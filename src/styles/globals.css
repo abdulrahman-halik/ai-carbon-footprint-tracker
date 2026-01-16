@@ -1,0 +1,37 @@
+@import "tailwindcss";
+
+@theme {
+    /* Brand Colors */
+    --color-primary: #22C55E;
+    /* Forest Green (green-500) */
+    --color-primary-100: #DCFCE7;
+    /* Light Green Accent (green-100) */
+
+    --color-earth-brown: #8B4513;
+    /* Earth Brown */
+    --color-earth-brown-100: #F5DEB3;
+    /* Wheat/Tan for brown accent */
+
+    --color-alert-red: #EF4444;
+    /* red-500 */
+
+    /* UI Colors */
+    --color-background: #F9FAFB;
+    /* gray-50 */
+    --color-surface: #FFFFFF;
+    --color-foreground: #111827;
+    /* gray-900 */
+    --color-muted: #9CA3AF;
+    /* gray-400 */
+
+    /* Border Radius */
+    --radius-xl: 1.25rem;
+    /* 20px */
+}
+
+/* Global Styles */
+body {
+    background-color: var(--color-background);
+    color: var(--color-foreground);
+    font-family: var(--font-sans), system-ui, sans-serif;
+}
