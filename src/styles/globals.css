@@ -1,46 +1,93 @@
 @import "tailwindcss";
 
 @theme {
-    /* Brand Colors */
-    --color-primary: #22C55E;
-    /* Forest Green (green-500) */
-    --color-primary-100: #DCFCE7;
-    /* Light Green Accent (green-100) */
+    /* Brand Colors - Sophisticated & Vibrant */
+    --color-primary: #10B981;
+    /* Emerald 500 */
+    --color-primary-dark: #059669;
+    /* Emerald 600 */
+    --color-primary-light: #D1FAE5;
+    /* Emerald 100 */
 
-    --color-earth-brown: #8B4513;
-    /* Earth Brown */
-    --color-earth-brown-100: #F5DEB3;
-    /* Wheat/Tan for brown accent */
+    --color-secondary: #3B82F6;
+    /* Blue 500 */
+    --color-secondary-light: #DBEAFE;
+    /* Blue 100 */
 
-    --color-alert-red: #EF4444;
-    /* red-500 */
+    --color-accent: #F59E0B;
+    /* Amber 500 */
+    --color-accent-light: #FEF3C7;
+    /* Amber 100 */
 
-    /* UI Colors */
-    --color-background: #F9FAFB;
-    /* gray-50 */
+    --color-danger: #EF4444;
+    /* Red 500 */
+    --color-danger-light: #FEE2E2;
+    /* Red 100 */
+
+    /* Neutral Scale */
+    --color-gray-50: #F9FAFB;
+    --color-gray-100: #F3F4F6;
+    --color-gray-200: #E5E7EB;
+    --color-gray-300: #D1D5DB;
+    --color-gray-400: #9CA3AF;
+    --color-gray-500: #6B7280;
+    --color-gray-600: #4B5563;
+    --color-gray-700: #374151;
+    --color-gray-800: #1F2937;
+    --color-gray-900: #111827;
+
+    /* Semantic Aliases */
+    --color-background: var(--color-gray-50);
     --color-surface: #FFFFFF;
-    --color-foreground: #111827;
-    /* gray-900 */
-    --color-muted: #9CA3AF;
-    /* gray-400 */
+    --color-foreground: var(--color-gray-900);
+    --color-muted: var(--color-gray-500);
 
-    /* Border Radius */
-    --radius-xl: 1.25rem;
-    /* 20px */
+    /* Effects */
+    --radius-xl: 1rem;
+    --radius-2xl: 1.5rem;
 }
 
 /* Global Styles */
 body {
-    background-color: var(--color-background);
+    /* Modern, subtle gradient mesh background */
+    background: radial-gradient(circle at 0% 0%, #E0F2FE 0%, transparent 50%),
+        radial-gradient(circle at 100% 0%, #DCFCE7 0%, transparent 50%),
+        radial-gradient(circle at 100% 100%, #FEF3C7 0%, transparent 50%),
+        radial-gradient(circle at 0% 100%, #F3F4F6 0%, transparent 50%);
+    background-color: #F9FAFB;
+    /* Fallback */
+    background-attachment: fixed;
     color: var(--color-foreground);
-    font-family: var(--font-sans), system-ui, sans-serif;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    min-height: 100vh;
 }
 
+/* Typography Enhancements */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    letter-spacing: -0.025em;
+    /* Tight tracking for headings */
+}
+
+/* Glassmorphism Utilities */
 @utility glass {
-    @apply bg-white/70 backdrop-blur-lg border border-white/20 shadow-lg;
-    /* Fallback/Additional optimization for dark mode support if needed later */
+    @apply bg-white/70 backdrop-blur-xl border border-white/50 shadow-sm transition-all duration-300;
 }
 
-@utility glass-dark {
-    @apply bg-black/60 backdrop-blur-lg border border-white/10 shadow-lg;
+@utility glass-card {
+    @apply glass rounded-2xl p-6 hover:shadow-lg hover:bg-white/80 hover:-translate-y-1 transition-all duration-300;
+}
+
+@utility glass-button {
+    @apply glass hover:bg-white/90 active:scale-95 cursor-pointer font-medium px-4 py-2 rounded-xl transition-all duration-200;
+}
+
+@utility text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-r from-emerald-600 to-teal-500;
 }

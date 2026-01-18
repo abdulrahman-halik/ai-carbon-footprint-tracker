@@ -76,12 +76,17 @@ export function EmissionSparkline({ data, className }) {
     };
 
     return (
-        <div className={cn("w-full h-64 bg-white p-4 rounded-2xl shadow-sm border border-gray-100", className)}>
-            <div className="flex justify-between items-center mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Weekly Emissions Trend</h3>
-                <span className="text-sm font-medium text-green-600 bg-green-50 px-2 py-1 rounded-full">-12% vs last week</span>
+        <div className={cn("glass-card border-none w-full h-80 flex flex-col", className)}>
+            <div className="flex justify-between items-start mb-6">
+                <div>
+                    <h3 className="text-lg font-bold text-gray-800">Weekly Trends</h3>
+                    <p className="text-sm text-gray-500">Your carbon footprint over time</p>
+                </div>
+                <span className="text-xs font-bold text-green-700 bg-green-100 px-2 py-1 rounded-full flex items-center border border-green-200">
+                    ↓ 12% vs last week
+                </span>
             </div>
-            <div className="h-48 w-full">
+            <div className="flex-1 w-full min-h-0">
                 <Line data={chartData} options={options} />
             </div>
         </div>
