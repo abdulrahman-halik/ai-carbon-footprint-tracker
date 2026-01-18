@@ -38,14 +38,17 @@ export function ImpactVisualizer({ data, className }) {
     };
 
     return (
-        <div className={cn("w-full h-80 bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex flex-col items-center", className)}>
-            <h3 className="text-lg font-semibold text-gray-900 mb-2 w-full text-left">Impact Breakdown</h3>
-            <div className="relative h-56 w-full flex justify-center items-center">
+        <div className={cn("glass-card border-none w-full h-80 flex flex-col items-center", className)}>
+            <div className="w-full mb-2">
+                <h3 className="text-lg font-bold text-gray-800 text-left">Impact Breakdown</h3>
+                <p className="text-sm text-gray-500 text-left">Where your emissions come from</p>
+            </div>
+            <div className="relative flex-1 w-full flex justify-center items-center min-h-0">
                 <Doughnut data={chartData} options={options} />
                 {/* Center Text Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-2">
-                    <span className="text-3xl font-bold text-gray-900">1.2t</span>
-                    <span className="text-xs text-gray-500 uppercase tracking-wide">Total CO2</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-4">
+                    <span className="text-4xl font-extrabold text-gray-900 tracking-tight">1.2t</span>
+                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest mt-1">Total CO2</span>
                 </div>
             </div>
         </div>
