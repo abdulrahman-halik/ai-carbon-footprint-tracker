@@ -57,13 +57,13 @@ export default function AboutPage() {
                     <h2 className="text-3xl font-bold text-gray-900 mb-6 text-center">Our Story</h2>
                     <p className="mb-6">
                         EcoTracker began in 2024 with a simple observation: most people want to help the planet,
-                        but they don't know where to start. The data was too complex, the solutions too expensive,
+                        but they don&apos;t know where to start. The data was too complex, the solutions too expensive,
                         and the impact too abstract.
                     </p>
                     <p className="mb-6">
                         We set out to build a tool that makes carbon tracking as easy as tracking steps.
                         By combining behavioral science with precise data modeling, we created a platform that
-                        doesn't just measure problems—it illuminates solutions.
+                        doesn&apos;t just measure problems—it illuminates solutions.
                     </p>
                 </div>
             </section>
