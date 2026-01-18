@@ -1,3 +1,5 @@
+import EmissionsDashboard from "@/features/emissions/components/EmissionsDashboard";
+
 export default function DashboardPage() {
     return (
         <div className="space-y-6">
@@ -8,10 +10,7 @@ export default function DashboardPage() {
                 </div>
             </div>
 
-            {/* Content placeholder */}
-            <div className="rounded-2xl border-2 border-dashed border-gray-200 bg-gray-50 p-12 text-center text-gray-500">
-                Dashboard Content Area
-            </div>
+            <EmissionsDashboard />
         </div>
     );
 }
