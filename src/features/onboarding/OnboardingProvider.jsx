@@ -24,6 +24,7 @@ export function OnboardingProvider({ children, initialSteps = 4 }) {
         const savedData = localStorage.getItem("onboarding_data");
         const savedStep = localStorage.getItem("onboarding_step");
 
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (savedData) setOnboardingData(JSON.parse(savedData));
         if (savedStep) setCurrentStep(Number(savedStep));
     }, []);
