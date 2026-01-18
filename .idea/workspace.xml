@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="e7aa2f36-ba4e-458f-98fa-fe83012b56e5" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/features/emissions/components/EmissionSparkline.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/emissions/components/EmissionsDashboard.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/features/emissions/components/ImpactVisualizer.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/lib/constants.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/app/(authenticated)/dashboard/page.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/app/(authenticated)/dashboard/page.jsx" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "abdulrahman-halik"
+  }
+}]]></component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "https://github.com/abdulrahman-halik/ai-carbon-footprint-tracker.git",
+    "accountId": "366cd36d-0222-4d8e-b3c3-4387d8d34908"
+  }
+}]]></component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 0
+}]]></component>
+  <component name="ProjectId" id="38RJyJUnFxIkpnRQqifmcZyeoly" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "git-widget-placeholder": "feature/emissions-visualization",
+    "last_opened_file_path": "/home/abdul/projects4/Frontend/src/features/emissions",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.tslint": "(autodetect)"
+  }
+}]]></component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/features/emissions" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/src/lib" />
+    </key>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-js-predefined-d6986cc7102b-deb605915726-JavaScript-WS-243.22562.222" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="e7aa2f36-ba4e-458f-98fa-fe83012b56e5" name="Changes" comment="" />
+      <created>1768756703654</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1768756703654</updated>
+      <workItem from="1768756706629" duration="811000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="zajith" />
+    <option name="LAST_COMMIT_MESSAGE" value="zajith" />
+  </component>
+</project>
