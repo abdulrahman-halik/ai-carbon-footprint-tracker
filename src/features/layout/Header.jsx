@@ -1,6 +1,7 @@
 "use client";
 
-import { Bell, Menu, Sun, Search, User as UserIcon } from "lucide-react";
+import { Menu, Sun, Search, User as UserIcon } from "lucide-react";
+import NotificationBell from "@/features/notifications/NotificationBell";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/Button"; // Assuming you have a Button component
@@ -47,10 +48,7 @@ export default function Header({ onMenuClick }) {
                 </button>
 
                 {/* Notifications */}
-                <button className="relative rounded-full p-2 text-gray-500 hover:bg-gray-100 transition-colors">
-                    <Bell size={20} />
-                    <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-red-500 ring-2 ring-white" />
-                </button>
+                <NotificationBell />
 
                 <div className="h-6 w-px bg-gray-200 mx-1" />
 
