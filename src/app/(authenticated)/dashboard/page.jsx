@@ -2,6 +2,8 @@ import EmissionsDashboard from "@/features/emissions/components/EmissionsDashboa
 import { GoalThermometer } from "@/features/behavior/GoalThermometer";
 import { NeighborhoodComparison } from "@/features/behavior/NeighborhoodComparison";
 
+import ExportButton from "@/features/reports/ExportButton";
+
 export default function DashboardPage() {
     return (
         <div className="max-w-7xl mx-auto space-y-8 pb-10 px-4 sm:px-6 lg:px-8">
@@ -18,6 +20,7 @@ export default function DashboardPage() {
                     </p>
                 </div>
                 <div className="flex gap-3">
+                    <ExportButton />
                     <button className="glass-button text-gray-600 hover:text-emerald-600">
                         Last 7 Days
                     </button>
