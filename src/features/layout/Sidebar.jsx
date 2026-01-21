@@ -12,6 +12,13 @@ import {
     ChevronLeft,
     ChevronRight,
     Settings,
+    Leaf,
+    Target,
+    Droplets,
+    Zap,
+    FileText,
+    Globe,
+    ClipboardList,
 } from "lucide-react";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
@@ -19,8 +26,13 @@ import { cn } from "@/lib/utils";
 const NAV_ITEMS = [
     { label: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { label: "Emissions", href: "/emissions", icon: BarChart3 },
-    { label: "Actions", href: "/actions", icon: ListTodo },
-    { label: "Social", href: "/social", icon: Users },
+    { label: "Activity", href: "/log", icon: ClipboardList },
+    { label: "Goals", href: "/goals", icon: Target },
+    { label: "Water", href: "/water", icon: Droplets },
+    { label: "Energy", href: "/energy", icon: Zap },
+    { label: "Reports", href: "/reports", icon: FileText },
+    { label: "Community", href: "/community", icon: Globe },
+    { label: "Team", href: "/social", icon: Users },
     { label: "Simulate", href: "/simulate", icon: FlaskConical },
 ];
 
@@ -37,9 +49,14 @@ export default function Sidebar() {
         >
             <div className="flex h-16 items-center justify-between px-4 border-b border-gray-100">
                 {!collapsed && (
-                    <span className="text-xl font-bold bg-gradient-to-r from-green-600 to-green-400 bg-clip-text text-transparent">
-                        EcoTracker
-                    </span>
+                    <div className="flex items-center gap-2">
+                        <div className="bg-emerald-500 p-1.5 rounded-lg text-white">
+                            <Leaf size={20} fill="currentColor" />
+                        </div>
+                        <span className="text-xl font-bold text-green-600">
+                            EcoTracker
+                        </span>
+                    </div>
                 )}
                 <button
                     onClick={() => setCollapsed(!collapsed)}

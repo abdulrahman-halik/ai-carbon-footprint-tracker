@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Sun, Search, User as UserIcon } from "lucide-react";
+import { Menu, Sun, Search, User as UserIcon, Leaf } from "lucide-react";
 import NotificationBell from "@/features/notifications/NotificationBell";
 import Link from "next/link";
 import Image from "next/image";
@@ -16,7 +16,7 @@ export default function Header({ onMenuClick }) {
 
     return (
         <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur-md lg:px-6">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 lg:gap-8">
                 {/* Mobile Menu Trigger */}
                 <button
                     onClick={onMenuClick}
@@ -25,23 +25,26 @@ export default function Header({ onMenuClick }) {
                     <Menu size={20} />
                 </button>
 
-                {/* Mobile Logo */}
-                <Link href="/dashboard" className="lg:hidden font-bold text-xl text-green-600">
-                    EcoTracker
-                </Link>
+                {/* Navigation Links */}
+                <nav className="hidden md:flex items-center gap-6">
+                    <Link href="/dashboard" className="text-emerald-500 font-medium text-sm">Home</Link>
+                    <Link href="/insights" className="text-gray-500 hover:text-emerald-500 font-medium text-sm transition-colors">Insights</Link>
+                </nav>
 
-                {/* Desktop Search (Optional) */}
-                <div className="hidden lg:flex items-center gap-2 rounded-full bg-gray-100 px-4 py-2 w-64">
-                    <Search size={16} className="text-gray-400" />
-                    <input
-                        type="text"
-                        placeholder="Search..."
-                        className="bg-transparent text-sm outline-none w-full placeholder:text-gray-400 text-gray-700"
-                    />
-                </div>
+
             </div>
 
             <div className="flex items-center gap-2 sm:gap-4">
+                {/* Search Bar (Moved to right) */}
+                <div className="hidden lg:flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-2.5 w-64 border border-gray-100 transition-all focus-within:ring-2 focus-within:ring-emerald-100 focus-within:border-emerald-200">
+                    <Search size={18} className="text-gray-400" />
+                    <input
+                        type="text"
+                        placeholder="Search Task"
+                        className="bg-transparent text-sm outline-none w-full placeholder:text-gray-400 text-gray-600"
+                    />
+                </div>
+
                 {/* Theme Toggle (Mock) */}
                 <button className="rounded-full p-2 text-gray-500 hover:bg-gray-100 transition-colors">
                     <Sun size={20} />
@@ -62,6 +65,6 @@ export default function Header({ onMenuClick }) {
                     </div>
                 </button>
             </div>
-        </header>
+        </header >
     );
 }

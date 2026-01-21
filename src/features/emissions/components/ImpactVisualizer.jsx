@@ -46,7 +46,7 @@ export function ImpactVisualizer({ data, className }) {
             <div className="relative flex-1 w-full flex justify-center items-center min-h-0">
                 <Doughnut data={chartData} options={options} />
                 {/* Center Text Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none mt-4">
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-6">
                     <span className="text-4xl font-extrabold text-gray-900 tracking-tight">1.2t</span>
                     <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest mt-1">Total CO2</span>
                 </div>

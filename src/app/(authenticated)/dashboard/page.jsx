@@ -1,8 +1,10 @@
 import EmissionsDashboard from "@/features/emissions/components/EmissionsDashboard";
 import { GoalThermometer } from "@/features/behavior/GoalThermometer";
 import { NeighborhoodComparison } from "@/features/behavior/NeighborhoodComparison";
+import { TeamCollaboration } from "@/features/social/TeamCollaboration";
 
 import ExportButton from "@/features/reports/ExportButton";
+import Link from "next/link";
 
 export default function DashboardPage() {
     return (
@@ -24,9 +26,9 @@ export default function DashboardPage() {
                     <button className="glass-button text-gray-600 hover:text-emerald-600">
                         Last 7 Days
                     </button>
-                    <button className="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-gray-200 hover:bg-gray-800 hover:shadow-xl transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer">
+                    <Link href="/log" className="bg-gray-900 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-gray-200 hover:bg-gray-800 hover:shadow-xl transition-all hover:-translate-y-0.5 active:scale-95 cursor-pointer block text-center">
                         Log Activity
-                    </button>
+                    </Link>
                 </div>
             </div>
 
@@ -50,6 +52,11 @@ export default function DashboardPage() {
                         insight="You're using 21% less carbon than your neighbors!"
                     />
                 </div>
+            </div>
+
+            {/* Team Collaboration Section */}
+            <div className="w-full">
+                <TeamCollaboration />
             </div>
         </div>
     );
