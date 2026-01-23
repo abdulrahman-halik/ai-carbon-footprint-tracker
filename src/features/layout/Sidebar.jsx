@@ -5,13 +5,9 @@ import { usePathname } from "next/navigation";
 import {
     LayoutDashboard,
     BarChart3,
-    ListTodo,
     Users,
     FlaskConical,
-    LogOut,
     ChevronLeft,
-    ChevronRight,
-    Settings,
     Leaf,
     Target,
     Droplets,
@@ -20,7 +16,7 @@ import {
     Globe,
     ClipboardList,
 } from "lucide-react";
-import { useState } from "react";
+
 import { cn } from "@/lib/utils";
 
 const NAV_ITEMS = [
@@ -36,81 +32,76 @@ const NAV_ITEMS = [
     { label: "Simulate", href: "/simulate", icon: FlaskConical },
 ];
 
-export default function Sidebar() {
+export default function Sidebar({ mobile, isOpen, onClose }) {
     const pathname = usePathname();
-    const [collapsed, setCollapsed] = useState(false);
+
+    // If mobile, strictly use full width/overlay styles
+    const sidebarClasses = mobile
+        ? cn(
+            "fixed inset-y-0 left-0 z-50 flex h-full w-64 flex-col bg-white border-r border-gray-100 shadow-2xl transition-transform duration-300 ease-in-out font-sans",
+            isOpen ? "translate-x-0" : "-translate-x-full"
+        )
+        : "hidden h-screen w-64 flex-col border-r border-gray-100 bg-white lg:flex sticky top-0 font-sans";
 
     return (
-        <aside
-            className={cn(
-                "hidden h-screen flex-col border-r border-gray-200 bg-white transition-all duration-300 lg:flex sticky top-0",
-                collapsed ? "w-20" : "w-64"
+        <>
+            {/* Mobile Overlay */}
+            {mobile && isOpen && (
+                <div
+                    className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm transition-opacity lg:hidden"
+                    onClick={onClose}
+                />
             )}
-        >
-            <div className="flex h-16 items-center justify-between px-4 border-b border-gray-100">
-                {!collapsed && (
-                    <div className="flex items-center gap-2">
-                        <div className="bg-emerald-500 p-1.5 rounded-lg text-white">
-                            <Leaf size={20} fill="currentColor" />
-                        </div>
-                        <span className="text-xl font-bold text-green-600">
-                            EcoTracker
-                        </span>
-                    </div>
-                )}
-                <button
-                    onClick={() => setCollapsed(!collapsed)}
-                    className="rounded-lg p-1.5 text-gray-500 hover:bg-gray-100 transition-colors"
-                >
-                    {collapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
-                </button>
-            </div>
 
-            <nav className="flex-1 space-y-1 p-4">
-                {NAV_ITEMS.map((item) => {
-                    const isActive = pathname === item.href;
-                    return (
-                        <Link
-                            key={item.href}
-                            href={item.href}
-                            className={cn(
-                                "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 group relative",
-                                isActive
-                                    ? "bg-green-50 text-green-700 font-medium"
-                                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                            )}
+            <aside className={sidebarClasses}>
+                <div className="flex flex-col items-center justify-center py-8 relative px-6">
+                    {mobile && (
+                        <button
+                            onClick={onClose}
+                            className="absolute top-4 right-4 p-2 text-gray-400 hover:text-gray-600 lg:hidden"
                         >
-                            <item.icon
-                                size={22}
-                                className={cn(
-                                    "shrink-0 transition-colors",
-                                    isActive ? "text-green-600" : "text-gray-500 group-hover:text-gray-700"
-                                )}
-                            />
-                            {!collapsed && <span>{item.label}</span>}
-
-                            {/* Tooltip for collapsed state */}
-                            {collapsed && (
-                                <div className="absolute left-14 top-1/2 -translate-y-1/2 rounded-md bg-gray-900 px-2 py-1 text-xs text-white opacity-0 group-hover:opacity-100 pointer-events-none whitespace-nowrap z-50">
-                                    {item.label}
-                                </div>
-                            )}
-                        </Link>
-                    );
-                })}
-            </nav>
-
-            <div className="border-t border-gray-100 p-4 space-y-1">
-                <Link
-                    href="/settings"
-                    className={cn(
-                        "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 text-gray-600 hover:bg-gray-50 hover:text-gray-900"
+                            <ChevronLeft size={24} />
+                        </button>
                     )}
-                >
-                    <Settings size={22} className="text-gray-500" />
-                    {!collapsed && <span>Settings</span>}
-                </Link>
-            </div>
-        </aside>
+
+                    <div className="bg-emerald-500 p-3 rounded-2xl shadow-lg shadow-emerald-200/10 text-white mb-1">
+                        <Leaf size={22} fill="currentColor" strokeWidth={2.5} />
+                    </div>
+                    <span className="text-xl font-extrabold text-gray-900 tracking-tight">
+                        EcoTracker
+                    </span>
+                </div>
+
+                <nav className="flex-1 space-y-1 px-4 overflow-y-auto">
+                    {NAV_ITEMS.map((item) => {
+                        const isActive = pathname === item.href;
+                        return (
+                            <Link
+                                key={item.href}
+                                href={item.href}
+                                onClick={mobile ? onClose : undefined}
+                                className={cn(
+                                    "flex items-center gap-3 rounded-xl px-3 py-2.5 transition-all duration-200 group relative font-medium",
+                                    isActive
+                                        ? "bg-emerald-50 text-emerald-600 shadow-sm"
+                                        : "text-gray-500 hover:bg-gray-50 hover:text-gray-900"
+                                )}
+                            >
+                                <item.icon
+                                    size={20}
+                                    className={cn(
+                                        "shrink-0 transition-colors",
+                                        isActive ? "text-emerald-600" : "text-gray-400 group-hover:text-gray-600"
+                                    )}
+                                />
+                                <span>{item.label}</span>
+                            </Link>
+                        );
+                    })}
+                </nav>
+
+
+            </aside>
+        </>
     );
 }
