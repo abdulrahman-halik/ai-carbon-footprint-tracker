@@ -4,6 +4,7 @@ import { Menu, Sun, Search, User as UserIcon, Leaf } from "lucide-react";
 import NotificationBell from "@/features/notifications/NotificationBell";
 import Link from "next/link";
 import Image from "next/image";
+import { usePathname } from "next/navigation";
 import { Button } from "@/components/ui/Button"; // Assuming you have a Button component
 import { useState } from "react";
 
@@ -14,9 +15,18 @@ export default function Header({ onMenuClick }) {
         avatar: null,
     };
 
+    const pathname = usePathname();
+
+    const linkClass = (path) =>
+        `relative py-7 text-xs font-bold tracking-widest uppercase transition-colors
+        ${pathname === path
+            ? "text-emerald-600 "
+            : "text-gray-500 hover:text-emerald-600"
+        }`;
+
     return (
-        <header className="sticky top-0 z-40 flex h-16 w-full items-center justify-between border-b border-gray-200 bg-white/80 px-4 backdrop-blur-md lg:px-6">
-            <div className="flex items-center gap-4 lg:gap-8">
+        <header className="sticky top-0 z-40 flex h-20 w-full items-center justify-between border-b border-gray-100 bg-white/90 px-4 backdrop-blur-md lg:px-8 transition-all">
+            <div className="flex items-center gap-4 lg:gap-12">
                 {/* Mobile Menu Trigger */}
                 <button
                     onClick={onMenuClick}
@@ -25,46 +35,54 @@ export default function Header({ onMenuClick }) {
                     <Menu size={20} />
                 </button>
 
-                {/* Navigation Links */}
-                <nav className="hidden md:flex items-center gap-6">
-                    <Link href="/dashboard" className="text-emerald-500 font-medium text-sm">Home</Link>
-                    <Link href="/insights" className="text-gray-500 hover:text-emerald-500 font-medium text-sm transition-colors">Insights</Link>
+                {/* Navigation Links - Tabs Style */}
+                <nav className="hidden md:flex items-center gap-8">
+                    <Link
+                        href="/dashboard"
+                        className={linkClass("/dashboard")}
+                    >
+                        Home
+
+                    </Link>
+                    <Link
+                        href="/insights"
+                        className={linkClass("/insights")}
+                    >
+                        Insights
+                    </Link>
                 </nav>
-
-
             </div>
 
-            <div className="flex items-center gap-2 sm:gap-4">
-                {/* Search Bar (Moved to right) */}
-                <div className="hidden lg:flex items-center gap-3 rounded-xl bg-gray-50 px-4 py-2.5 w-64 border border-gray-100 transition-all focus-within:ring-2 focus-within:ring-emerald-100 focus-within:border-emerald-200">
+            <div className="flex items-center gap-3 sm:gap-6">
+                {/* Search Bar */}
+                <div className="hidden lg:flex items-center gap-3 rounded-full bg-gray-100/80 px-5 py-2.5 w-72 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-100 focus-within:shadow-sm">
                     <Search size={18} className="text-gray-400" />
                     <input
                         type="text"
-                        placeholder="Search Task"
-                        className="bg-transparent text-sm outline-none w-full placeholder:text-gray-400 text-gray-600"
+                        placeholder="Search Activity..."
+                        className="bg-transparent text-sm outline-none w-full placeholder:text-gray-400 text-gray-700 font-medium"
                     />
                 </div>
-
-                {/* Theme Toggle (Mock) */}
-                <button className="rounded-full p-2 text-gray-500 hover:bg-gray-100 transition-colors">
-                    <Sun size={20} />
-                </button>
 
                 {/* Notifications */}
                 <NotificationBell />
 
-                <div className="h-6 w-px bg-gray-200 mx-1" />
+                <div className="h-8 w-px bg-gray-200 mx-1 hidden sm:block" />
 
                 {/* User Menu */}
-                <button className="flex items-center gap-3 rounded-full border border-gray-200 p-1 pl-3 pr-2 hover:bg-gray-50 transition-colors">
-                    <span className="hidden text-sm font-medium text-gray-700 sm:block">
+                <button className="flex items-center gap-3 pl-2 pr-1 hover:bg-gray-50 rounded-full transition-colors cursor-pointer group">
+                    <span className="hidden text-sm font-bold text-gray-700 sm:block group-hover:text-gray-900">
                         {user.name}
                     </span>
-                    <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100 text-green-700">
-                        {user.avatar ? <Image src={user.avatar} alt="User Avatar" width={32} height={32} className="rounded-full object-cover" /> : <UserIcon size={16} />}
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 ring-2 ring-white shadow-sm group-hover:ring-emerald-100 transition-all">
+                        {user.avatar ? (
+                            <Image src={user.avatar} alt="User Avatar" width={40} height={40} className="rounded-full object-cover" />
+                        ) : (
+                            <UserIcon size={18} strokeWidth={2.5} />
+                        )}
                     </div>
                 </button>
             </div>
-        </header >
+        </header>
     );
 }

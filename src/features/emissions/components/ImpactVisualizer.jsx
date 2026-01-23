@@ -16,15 +16,7 @@ export function ImpactVisualizer({ data, className }) {
         maintainAspectRatio: false,
         plugins: {
             legend: {
-                position: "bottom",
-                labels: {
-                    usePointStyle: true,
-                    padding: 20,
-                    color: "#4B5563", // Gray-600
-                    font: {
-                        size: 12,
-                    }
-                },
+                display: false, // Disable default legend
             },
             tooltip: {
                 backgroundColor: "#1F2937",
@@ -34,22 +26,37 @@ export function ImpactVisualizer({ data, className }) {
                 }
             }
         },
-        cutout: "70%", // Thinner doughnut
+        cutout: "75%",
     };
 
+    const legendItems = [
+        { label: "Transport", color: "#3B82F6" }, // Blue
+        { label: "Diet", color: "#22C55E" },      // Green
+        { label: "Energy", color: "#EAB308" },    // Yellow
+        { label: "Shopping", color: "#A855F7" },   // Purple
+    ];
+
     return (
-        <div className={cn("glass-card border-none w-full h-80 flex flex-col items-center", className)}>
-            <div className="w-full mb-2">
-                <h3 className="text-lg font-bold text-gray-800 text-left">Impact Breakdown</h3>
-                <p className="text-sm text-gray-500 text-left">Where your emissions come from</p>
-            </div>
-            <div className="relative flex-1 w-full flex justify-center items-center min-h-0">
+        <div className={cn("w-full h-full flex flex-col items-center justify-center gap-6", className)}>
+            <div className="relative w-48 h-48 flex justify-center items-center">
                 <Doughnut data={chartData} options={options} />
-                {/* Center Text Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-6">
-                    <span className="text-4xl font-extrabold text-gray-900 tracking-tight">1.2t</span>
-                    <span className="text-xs font-semibold text-gray-500 uppercase tracking-widest mt-1">Total CO2</span>
+                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none pb-2">
+                    <span className="text-3xl font-extrabold text-gray-900 tracking-tight">1.2t</span>
+                    <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Total CO2</span>
                 </div>
+            </div>
+
+            {/* Custom Legend */}
+            <div className="grid grid-cols-2 gap-x-8 gap-y-3">
+                {legendItems.map((item) => (
+                    <div key={item.label} className="flex items-center gap-2">
+                        <div
+                            className="w-3 h-3 rounded-full"
+                            style={{ backgroundColor: item.color }}
+                        />
+                        <span className="text-sm text-gray-600 font-medium">{item.label}</span>
+                    </div>
+                ))}
             </div>
         </div>
     );
