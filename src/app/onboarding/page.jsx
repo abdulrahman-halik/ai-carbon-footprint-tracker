@@ -2,8 +2,11 @@
 
 import { OnboardingProvider, useOnboarding } from "@/features/onboarding/OnboardingProvider";
 import WizardLayout from "@/features/onboarding/WizardLayout";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
+import { useRouter } from "next/navigation";
+import mockApi from "@/mockApi";
+import { useAuth } from "@/hooks/useAuth";
 
 // Placeholder configuration for the wizard steps
 // In Phase 7, we will replace the 'component' placeholders with actual form components
@@ -40,6 +43,9 @@ import { Card } from "@/components/ui/Card";
 
 function WizardContent() {
     const { currentStep } = useOnboarding();
+    const router = useRouter();
+    const { user } = useAuth();
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     // Safety check
     const stepIndex = currentStep - 1;
@@ -75,8 +81,29 @@ function WizardContent() {
                         </div>
                         <div className="text-center max-w-md">
                             <p className="text-gray-600 text-lg leading-relaxed">{step.description}</p>
-                            <Button className="mt-8 w-full" onClick={() => window.location.href = '/dashboard'}>
-                                Go to Dashboard
+                            <Button
+                                className="mt-8 w-full"
+                                disabled={isSubmitting}
+                                onClick={async () => {
+                                    try {
+                                        setIsSubmitting(true);
+                                        await mockApi.submitOnboarding({
+                                            userId: user?.id,
+                                            completed: true
+                                        });
+                                        // The AuthProvider's user isn't directly listening to localStorage changes unless reloaded/refetched.
+                                        // A hard refresh or router.push will trigger the guard. Since RouteGuard checks user.onboardingCompleted, 
+                                        // we should ideally update the React state. For mock behavior, a simple router check works 
+                                        // if we reload, or we can just redirect to dashboard and let AuthProvider pull from localStorage next time.
+                                        // A window.location.href ensures the page correctly re-initializes contexts from localStorage:
+                                        window.location.href = '/dashboard';
+                                    } catch (error) {
+                                        console.error(error);
+                                        setIsSubmitting(false);
+                                    }
+                                }}
+                            >
+                                {isSubmitting ? "Saving..." : "Go to Dashboard"}
                             </Button>
                         </div>
                     </div>

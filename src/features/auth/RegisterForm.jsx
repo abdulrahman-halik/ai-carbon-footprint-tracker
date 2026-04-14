@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -13,62 +15,46 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/Card";
-import Icon from "@/components/Icon";
+import PasswordInput from "@/components/ui/PasswordInput";
+import Icon from "@/components/ui/Icon";
 import { Mail, Lock, User, Loader2, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { registerSchema } from "./authSchemas";
 
 export default function RegisterForm() {
-    const { register } = useAuth();
+    const { register: authRegister } = useAuth();
     const router = useRouter();
-    const [formData, setFormData] = useState({
-        name: "",
-        email: "",
-        password: "",
-        confirmPassword: "",
-    });
-    const [error, setError] = useState("");
-    const [errors, setErrors] = useState({});
+    const [apiError, setApiError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-        // Clear field error when user starts typing
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: "" }));
-        }
-    };
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(registerSchema),
+        defaultValues: {
+            name: "",
+            email: "",
+            password: "",
+            confirmPassword: "",
+        },
+    });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        setErrors({});
-
-        // Validate form data
-        const result = registerSchema.safeParse(formData);
-        if (!result.success) {
-            const fieldErrors = result.error.flatten().fieldErrors;
-            const formattedErrors = {};
-            for (const key in fieldErrors) {
-                formattedErrors[key] = fieldErrors[key][0];
-            }
-            setErrors(formattedErrors);
-            return;
-        }
-
+    const onSubmit = async (data) => {
+        setApiError("");
         setLoading(true);
 
         try {
-            await register({
-                name: formData.name,
-                email: formData.email,
-                password: formData.password,
+            await authRegister({
+                name: data.name,
+                email: data.email,
+                password: data.password,
             });
             router.push("/dashboard");
         } catch (err) {
-            setError(err.message || "Failed to register");
+            setApiError(err.message || "Failed to register");
         } finally {
             setLoading(false);
         }
@@ -85,7 +71,7 @@ export default function RegisterForm() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="name">Full Name</Label>
                         <div className="relative">
@@ -96,17 +82,14 @@ export default function RegisterForm() {
                             />
                             <Input
                                 id="name"
-                                name="name"
                                 type="text"
                                 placeholder="John Doe"
-                                value={formData.name}
-                                onChange={handleChange}
+                                {...register("name")}
                                 className={`pl-10 ${errors.name ? "border-red-500" : ""}`}
-                                required
                             />
                         </div>
                         {errors.name && (
-                            <p className="text-sm text-red-500">{errors.name}</p>
+                            <p className="text-sm text-red-500">{errors.name.message}</p>
                         )}
                     </div>
                     <div className="space-y-2">
@@ -119,68 +102,47 @@ export default function RegisterForm() {
                             />
                             <Input
                                 id="email"
-                                name="email"
                                 type="email"
                                 placeholder="name@example.com"
-                                value={formData.email}
-                                onChange={handleChange}
+                                {...register("email")}
                                 className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
-                                required
                             />
                         </div>
                         {errors.email && (
-                            <p className="text-sm text-red-500">{errors.email}</p>
+                            <p className="text-sm text-red-500">{errors.email.message}</p>
                         )}
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="password">Password</Label>
-                        <div className="relative">
-                            <Icon
-                                icon={Lock}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                size={18}
-                            />
-                            <Input
-                                id="password"
-                                name="password"
-                                type="password"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className={`pl-10 ${errors.password ? "border-red-500" : ""}`}
-                                required
-                            />
-                        </div>
+                        <PasswordInput
+                            id="password"
+                            type="password"
+                            placeholder="••••••••"
+                            leftIcon={Lock}
+                            {...register("password")}
+                            className={errors.password ? "border-red-500" : ""}
+                        />
                         {errors.password && (
-                            <p className="text-sm text-red-500">{errors.password}</p>
+                            <p className="text-sm text-red-500">{errors.password.message}</p>
                         )}
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="confirmPassword">Confirm Password</Label>
-                        <div className="relative">
-                            <Icon
-                                icon={CheckCircle}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                size={18}
-                            />
-                            <Input
-                                id="confirmPassword"
-                                name="confirmPassword"
-                                type="password"
-                                placeholder="••••••••"
-                                value={formData.confirmPassword}
-                                onChange={handleChange}
-                                className={`pl-10 ${errors.confirmPassword ? "border-red-500" : ""}`}
-                                required
-                            />
-                        </div>
+                        <PasswordInput
+                            id="confirmPassword"
+                            type="password"
+                            placeholder="••••••••"
+                            leftIcon={CheckCircle}
+                            {...register("confirmPassword")}
+                            className={errors.confirmPassword ? "border-red-500" : ""}
+                        />
                         {errors.confirmPassword && (
-                            <p className="text-sm text-red-500">{errors.confirmPassword}</p>
+                            <p className="text-sm text-red-500">{errors.confirmPassword.message}</p>
                         )}
                     </div>
-                    {error && (
+                    {apiError && (
                         <div className="text-sm text-red-500 font-medium">
-                            {error}
+                            {apiError}
                         </div>
                     )}
                     <Button type="submit" className="w-full" disabled={loading}>
@@ -206,3 +168,4 @@ export default function RegisterForm() {
         </Card>
     );
 }
+

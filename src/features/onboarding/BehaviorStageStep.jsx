@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useOnboarding } from './OnboardingProvider';
 import { Card } from '@/components/ui/Card';
 import { Check } from 'lucide-react';
-import Icon from '@/components/Icon';
+import Icon from '@/components/ui/Icon';
 
 const STAGES = [
     {

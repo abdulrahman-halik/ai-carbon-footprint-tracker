@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useAuth } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
@@ -13,7 +15,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/Card";
-import Icon from "@/components/Icon";
+import PasswordInput from "@/components/ui/PasswordInput";
+import Icon from "@/components/ui/Icon";
 import { Mail, Lock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -22,48 +25,30 @@ import { loginSchema } from "./authSchemas";
 export default function LoginForm() {
     const { login } = useAuth();
     const router = useRouter();
-    const [formData, setFormData] = useState({
-        email: "",
-        password: "",
-    });
-    const [error, setError] = useState("");
-    const [errors, setErrors] = useState({});
+    const [apiError, setApiError] = useState("");
     const [loading, setLoading] = useState(false);
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-        // Clear field error when user starts typing
-        if (errors[name]) {
-            setErrors((prev) => ({ ...prev, [name]: "" }));
-        }
-    };
+    const {
+        register,
+        handleSubmit,
+        formState: { errors },
+    } = useForm({
+        resolver: zodResolver(loginSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
-        setError("");
-        setErrors({});
-
-        // Validate form data
-        const result = loginSchema.safeParse(formData);
-        if (!result.success) {
-            const fieldErrors = result.error.flatten().fieldErrors;
-            // flatten().fieldErrors returns arrays, we want strings
-            const formattedErrors = {};
-            for (const key in fieldErrors) {
-                formattedErrors[key] = fieldErrors[key][0];
-            }
-            setErrors(formattedErrors);
-            return;
-        }
-
+    const onSubmit = async (data) => {
+        setApiError("");
         setLoading(true);
 
         try {
-            await login(formData);
-            router.push("/dashboard"); // Redirect to dashboard after login
+            await login(data);
+            router.push("/dashboard");
         } catch (err) {
-            setError(err.message || "Failed to login");
+            setApiError(err.message || "Failed to login");
         } finally {
             setLoading(false);
         }
@@ -80,7 +65,7 @@ export default function LoginForm() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="email">Email</Label>
                         <div className="relative">
@@ -91,45 +76,33 @@ export default function LoginForm() {
                             />
                             <Input
                                 id="email"
-                                name="email"
                                 type="email"
                                 placeholder="name@example.com"
-                                value={formData.email}
-                                onChange={handleChange}
+                                {...register("email")}
                                 className={`pl-10 ${errors.email ? "border-red-500" : ""}`}
-                                required
                             />
                         </div>
                         {errors.email && (
-                            <p className="text-sm text-red-500">{errors.email}</p>
+                            <p className="text-sm text-red-500">{errors.email.message}</p>
                         )}
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="password">Password</Label>
-                        <div className="relative">
-                            <Icon
-                                icon={Lock}
-                                className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500"
-                                size={18}
-                            />
-                            <Input
-                                id="password"
-                                name="password"
-                                type="password"
-                                placeholder="••••••••"
-                                value={formData.password}
-                                onChange={handleChange}
-                                className={`pl-10 ${errors.password ? "border-red-500" : ""}`}
-                                required
-                            />
-                        </div>
+                        <PasswordInput
+                            id="password"
+                            type="password"
+                            placeholder="••••••••"
+                            leftIcon={Lock}
+                            {...register("password")}
+                            className={errors.password ? "border-red-500" : ""}
+                        />
                         {errors.password && (
-                            <p className="text-sm text-red-500">{errors.password}</p>
+                            <p className="text-sm text-red-500">{errors.password.message}</p>
                         )}
                     </div>
-                    {error && (
+                    {apiError && (
                         <div className="text-sm text-red-500 font-medium">
-                            {error}
+                            {apiError}
                         </div>
                     )}
                     <Button type="submit" className="w-full" disabled={loading}>
@@ -158,3 +131,4 @@ export default function LoginForm() {
         </Card>
     );
 }
+
