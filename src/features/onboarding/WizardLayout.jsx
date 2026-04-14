@@ -3,7 +3,7 @@
 import { useOnboarding } from "./OnboardingProvider";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
-import Icon from "@/components/Icon";
+import Icon from "@/components/ui/Icon";
 import { ChevronRight, ChevronLeft, Check } from "lucide-react";
 
 /**

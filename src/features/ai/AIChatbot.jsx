@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
+import { useForm } from "react-hook-form";
 import { MessageSquare, X, Send, Bot, User, Sparkles } from 'lucide-react';
 
 export default function AIChatbot() {
@@ -7,9 +8,21 @@ export default function AIChatbot() {
     const [messages, setMessages] = useState([
         { id: 1, text: "Hello! I'm your Eco-Assistant. How can I help you reduce your carbon footprint today?", sender: 'ai' }
     ]);
-    const [inputText, setInputText] = useState("");
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
+
+    const {
+        register,
+        handleSubmit,
+        reset,
+        watch,
+    } = useForm({
+        defaultValues: {
+            message: "",
+        },
+    });
+
+    const inputText = watch("message");
 
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -19,13 +32,12 @@ export default function AIChatbot() {
         scrollToBottom();
     }, [messages, isTyping, isOpen]);
 
-    const handleSendMessage = (e) => {
-        e.preventDefault();
-        if (!inputText.trim()) return;
+    const onSubmit = (data) => {
+        if (!data.message.trim()) return;
 
-        const userMsg = { id: Date.now(), text: inputText, sender: 'user' };
+        const userMsg = { id: Date.now(), text: data.message, sender: 'user' };
         setMessages(prev => [...prev, userMsg]);
-        setInputText("");
+        reset();
         setIsTyping(true);
 
         // Simulate AI response
@@ -100,18 +112,17 @@ export default function AIChatbot() {
                     </div>
 
                     {/* Input Area */}
-                    <form onSubmit={handleSendMessage} className="p-3 bg-white border-t border-gray-100">
+                    <form onSubmit={handleSubmit(onSubmit)} className="p-3 bg-white border-t border-gray-100">
                         <div className="relative flex items-center">
                             <input
                                 type="text"
-                                value={inputText}
-                                onChange={(e) => setInputText(e.target.value)}
+                                {...register("message")}
                                 placeholder="Ask for eco-tips..."
                                 className="w-full pl-4 pr-12 py-3 rounded-xl bg-gray-50 border border-gray-200 focus:outline-none focus:ring-2 focus:ring-emerald-500/50 focus:border-emerald-500 transition-all text-sm placeholder-gray-400"
                             />
                             <button
                                 type="submit"
-                                disabled={!inputText.trim()}
+                                disabled={!inputText?.trim()}
                                 className="absolute right-2 p-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 disabled:opacity-50 disabled:hover:bg-emerald-600 transition-colors shadow-sm"
                             >
                                 <Send size={16} />
@@ -145,3 +156,4 @@ export default function AIChatbot() {
         </div>
     );
 }
+

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import authService from "@/features/auth/authService";
+import authService from "@/mockApi";
 
 const AuthContext = createContext();
 
@@ -64,8 +64,20 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Forgot Password function
+    const forgotPassword = async (email) => {
+        setIsLoading(true);
+        try {
+            return await authService.forgotPassword(email);
+        } catch (error) {
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, isLoading, login, register, logout, forgotPassword }}>
             {children}
         </AuthContext.Provider>
     );

@@ -1,8 +1,47 @@
-import React from "react";
+"use client";
+
+import React, { useState, useEffect } from "react";
 import { EmissionSparkline } from "./EmissionSparkline";
 import { ImpactVisualizer } from "./ImpactVisualizer";
+import mockApi from "@/mockApi";
 
 export default function EmissionsDashboard() {
+    const [stats, setStats] = useState(null);
+    const [emissionsData, setEmissionsData] = useState(null);
+    const [impactData, setImpactData] = useState(null);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const [statsRes, emissionsRes, impactRes] = await Promise.all([
+                    mockApi.getStats(),
+                    mockApi.getEmissionsData(),
+                    mockApi.getImpactData()
+                ]);
+                setStats(statsRes);
+                setEmissionsData(emissionsRes);
+                setImpactData(impactRes);
+            } catch (error) {
+                console.error("Failed to fetch dashboard data:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchData();
+    }, []);
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center h-[60vh]">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-500"></div>
+            </div>
+        );
+    }
+
+    if (!stats) return null;
+
     return (
         <div className="space-y-6">
             {/* Top Stats Row */}
@@ -18,10 +57,10 @@ export default function EmissionsDashboard() {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <h3 className="text-2xl font-bold text-gray-900">Sunday</h3>
+                        <h3 className="text-2xl font-bold text-gray-900">{stats.bestPerformance.day}</h3>
                         <p className="text-sm font-medium text-emerald-600 flex items-center gap-1">
-                            <span>↓ 15%</span>
-                            <span className="text-gray-400 font-normal">vs yesterday</span>
+                            <span>↓ {Math.abs(stats.bestPerformance.change)}%</span>
+                            <span className="text-gray-400 font-normal">{stats.bestPerformance.compareLabel}</span>
                         </p>
                     </div>
                 </div>
@@ -37,10 +76,10 @@ export default function EmissionsDashboard() {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <h3 className="text-2xl font-bold text-gray-900">Transport</h3>
+                        <h3 className="text-2xl font-bold text-gray-900">{stats.majorImpact.category}</h3>
                         <p className="text-sm font-medium text-blue-600 flex items-center gap-1">
-                            <span className="bg-blue-100 px-1.5 py-0.5 rounded text-xs">45%</span>
-                            <span className="text-gray-400 font-normal">of footprint</span>
+                            <span className="bg-blue-100 px-1.5 py-0.5 rounded text-xs">{stats.majorImpact.percentage}%</span>
+                            <span className="text-gray-400 font-normal">{stats.majorImpact.label}</span>
                         </p>
                     </div>
                 </div>
@@ -56,10 +95,10 @@ export default function EmissionsDashboard() {
                         </div>
                     </div>
                     <div className="space-y-1">
-                        <h3 className="text-2xl font-bold text-gray-900">High Usage</h3>
+                        <h3 className="text-2xl font-bold text-gray-900">{stats.warning.title}</h3>
                         <p className="text-sm font-medium text-amber-600 flex items-center gap-1">
-                            <span>↑ 10%</span>
-                            <span className="text-gray-400 font-normal">energy spike</span>
+                            <span>↑ {stats.warning.change}%</span>
+                            <span className="text-gray-400 font-normal">{stats.warning.label}</span>
                         </p>
                     </div>
                 </div>
@@ -79,7 +118,7 @@ export default function EmissionsDashboard() {
                         </span>
                     </div>
                     <div className="h-[300px] w-full">
-                        <EmissionSparkline className="h-full w-full" />
+                        <EmissionSparkline data={emissionsData} className="h-full w-full" />
                     </div>
                 </div>
 
@@ -90,7 +129,7 @@ export default function EmissionsDashboard() {
                         <p className="text-sm text-gray-500 font-medium">Where your emissions come from</p>
                     </div>
                     <div className="h-[340px] w-full">
-                        <ImpactVisualizer />
+                        <ImpactVisualizer data={impactData} />
                     </div>
                 </div>
             </div>
@@ -102,15 +141,15 @@ export default function EmissionsDashboard() {
                     <div className="flex justify-between items-end mb-4">
                         <div>
                             <h3 className="text-lg font-bold text-gray-900">Carbon Budget</h3>
-                            <p className="text-sm text-gray-500">Target reached: 75%</p>
+                            <p className="text-sm text-gray-500">Target reached: {stats.budget.percentage}%</p>
                         </div>
                         <div className="text-right">
-                            <span className="text-2xl font-bold text-emerald-600">750</span>
-                            <span className="text-xs text-gray-400 font-medium uppercase"> / 1k KG</span>
+                            <span className="text-2xl font-bold text-emerald-600">{stats.budget.used}</span>
+                            <span className="text-xs text-gray-400 font-medium uppercase"> / {stats.budget.total / 1000}k KG</span>
                         </div>
                     </div>
                     <div className="relative h-2 w-full bg-gray-100 rounded-full overflow-hidden">
-                        <div className="absolute top-0 left-0 h-full bg-emerald-500 w-[75%] rounded-full"></div>
+                        <div className="absolute top-0 left-0 h-full bg-emerald-500 rounded-full" style={{ width: `${stats.budget.percentage}%` }}></div>
                     </div>
                     <div className="flex justify-between text-[10px] text-gray-400 mt-2 font-medium uppercase tracking-wide">
                         <span>0</span>
@@ -127,16 +166,16 @@ export default function EmissionsDashboard() {
                             <div>
                                 <div className="flex justify-between text-xs font-bold mb-1">
                                     <span className="text-emerald-600 uppercase">You</span>
-                                    <span className="text-gray-900">750 KG</span>
+                                    <span className="text-gray-900">{stats.neighbors.user} KG</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
-                                    <div className="h-full bg-emerald-500 w-[75%] rounded-full"></div>
+                                    <div className="h-full bg-emerald-500 rounded-full" style={{ width: `${(stats.neighbors.user / stats.neighbors.avg) * 100}%` }}></div>
                                 </div>
                             </div>
                             <div>
                                 <div className="flex justify-between text-xs font-bold mb-1">
                                     <span className="text-gray-400 uppercase">Avg. City</span>
-                                    <span className="text-gray-900">950 KG</span>
+                                    <span className="text-gray-900">{stats.neighbors.avg} KG</span>
                                 </div>
                                 <div className="h-1.5 w-full bg-gray-100 rounded-full overflow-hidden">
                                     <div className="h-full bg-gray-300 w-[95%] rounded-full"></div>
@@ -150,7 +189,7 @@ export default function EmissionsDashboard() {
                             <span className="text-[10px] font-bold uppercase tracking-wider">Insight</span>
                         </div>
                         <p className="text-xs text-blue-600 font-medium leading-relaxed">
-                            Using <span className="font-bold">21% less</span> than average.
+                            Using <span className="font-bold">{stats.neighbors.diffPercentage}% less</span> than average.
                         </p>
                     </div>
                 </div>
@@ -187,5 +226,4 @@ export default function EmissionsDashboard() {
             </div>
         </div>
     );
-
 }
