@@ -5,9 +5,9 @@ import NotificationBell from "@/features/notifications/NotificationBell";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { Button } from "@/components/ui/Button"; // Assuming you have a Button component
 import { useState, useEffect, useRef } from "react";
 import authService from "@/mockApi";
+import { useAuth } from "@/hooks/useAuth";
 
 export default function Header({ onMenuClick }) {
     const [user, setUser] = useState(null);
@@ -15,6 +15,7 @@ export default function Header({ onMenuClick }) {
     const [searchQuery, setSearchQuery] = useState("");
     const dropdownRef = useRef(null);
     const router = useRouter();
+    const { logout } = useAuth();
 
     useEffect(() => {
         const currentUser = authService.getCurrentUser();
@@ -35,10 +36,11 @@ export default function Header({ onMenuClick }) {
     }, []);
 
     const handleLogout = async () => {
-        await authService.logout();
+        await logout();
         setUser(null);
         setIsDropdownOpen(false);
-        router.push("/login");
+        sessionStorage.setItem("logoutMessage", "You have successfully logged out");
+        window.location.href = "/";
     };
 
     const pathname = usePathname();
@@ -118,10 +120,14 @@ export default function Header({ onMenuClick }) {
                     {/* Dropdown Menu */}
                     {isDropdownOpen && (
                         <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-lg border border-gray-100 py-1 z-50 transition-all origin-top-right">
-                            <div className="px-4 py-3 border-b border-gray-100 mb-1">
+                            <Link
+                                href="/profile"
+                                onClick={() => setIsDropdownOpen(false)}
+                                className="block px-4 py-3 border-b border-gray-100 mb-1 hover:bg-gray-50 transition-colors"
+                            >
                                 <p className="text-sm font-medium text-gray-900">{user?.name || "Guest"}</p>
                                 {user?.email && <p className="text-xs text-gray-500 truncate">{user.email}</p>}
-                            </div>
+                            </Link>
                             <button
                                 onClick={handleLogout}
                                 className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
