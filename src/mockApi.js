@@ -115,6 +115,60 @@ const authService = {
             localStorage.setItem("onboarding_profile", JSON.stringify(dummyData));
         }
         return dummyData;
+    },
+
+    /**
+     * Mock update profile
+     */
+    updateProfile: async (data) => {
+        await delay(800);
+        if (typeof window !== "undefined") {
+            localStorage.setItem("onboarding_profile", JSON.stringify(data));
+        }
+        return { success: true, data };
+    },
+
+    /**
+     * Mock change password
+     */
+    changePassword: async (currentPassword, newPassword) => {
+        await delay(800);
+        if (!currentPassword || !newPassword) {
+            throw new Error("Missing required fields");
+        }
+        // Mock validation: assume current password is "Test@1234" or whatever mock allows
+        if (currentPassword === newPassword) {
+            throw new Error("New password must be different from current password");
+        }
+        return { success: true, message: "Password updated successfully" };
+    },
+
+    /**
+     * Mock toggle 2FA
+     */
+    toggle2FA: async (enabled) => {
+        await delay(800);
+        if (typeof window !== "undefined") {
+            const userJson = localStorage.getItem("user");
+            if (userJson) {
+                const userObj = JSON.parse(userJson);
+                userObj.twoFactorEnabled = enabled;
+                localStorage.setItem("user", JSON.stringify(userObj));
+            }
+        }
+        return { success: true, enabled };
+    },
+
+    /**
+     * Mock delete account
+     */
+    deleteAccount: async () => {
+        await delay(1000);
+        if (typeof window !== "undefined") {
+            localStorage.removeItem("user");
+            localStorage.removeItem("onboarding_profile");
+        }
+        return { success: true };
     }
 };
 
