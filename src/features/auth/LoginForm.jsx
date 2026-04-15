@@ -21,6 +21,7 @@ import { Mail, Lock, Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { loginSchema } from "./authSchemas";
+import { toast } from "react-hot-toast";
 
 export default function LoginForm() {
     const { login } = useAuth();
@@ -45,7 +46,8 @@ export default function LoginForm() {
         setLoading(true);
 
         try {
-            await login(data);
+            const user = await login(data);
+            toast.success(`Welcome back, ${user.name || "User"} 👋`);
             router.push("/dashboard");
         } catch (err) {
             setApiError(err.message || "Failed to login");

@@ -2,6 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../styles/globals.css";
 import { AuthProvider } from "@/hooks/useAuth";
 import RouteGuard from "@/components/RouteGuard";
+import { Toaster } from "react-hot-toast";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -27,6 +28,7 @@ export default function RootLayout({ children }) {
             {children}
           </RouteGuard>
         </AuthProvider>
+        <Toaster position="top-center" />
       </body>
     </html>
   );
