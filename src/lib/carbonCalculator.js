@@ -2,109 +2,68 @@
 // Emission factors sourced from IPCC and environmental databases
 
 export const EMISSION_FACTORS = {
-    // Energy Consumption (kg CO2e per unit)
-    electricity: 0.85, // kg CO2e per kWh (global average)
-    lpg: 2.98, // kg CO2e per kg (cooking gas)
-    water: 0.0003, // kg CO2e per litre (water treatment & distribution)
-
-    // Transport (kg CO2e per km)
-    car: 0.25, // kg CO2e per km (average gasoline car)
-    bike: 0.02, // kg CO2e per km (electric bike/assist)
-    public_transport: 0.08, // kg CO2e per km (bus/train average)
-    air_travel: 0.15, // kg CO2e per km (domestic flights)
-
-    // Waste (kg CO2e per kg)
-    waste: 0.57, // kg CO2e per kg (landfill methane emissions)
+    electricity: 0.85,
+    lpg: 2.98,
+    water: 0.0003,
+    car: 0.25,
+    bike: 0.02,
+    public_transport: 0.08,
+    air_travel: 0.15,
+    waste: 0.57,
 };
 
-/**
- * Calculate carbon footprint from user inputs
- * @param {Object} inputs - User lifestyle inputs
- * @returns {Object} - Calculation results with breakdown
- */
-export const calculateCarbonFootprint = (inputs) => {
-    // Energy calculations (monthly)
-    const electricityEmissions = (inputs.electricity || 0) * EMISSION_FACTORS.electricity;
-    const lpgEmissions = (inputs.lpg || 0) * EMISSION_FACTORS.lpg;
-    const waterEmissions = (inputs.water || 0) * EMISSION_FACTORS.water * 30; // Convert daily to monthly
+const MONTH_FACTORS = {
+    electricity: 1,
+    lpg: 1,
+    water: 30,
+    car: 30,
+    bike: 30,
+    public_transport: 30,
+    air_travel: 1 / 12,
+    waste: 4.33,
+};
 
-    // Transport calculations (monthly)
-    const carEmissions = (inputs.car || 0) * EMISSION_FACTORS.car * 30; // Convert daily to monthly
-    const bikeEmissions = (inputs.bike || 0) * EMISSION_FACTORS.bike * 30;
-    const publicTransportEmissions = (inputs.public_transport || 0) * EMISSION_FACTORS.public_transport * 30;
-    const airTravelEmissions = (inputs.air_travel || 0) * EMISSION_FACTORS.air_travel / 12; // Convert yearly to monthly
+const BREAKDOWN_META = [
+    ['Electricity', 'electricity', '#3B82F6'],
+    ['LPG', 'lpg', '#EF4444'],
+    ['Water', 'water', '#06B6D4'],
+    ['Car Travel', 'car', '#F59E0B'],
+    ['Bike Travel', 'bike', '#10B981'],
+    ['Public Transport', 'public_transport', '#8B5CF6'],
+    ['Air Travel', 'air_travel', '#EC4899'],
+    ['Waste', 'waste', '#6B7280'],
+];
 
-    // Waste calculations (monthly)
-    const wasteEmissions = (inputs.waste || 0) * EMISSION_FACTORS.waste * 4.33; // Convert weekly to monthly
+export const calculateCarbonFootprint = (inputs = {}) => {
+    const values = {};
+    let energy = 0,
+        transport = 0,
+        waste = 0;
 
-    // Category totals
-    const energyTotal = electricityEmissions + lpgEmissions + waterEmissions;
-    const transportTotal = carEmissions + bikeEmissions + publicTransportEmissions + airTravelEmissions;
-    const wasteTotal = wasteEmissions;
+    for (const [, key] of BREAKDOWN_META.map((m) => [m[0], m[1]])) {
+        const raw = Number(inputs[key]) || 0;
+        const monthly = raw * (MONTH_FACTORS[key] ?? 1);
+        const emission = monthly * (EMISSION_FACTORS[key] ?? 0);
+        values[key] = emission;
+        if (['electricity', 'lpg', 'water'].includes(key)) energy += emission;
+        else if (['car', 'bike', 'public_transport', 'air_travel'].includes(key)) transport += emission;
+        else if (key === 'waste') waste += emission;
+    }
 
-    const totalFootprint = energyTotal + transportTotal + wasteTotal;
+    const totalFootprint = energy + transport + waste;
 
-    // Detailed breakdown
-    const breakdown = [
-        {
-            category: 'Electricity',
-            value: electricityEmissions,
-            percentage: totalFootprint > 0 ? (electricityEmissions / totalFootprint) * 100 : 0,
-            color: '#3B82F6'
-        },
-        {
-            category: 'LPG',
-            value: lpgEmissions,
-            percentage: totalFootprint > 0 ? (lpgEmissions / totalFootprint) * 100 : 0,
-            color: '#EF4444'
-        },
-        {
-            category: 'Water',
-            value: waterEmissions,
-            percentage: totalFootprint > 0 ? (waterEmissions / totalFootprint) * 100 : 0,
-            color: '#06B6D4'
-        },
-        {
-            category: 'Car Travel',
-            value: carEmissions,
-            percentage: totalFootprint > 0 ? (carEmissions / totalFootprint) * 100 : 0,
-            color: '#F59E0B'
-        },
-        {
-            category: 'Bike Travel',
-            value: bikeEmissions,
-            percentage: totalFootprint > 0 ? (bikeEmissions / totalFootprint) * 100 : 0,
-            color: '#10B981'
-        },
-        {
-            category: 'Public Transport',
-            value: publicTransportEmissions,
-            percentage: totalFootprint > 0 ? (publicTransportEmissions / totalFootprint) * 100 : 0,
-            color: '#8B5CF6'
-        },
-        {
-            category: 'Air Travel',
-            value: airTravelEmissions,
-            percentage: totalFootprint > 0 ? (airTravelEmissions / totalFootprint) * 100 : 0,
-            color: '#EC4899'
-        },
-        {
-            category: 'Waste',
-            value: wasteEmissions,
-            percentage: totalFootprint > 0 ? (wasteEmissions / totalFootprint) * 100 : 0,
-            color: '#6B7280'
-        }
-    ];
+    const breakdown = BREAKDOWN_META.map(([label, key, color]) => ({
+        category: label,
+        value: values[key],
+        percentage: totalFootprint > 0 ? (values[key] / totalFootprint) * 100 : 0,
+        color,
+    }));
 
     return {
         totalFootprint,
         breakdown,
-        categories: {
-            energy: energyTotal,
-            transport: transportTotal,
-            waste: wasteTotal
-        },
-        inputs
+        categories: { energy, transport, waste },
+        inputs,
     };
 };
 
