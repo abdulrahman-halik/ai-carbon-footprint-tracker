@@ -21,6 +21,7 @@ import { Mail, Lock, User, Loader2, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { registerSchema } from "./authSchemas";
+import { toast } from "react-hot-toast";
 
 export default function RegisterForm() {
     const { register: authRegister } = useAuth();
@@ -47,11 +48,12 @@ export default function RegisterForm() {
         setLoading(true);
 
         try {
-            await authRegister({
+            const user = await authRegister({
                 name: data.name,
                 email: data.email,
                 password: data.password,
             });
+            toast.success(`Welcome back, ${user.name || "User"} 👋`);
             router.push("/dashboard");
         } catch (err) {
             setApiError(err.message || "Failed to register");

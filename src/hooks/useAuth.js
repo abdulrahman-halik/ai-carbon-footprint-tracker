@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import authService from "@/mockApi";
+import { toast } from "react-hot-toast";
 
 const AuthContext = createContext();
 
@@ -23,6 +24,13 @@ export const AuthProvider = ({ children }) => {
         };
 
         checkUser();
+
+        // Check for persistent logout toast
+        const showLogoutToast = sessionStorage.getItem("logout_toast");
+        if (showLogoutToast === "true") {
+            toast.success("You have successfully logged out");
+            sessionStorage.removeItem("logout_toast");
+        }
     }, []);
 
     // Login function
@@ -59,6 +67,7 @@ export const AuthProvider = ({ children }) => {
         try {
             await authService.logout();
             setUser(null);
+            // Toast is now handled by the refresh-safe useEffect above or by individual components
         } finally {
             setIsLoading(false);
         }

@@ -96,22 +96,11 @@ export default function LandingPage() {
     const [logoutMsg, setLogoutMsg] = useState("");
 
     useEffect(() => {
-        const msg = sessionStorage.getItem("logoutMessage");
-        if (msg) {
-            setLogoutMsg(msg);
-            sessionStorage.removeItem("logoutMessage");
-            setTimeout(() => setLogoutMsg(""), 5000);
-        }
+        // No-op for logout messages as we use toasts now
     }, []);
 
     return (
         <div className="flex flex-col gap-20 pb-20">
-            {logoutMsg && (
-                <div className="fixed bottom-4 right-4 bg-emerald-600 text-white px-6 py-3 rounded-xl shadow-2xl z-50 transition-all font-medium border border-emerald-500 flex items-center gap-2 animate-in slide-in-from-bottom-5">
-                    <ShieldCheck size={20} />
-                    {logoutMsg}
-                </div>
-            )}
             {/* Hero Section */}
             <section className="relative pt-20 pb-32 md:pt-32 md:pb-48 overflow-hidden">
                 {/* Background blobs */}

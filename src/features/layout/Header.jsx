@@ -37,9 +37,8 @@ export default function Header({ onMenuClick }) {
 
     const handleLogout = async () => {
         await logout();
-        setUser(null);
         setIsDropdownOpen(false);
-        sessionStorage.setItem("logoutMessage", "You have successfully logged out");
+        sessionStorage.setItem("logout_toast", "true");
         window.location.href = "/";
     };
 
