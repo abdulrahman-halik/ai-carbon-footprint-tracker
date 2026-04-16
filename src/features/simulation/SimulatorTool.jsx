@@ -1,219 +1,108 @@
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { Label } from '@/components/ui/Label';
-import { Zap, Car, Bike, Train, Plane, Trash2, Droplets, Calculator, TrendingDown } from 'lucide-react';
-import { calculateCarbonFootprint, calculatePotentialSavings } from '@/lib/carbonCalculator';
-
-const DEFAULT_CURRENT = {
-    electricity: 300, lpg: 10, water: 150, car: 20, bike: 5, public_transport: 15, air_travel: 2000, waste: 5
-};
-
-const DEFAULT_TARGET = {
-    electricity: 250, lpg: 8, water: 120, car: 10, bike: 10, public_transport: 20, air_travel: 1000, waste: 3
-};
-
-const InputRow = ({ label, value, onChange, unit, id }) => (
-    <div className="flex items-center gap-3">
-        <Label className="w-20 text-sm">{label}</Label>
-        <Input type="number" value={value} onChange={(e) => onChange(id, e.target.value)} className="w-24 h-8 text-sm" min="0" />
-        <span className="text-xs text-gray-500">{unit}</span>
-    </div>
-);
-
-const ResultCards = ({ results }) => (
-    <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Card className="shadow-lg border-0 ring-1 ring-gray-200/50">
-            <CardHeader>
-                <CardTitle className="text-lg">Current Footprint</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="text-center">
-                    <div className="text-3xl font-bold text-gray-900 mb-2">{results.current.totalFootprint.toFixed(1)}</div>
-                    <div className="text-sm text-gray-500">kg CO₂e / month</div>
-                </div>
-                <div className="mt-6 space-y-3">
-                    <div className="flex justify-between text-sm"><span>Energy</span><span className="font-medium">{results.current.categories.energy.toFixed(1)} kg</span></div>
-                    <div className="flex justify-between text-sm"><span>Transport</span><span className="font-medium">{results.current.categories.transport.toFixed(1)} kg</span></div>
-                    <div className="flex justify-between text-sm"><span>Waste</span><span className="font-medium">{results.current.categories.waste.toFixed(1)} kg</span></div>
-                </div>
-            </CardContent>
-        </Card>
-
-        <Card className="shadow-lg border-0 ring-1 ring-green-200/50 bg-gradient-to-br from-green-50 to-emerald-50">
-            <CardHeader>
-                <CardTitle className="text-lg flex items-center gap-2"><TrendingDown className="w-5 h-5 text-green-600" />Potential Savings</CardTitle>
-            </CardHeader>
-            <CardContent>
-                <div className="text-center">
-                    <div className="text-3xl font-bold text-green-600 mb-2">-{results.savings.savings.toFixed(1)}</div>
-                    <div className="text-sm text-gray-600">kg CO₂e / month</div>
-                    <div className="text-lg font-medium text-green-700 mt-2">{results.savings.percentageReduction.toFixed(1)}% reduction</div>
-                </div>
-                <div className="mt-6 p-4 bg-white/60 rounded-lg">
-                    <div className="text-sm text-gray-700"><strong>New footprint:</strong> {results.savings.targetFootprint.toFixed(1)} kg CO₂e/month</div>
-                    <div className="text-xs text-gray-500 mt-1">Equivalent to removing {Math.round(results.savings.savings / 20)} cars from the road!</div>
-                </div>
-            </CardContent>
-        </Card>
-    </div>
-);
+import { Card } from '@/components/ui/Card';
+import ScenarioSlider from './ScenarioSlider';
 
 export const SimulatorTool = () => {
-    // Current and target lifestyle inputs
-    const [currentInputs, setCurrentInputs] = useState(DEFAULT_CURRENT);
-    const [targetInputs, setTargetInputs] = useState(DEFAULT_TARGET);
+    // Base footprint in kg CO2e
+    const BASE_FOOTPRINT = 12000;
 
-    const [results, setResults] = useState(null);
-    const [loading, setLoading] = useState(false);
+    // Simulation parameters (percentage reduction)
+    const [transportReduction, setTransportReduction] = useState(0);
+    const [dietPlantBased, setDietPlantBased] = useState(0);
+    const [energyEfficiency, setEnergyEfficiency] = useState(0);
 
-    const inputSections = [
-        {
-            title: "Energy Consumption",
-            icon: Zap,
-            color: "text-blue-600",
-            bgColor: "bg-blue-50",
-            inputs: [
-                { id: 'electricity', label: 'Electricity', unit: 'kWh/month' },
-                { id: 'lpg', label: 'LPG', unit: 'kg/month' },
-                { id: 'water', label: 'Water', unit: 'litres/day' }
-            ]
-        },
-        {
-            title: "Transportation",
-            icon: Car,
-            color: "text-green-600",
-            bgColor: "bg-green-50",
-            inputs: [
-                { id: 'car', label: 'Car', unit: 'km/day' },
-                { id: 'bike', label: 'Bike', unit: 'km/day' },
-                { id: 'public_transport', label: 'Public Transport', unit: 'km/day' },
-                { id: 'air_travel', label: 'Air Travel', unit: 'km/year' }
-            ]
-        },
-        {
-            title: "Waste",
-            icon: Trash2,
-            color: "text-orange-600",
-            bgColor: "bg-orange-50",
-            inputs: [
-                { id: 'waste', label: 'Waste', unit: 'kg/week' }
-            ]
-        }
-    ];
+    // Dynamic calculation logic (Derived State)
+    // Simple mock model
+    // Transport accounts for ~30%, Diet ~25%, Energy ~25% of total
+    const transportSavings = (BASE_FOOTPRINT * 0.30) * (transportReduction / 100);
+    const dietSavings = (BASE_FOOTPRINT * 0.25) * (dietPlantBased / 100);
+    const energySavings = (BASE_FOOTPRINT * 0.25) * (energyEfficiency / 100);
 
-    const InputCard = ({ title, headerIcon, headerBg, type }) => (
-        <Card className="shadow-lg border-0 ring-1 ring-gray-200/50">
-            <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                    <div className={`w-8 h-8 ${headerBg} rounded-full flex items-center justify-center`}>
-                        {headerIcon}
-                    </div>
-                    {title}
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6">
-                {inputSections.map((section, sectionIndex) => {
-                    const Icon = section.icon;
-                    return (
-                        <div key={sectionIndex} className="space-y-3">
-                            <div className="flex items-center gap-2">
-                                <div className={`p-1.5 rounded ${section.bgColor}`}>
-                                    <Icon className={`w-4 h-4 ${section.color}`} />
-                                </div>
-                                <h4 className="font-medium text-gray-900">{section.title}</h4>
-                            </div>
-                            <div className="space-y-3 pl-8">
-                                {section.inputs.map((input) => (
-                                    <InputRow
-                                        key={input.id}
-                                        id={input.id}
-                                        label={input.label}
-                                        value={type === 'current' ? currentInputs[input.id] : targetInputs[input.id]}
-                                        onChange={(id, v) => handleInputChange(type, id, v)}
-                                        unit={input.unit}
-                                    />
-                                ))}
-                            </div>
-                        </div>
-                    );
-                })}
-            </CardContent>
-        </Card>
-    );
-
-    const handleInputChange = (type, id, value) => {
-        const inputs = type === 'current' ? currentInputs : targetInputs;
-        const setInputs = type === 'current' ? setCurrentInputs : setTargetInputs;
-
-        setInputs(prev => ({
-            ...prev,
-            [id]: parseFloat(value) || 0
-        }));
-    };
-
-    const handleSimulate = async () => {
-        setLoading(true);
-        await new Promise(resolve => setTimeout(resolve, 800));
-
-        const currentFootprint = calculateCarbonFootprint(currentInputs);
-        const savings = calculatePotentialSavings(currentInputs, targetInputs);
-
-        setResults({
-            current: currentFootprint,
-            savings: savings
-        });
-        setLoading(false);
-    };
-
-    const resetToDefaults = () => {
-        setCurrentInputs(DEFAULT_CURRENT);
-        setTargetInputs(DEFAULT_TARGET);
-        setResults(null);
-    };
+    const totalSavings = transportSavings + dietSavings + energySavings;
+    const savings = Math.round(totalSavings);
+    const projectedFootprint = Math.round(BASE_FOOTPRINT - totalSavings);
 
     return (
-        <div className="space-y-8">
-            {/* Header */}
-            <div className="text-center">
-                <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight mb-2">
-                    Carbon Footprint Simulator
-                </h3>
-                <p className="text-gray-500 max-w-2xl mx-auto">
-                    Compare your current lifestyle with potential changes to see the impact on your carbon footprint.
-                </p>
-            </div>
+        <Card className="w-full shadow-xl border-0 ring-1 ring-gray-200/50 bg-white/50 backdrop-blur-sm overflow-hidden">
+            <div className="p-6 sm:p-8 space-y-8">
+                <div className="text-center sm:text-left">
+                    <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">Future Impact Simulator</h3>
+                    <p className="text-gray-500 mt-2 max-w-2xl">
+                        Adjust your lifestyle choices below to see their potential impact on your annual carbon emissions.
+                    </p>
+                </div>
 
-            {/* Input Sections */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <InputCard title="Current Lifestyle" headerIcon={"📊"} headerBg="bg-gray-100" type="current" />
-                <InputCard title="Target Lifestyle" headerIcon={"🎯"} headerBg="bg-green-100" type="target" />
-            </div>
+                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                    {/* Controls Column */}
+                    <div className="lg:col-span-7 space-y-8">
+                        <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6 hover:shadow-md transition-shadow duration-300">
+                            <ScenarioSlider
+                                label="Reduce Car Travel"
+                                value={transportReduction}
+                                min={0}
+                                max={100}
+                                unit="%"
+                                icon="🚗"
+                                description="Walk, bike, or take public transit more often."
+                                onChange={setTransportReduction}
+                            />
+                            <div className="h-px bg-gray-50" />
+                            <ScenarioSlider
+                                label="Plant-Based Meals"
+                                value={dietPlantBased}
+                                min={0}
+                                max={100}
+                                unit="%"
+                                icon="🥗"
+                                description="Incorporate more vegetarian or vegan meals."
+                                onChange={setDietPlantBased}
+                            />
+                            <div className="h-px bg-gray-50" />
+                            <ScenarioSlider
+                                label="Home Energy Efficiency"
+                                value={energyEfficiency}
+                                min={0}
+                                max={100}
+                                unit="%"
+                                icon="🏠"
+                                description="Use smart stats, LED bulbs, and better insulation."
+                                onChange={setEnergyEfficiency}
+                            />
+                        </div>
+                    </div>
 
-            {/* Action Buttons */}
-            <div className="flex justify-center gap-4">
-                <Button onClick={resetToDefaults} variant="outline" size="lg">
-                    Reset to Defaults
-                </Button>
-                <Button onClick={handleSimulate} disabled={loading} size="lg">
-                    {loading ? (
-                        <>
-                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                            Calculating...
-                        </>
-                    ) : (
-                        <>
-                            <Calculator className="mr-2 w-4 h-4" />
-                            Run Simulation
-                        </>
-                    )}
-                </Button>
-            </div>
+                    {/* Results Column */}
+                    <div className="lg:col-span-5">
+                        <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden text-center">
+                            {/* Decorative background circles */}
+                            <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
+                            <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
 
-            {/* Results */}
-            {results && <ResultCards results={results} />}
-        </div>
+                            <h4 className="text-blue-100 font-medium text-sm uppercase tracking-wider mb-6">Projected Annual Footprint</h4>
+
+                            <div className="relative inline-flex items-center justify-center">
+                                <span className="text-5xl font-black tracking-tight">{projectedFootprint.toLocaleString()}</span>
+                            </div>
+                            <span className="block text-blue-200 mt-1 mb-8 text-sm">kg CO2e / year</span>
+
+                            {savings > 0 ? (
+                                <div className="bg-white/20 backdrop-blur-md rounded-xl p-4 border border-white/10 animate-fade-in">
+                                    <p className="text-blue-50 font-medium text-sm mb-1">Total Savings</p>
+                                    <p className="text-3xl font-bold text-green-300">-{savings.toLocaleString()} kg</p>
+                                    <p className="text-xs text-blue-100 mt-2 opacity-90">
+                                        Equivalent to planting <span className="font-bold text-white">{Math.ceil(savings / 20)}</span> trees! 🌲
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="p-4 rounded-xl border border-white/10 text-blue-200 text-sm">
+                                    Adjust the sliders to see your savings.
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </Card>
     );
 };
 
