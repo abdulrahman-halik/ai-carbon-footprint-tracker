@@ -70,17 +70,17 @@ export default function WizardLayout({ title, subtitle, children }) {
                             Back
                         </Button>
 
-                        <Button
-                            onClick={nextStep}
-                            disabled={!isStepValid}
-                            className="px-8"
-                            size="lg"
-                        >
-                            {currentStep === totalSteps ? "Finish" : "Next"}
-                            {currentStep !== totalSteps && (
+                        {currentStep !== totalSteps && (
+                            <Button
+                                onClick={nextStep}
+                                disabled={!isStepValid}
+                                className="px-8"
+                                size="lg"
+                            >
+                                Next
                                 <Icon icon={ChevronRight} className="ml-2" size={20} />
-                            )}
-                        </Button>
+                            </Button>
+                        )}
                     </div>
                 </div>
             </Card>

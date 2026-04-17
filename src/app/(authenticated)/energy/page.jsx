@@ -1,18 +1,11 @@
 "use client";
 
-import { Zap, TrendingUp, Lightbulb, Plug } from "lucide-react";
-import { Line } from "react-chartjs-2";
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler,
-} from "chart.js";
+import React, { useState } from "react";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from "chart.js";
+import EnergyHeader from "@/features/energy/EnergyHeader";
+import StatsGrid from "@/features/energy/StatsGrid";
+import UsageChart from "@/features/energy/UsageChart";
+import MeterModal from "@/features/energy/MeterModal";
 
 ChartJS.register(
     CategoryScale,
@@ -26,6 +19,24 @@ ChartJS.register(
 );
 
 export default function EnergyPage() {
+    const [isMeterOpen, setIsMeterOpen] = useState(false);
+    const [reading, setReading] = useState('');
+    const [date, setDate] = useState('');
+    const [readings, setReadings] = useState([]);
+    const [savedToast, setSavedToast] = useState(false);
+
+    const openMeter = () => setIsMeterOpen(true);
+    const closeMeter = () => setIsMeterOpen(false);
+    const handleSave = () => {
+        const entry = { id: Date.now(), reading: Number(reading) || 0, date: date || new Date().toISOString().slice(0,10) };
+        setReadings(prev => [entry, ...prev].slice(0,8));
+        setSavedToast(true);
+        setTimeout(() => setSavedToast(false), 1800);
+        setIsMeterOpen(false);
+        setReading('');
+        setDate('');
+    };
+
     const data = {
         labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "23:59"],
         datasets: [
@@ -68,77 +79,16 @@ export default function EnergyPage() {
 
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-10">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <Zap className="text-amber-500" size={32} />
-                        Energy Monitor
-                    </h1>
-                    <p className="text-gray-500 mt-1">Track your electricity consumption and renewable energy usage.</p>
-                </div>
-                <div className="flex gap-3">
-                    <button className="bg-amber-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-amber-100 hover:bg-amber-600 transition-colors">
-                        Add Meter Reading
-                    </button>
-                </div>
-            </div>
+            <EnergyHeader onAdd={openMeter} />
+            <MeterModal isOpen={isMeterOpen} onClose={closeMeter} reading={reading} setReading={setReading} date={date} setDate={setDate} readings={readings} onSave={handleSave} savedToast={savedToast} />
+            <StatsGrid />
+            <UsageChart data={data} options={options} />
 
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="glass-card p-6 flex flex-col">
-                    <span className="text-gray-500 text-sm font-medium">Daily Usage</span>
-                    <div className="flex items-end gap-2 mt-2">
-                        <span className="text-4xl font-bold text-gray-900">12.4</span>
-                        <span className="text-gray-500 mb-1">kWh</span>
-                    </div>
-                    <div className="mt-4 flex items-center gap-2 text-rose-600 bg-rose-50 w-fit px-2 py-1 rounded-full text-xs font-medium">
-                        <TrendingUp size={14} />
-                        <span>5% higher than annual avg</span>
-                    </div>
-                </div>
-
-                <div className="glass-card p-6 flex flex-col">
-                    <span className="text-gray-500 text-sm font-medium">Renewable Mix</span>
-                    <div className="flex items-end gap-2 mt-2">
-                        <span className="text-4xl font-bold text-emerald-600">42%</span>
-                        <span className="text-gray-500 mb-1">Green Energy</span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-4">
-                        <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '42%' }}></div>
-                    </div>
-                </div>
-
-                <div className="glass-card p-6 flex flex-col">
-                    <span className="text-gray-500 text-sm font-medium">Estimated Cost</span>
-                    <div className="flex items-end gap-2 mt-2">
-                        <span className="text-4xl font-bold text-gray-900">$48.20</span>
-                        <span className="text-gray-500 mb-1">This Month</span>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-4">Based on avg rate of $0.14/kWh</p>
-                </div>
-            </div>
-
-            {/* Main Chart */}
-            <div className="glass-card p-8">
-                <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Usage Trends (Today)</h3>
-                    <div className="flex items-center gap-2">
-                        <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-                        <span className="text-sm text-gray-600">Peak Hours</span>
-                    </div>
-                </div>
-                <div className="h-[300px] w-full">
-                    <Line data={data} options={options} />
-                </div>
-            </div>
-
-            {/* Insights & Tips */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="glass-card p-0 overflow-hidden flex flex-col">
                     <div className="p-6 bg-amber-50 border-b border-amber-100 flex items-center gap-3">
                         <div className="bg-white p-2 rounded-lg text-amber-500 shadow-sm">
-                            <Lightbulb size={20} />
+                            <svg className="w-5 h-5 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 3.055A9 9 0 1 0 20.945 13H19.5A7.5 7.5 0 1 1 11 3.055z"/></svg>
                         </div>
                         <h3 className="font-semibold text-gray-900">Energy Saving Tip</h3>
                     </div>
@@ -152,7 +102,7 @@ export default function EnergyPage() {
                 <div className="glass-card p-0 overflow-hidden flex flex-col">
                     <div className="p-6 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
                         <div className="bg-white p-2 rounded-lg text-gray-700 shadow-sm">
-                            <Plug size={20} />
+                            <svg className="w-5 h-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a1 1 0 0 1 1 1v7h7a1 1 0 1 1 0 2h-7v7a1 1 0 1 1-2 0v-7H4a1 1 0 1 1 0-2h7V4a1 1 0 0 1 1-1z"/></svg>
                         </div>
                         <h3 className="font-semibold text-gray-900">Phantom Power</h3>
                     </div>

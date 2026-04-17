@@ -9,6 +9,7 @@ import { calculateCarbonFootprint, getFootprintFeedback } from '@/lib/carbonCalc
 import EmissionsInputForm from "./EmissionsInputForm";
 import EmissionsSummaryCards from "./EmissionsSummaryCards";
 import EmissionsBreakdownTable from "./EmissionsBreakdownTable";
+import EmissionItemModal from "./EmissionItemModal";
 
 /**
  * EmissionsDashboard — page-level orchestrator.
@@ -61,6 +62,27 @@ export default function EmissionsDashboard() {
 
     const feedback = results ? getFootprintFeedback(results.totalFootprint) : null;
 
+    // Local CRUD for custom emission items
+    const [customItems, setCustomItems] = useState([]);
+    const [isItemModalOpen, setIsItemModalOpen] = useState(false);
+    const [editingItem, setEditingItem] = useState(null);
+
+    const handleAddItem = (it) => {
+        setCustomItems(prev => [{ ...it, _custom: true }, ...prev]);
+    };
+
+    const handleSaveItem = (it) => {
+        setCustomItems(prev => prev.map(p => p.id === it.id ? { ...it, _custom: true } : p));
+    };
+
+    const handleDeleteItem = (id) => {
+        setCustomItems(prev => prev.filter(p => p.id !== id));
+    };
+
+    const openNewItem = () => { setEditingItem(null); setIsItemModalOpen(true); };
+
+    const openEditItem = (item) => { setEditingItem(item); setIsItemModalOpen(true); };
+
     if (!results) {
         return (
             <div className="flex items-center justify-center h-[60vh]">
@@ -90,6 +112,7 @@ export default function EmissionsDashboard() {
                     loading={loading}
                     onChange={handleInputChange}
                     onCalculate={handleCalculate}
+                    onCancel={() => setShowInputs(false)}
                 />
             )}
 
@@ -121,8 +144,17 @@ export default function EmissionsDashboard() {
                 </div>
             </div>
 
-            {/* Detailed breakdown table */}
-            <EmissionsBreakdownTable breakdown={results.breakdown} />
+            <div className="flex items-center justify-between">
+                <h3 className="text-lg font-bold text-gray-900">Detailed Breakdown</h3>
+                <div className="flex items-center gap-3">
+                    <button onClick={openNewItem} className="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700">Add Item</button>
+                </div>
+            </div>
+
+            {/* Detailed breakdown table (includes custom items) */}
+            <EmissionsBreakdownTable breakdown={results.breakdown} extraEntries={customItems} onEditExtra={openEditItem} onDeleteExtra={handleDeleteItem} />
+
+            <EmissionItemModal isOpen={isItemModalOpen} onClose={() => setIsItemModalOpen(false)} onSave={(it) => { if (editingItem) handleSaveItem(it); else handleAddItem(it); }} item={editingItem} />
         </div>
     );
 }

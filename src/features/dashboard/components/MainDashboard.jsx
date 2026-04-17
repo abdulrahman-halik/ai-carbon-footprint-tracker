@@ -56,10 +56,6 @@ export default function MainDashboard() {
                     <p className="text-gray-500 mt-1">Here is what&apos;s happening today.</p>
                 </div>
                 <div className="flex gap-3">
-                    <button className="flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 shadow-sm rounded-lg text-sm font-medium text-gray-700 hover:bg-gray-50 transition-all cursor-pointer">
-                        <Bell className="w-4 h-4 text-gray-500" />
-                        <span>Notifications</span>
-                    </button>
                     <button
                         onClick={() => setIsNewEntryOpen(true)}
                         className="flex items-center gap-2 px-4 py-2 bg-emerald-600 shadow-md shadow-emerald-600/20 rounded-lg text-sm font-bold text-white hover:bg-emerald-700 transition-all cursor-pointer group"
