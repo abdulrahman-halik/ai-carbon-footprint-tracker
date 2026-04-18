@@ -1,65 +1,60 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { EmissionSparkline } from "./EmissionSparkline";
-import { ImpactVisualizer } from "./ImpactVisualizer";
+import React, { useState, useEffect, useCallback } from "react";
+import { Calculator, Leaf } from 'lucide-react';
 import { Button } from "@/components/ui/Button";
-import { Calculator } from 'lucide-react';
-import { calculateCarbonFootprint, getFootprintFeedback } from '@/lib/carbonCalculator';
+import {
+    calculateCarbonFootprint, getFootprintFeedback,
+    generateAIInsights, getComparisonData, getUserLevel
+} from '@/lib/carbonCalculator';
+
 import EmissionsInputForm from "./EmissionsInputForm";
 import EmissionsSummaryCards from "./EmissionsSummaryCards";
 import EmissionsBreakdownTable from "./EmissionsBreakdownTable";
+import AIInsightsPanel from "./AIInsightsPanel";
+import ComparisonMetrics from "./ComparisonMetrics";
+import WhatIfSimulator from "./WhatIfSimulator";
+import GamificationBadge from "./GamificationBadge";
+import { EmissionSparkline } from "./EmissionSparkline";
+import { ImpactVisualizer } from "./ImpactVisualizer";
 
-/**
- * EmissionsDashboard — page-level orchestrator.
- * Manages lifestyle input state & calculation; composites all sub-components.
- */
+const DEFAULT_INPUTS = {
+    // Energy
+    electricity: 300, lpg: 10, water: 150, energy_source: 'grid',
+    // Transport
+    car: 20, bike: 5, public_transport: 15, air_travel: 2000, waste: 5,
+    // Food
+    diet_type: 'mixed', meat_meals: 5, dairy_portions: 7, food_waste: 2,
+    // Home
+    house_type: 'apartment', household_size: 3, ac_usage: 3, has_solar: 0,
+    // Shopping
+    clothing: 2, electronics: 0, online_orders: 4,
+};
+
 export default function EmissionsDashboard() {
-    const [inputs, setInputs] = useState({
-        electricity: 300, lpg: 10, water: 150,
-        car: 20, bike: 5, public_transport: 15,
-        air_travel: 2000, waste: 5,
-    });
-    const [results, setResults] = useState(null);
+    const [inputs, setInputs] = useState(DEFAULT_INPUTS);
+    const [results, setResults] = useState(calculateCarbonFootprint(DEFAULT_INPUTS));
     const [loading, setLoading] = useState(false);
     const [showInputs, setShowInputs] = useState(false);
 
-    const handleInputChange = (id, value) =>
-        setInputs(prev => ({ ...prev, [id]: parseFloat(value) || 0 }));
+    const handleInputChange = useCallback((id, value) => {
+        setInputs(prev => ({ ...prev, [id]: typeof value === 'string' ? (parseFloat(value) || value) : value }));
+    }, []);
 
-    const handleCalculate = async () => {
+    const handleCalculate = useCallback(async () => {
         setLoading(true);
-        await new Promise(r => setTimeout(r, 500));
+        await new Promise(r => setTimeout(r, 300));
         setResults(calculateCarbonFootprint(inputs));
         setLoading(false);
-    };
+    }, [inputs]);
 
-    // Run on first render
-    useEffect(() => { handleCalculate(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
-
-    // Chart data helpers
-    const emissionsData = {
-        labels: ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"],
-        datasets: [{
-            label: "CO2 Emissions (kg)",
-            data: [25, 30, 28, 35, 32, 20, 22],
-            borderColor: "#22C55E",
-            backgroundColor: "rgba(34, 197, 94, 0.2)",
-            fill: true, tension: 0.4, pointRadius: 4,
-        }],
-    };
-
-    const impactData = results ? {
-        labels: results.breakdown.map(i => i.category),
-        datasets: [{
-            label: "Emissions by Category",
-            data: results.breakdown.map(i => i.value),
-            backgroundColor: results.breakdown.map(i => i.color),
-            hoverOffset: 4, borderWidth: 0,
-        }],
-    } : { labels: [], datasets: [] };
-
-    const feedback = results ? getFootprintFeedback(results.totalFootprint) : null;
+    // Auto-recalculate on input change (debounced)
+    useEffect(() => {
+        const id = setTimeout(() => {
+            setResults(calculateCarbonFootprint(inputs));
+        }, 400);
+        return () => clearTimeout(id);
+    }, [inputs]);
 
     if (!results) {
         return (
@@ -69,13 +64,30 @@ export default function EmissionsDashboard() {
         );
     }
 
+    const feedback = getFootprintFeedback(results.totalFootprint);
+    const { insights, recommendations } = generateAIInsights(results, inputs);
+    const comparison = getComparisonData(results.totalFootprint);
+    const levelData = getUserLevel(results.totalFootprint);
+
+    const impactData = {
+        labels: results.breakdown.filter(i => i.value > 0).sort((a, b) => b.value - a.value).slice(0, 6).map(i => i.category),
+        datasets: [{
+            label: "Emissions by Category",
+            data: results.breakdown.filter(i => i.value > 0).sort((a, b) => b.value - a.value).slice(0, 6).map(i => i.value),
+            backgroundColor: results.breakdown.filter(i => i.value > 0).sort((a, b) => b.value - a.value).slice(0, 6).map(i => i.color),
+            hoverOffset: 4, borderWidth: 0,
+        }],
+    };
+
     return (
         <div className="space-y-6">
             {/* Header */}
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center flex-wrap gap-3">
                 <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Emissions Dashboard</h2>
-                    <p className="text-gray-600">Track and analyze your carbon footprint</p>
+                    <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
+                     Emissions Dashboard
+                    </h2>
+                    <p className="text-gray-500 text-sm">AI-powered carbon footprint advisor</p>
                 </div>
                 <Button onClick={() => setShowInputs(!showInputs)} variant="outline" className="flex items-center gap-2">
                     <Calculator className="w-4 h-4" />
@@ -86,42 +98,61 @@ export default function EmissionsDashboard() {
             {/* Collapsible input form */}
             {showInputs && (
                 <EmissionsInputForm
-                    inputs={inputs}
-                    loading={loading}
-                    onChange={handleInputChange}
-                    onCalculate={handleCalculate}
+                    inputs={inputs} loading={loading}
+                    onChange={handleInputChange} onCalculate={handleCalculate}
                 />
             )}
 
-            {/* Summary stat cards */}
-            <EmissionsSummaryCards results={results} feedback={feedback} />
+            {/* Summary + Gamification row */}
+            <div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+                <div className="xl:col-span-3">
+                    <EmissionsSummaryCards results={results} feedback={feedback} />
+                </div>
+                <div>
+                    <GamificationBadge levelData={levelData} streakDays={5} />
+                </div>
+            </div>
+
+            {/* AI Insights */}
+            <AIInsightsPanel insights={insights} recommendations={recommendations} />
+
+            {/* Comparison */}
+            <ComparisonMetrics
+                totalFootprint={results.totalFootprint}
+                lastMonth={comparison.lastMonth}
+                average={comparison.average}
+                forecast={comparison.forecast}
+            />
 
             {/* Charts row */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="glass-card bg-white border-none shadow-sm p-6 lg:col-span-2">
-                    <div className="flex justify-between items-center mb-6">
+                    <div className="flex justify-between items-center mb-4">
                         <div>
                             <h3 className="text-lg font-bold text-gray-900">Weekly Trends</h3>
-                            <p className="text-xs text-gray-500 uppercase tracking-wide">Carbon Footprint History</p>
+                            <p className="text-xs text-gray-400 uppercase tracking-wide">Actual + Forecast</p>
                         </div>
                         <span className="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-1 rounded">↘ -8%</span>
                     </div>
-                    <div className="h-[300px] w-full">
-                        <EmissionSparkline data={emissionsData} className="h-full w-full" />
+                    <div className="h-[280px] w-full">
+                        <EmissionSparkline forecast={comparison.forecast} />
                     </div>
                 </div>
-                <div className="glass-card bg-white border-none shadow-sm p-8">
-                    <div className="mb-8">
-                        <h3 className="text-xl font-bold text-gray-900">Impact Breakdown</h3>
-                        <p className="text-sm text-gray-500 font-medium">Where your emissions come from</p>
+                <div className="glass-card bg-white border-none shadow-sm p-6">
+                    <div className="mb-4">
+                        <h3 className="text-lg font-bold text-gray-900">Impact Breakdown</h3>
+                        <p className="text-sm text-gray-400">Top emission sources</p>
                     </div>
-                    <div className="h-[340px] w-full">
-                        <ImpactVisualizer data={impactData} />
+                    <div className="h-[280px] w-full">
+                        <ImpactVisualizer data={impactData} breakdown={results.breakdown} total={results.totalFootprint} />
                     </div>
                 </div>
             </div>
 
-            {/* Detailed breakdown table */}
+            {/* What-If Simulator */}
+            <WhatIfSimulator baseInputs={inputs} />
+
+            {/* Breakdown table */}
             <EmissionsBreakdownTable breakdown={results.breakdown} />
         </div>
     );
