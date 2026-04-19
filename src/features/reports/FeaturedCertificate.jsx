@@ -10,7 +10,18 @@ export default function FeaturedCertificate() {
     const badge = user?.name || 'Eco Warrior';
 
     const handleDownload = () => {
-        const svg = createCertificateSVG({ title: 'Net Zero Hero', subtitle: 'Congratulations! You reduced your carbon footprint by 15% in January.', badge, month: 'January 2026' });
+        const metrics = [
+            { label: 'Reduction', value: '15%' },
+            { label: 'Period', value: 'January' }
+        ];
+        const svg = createCertificateSVG({
+            title: 'Net Zero Hero',
+            recipient: badge || 'Eco Advocate',
+            achievement: 'Reduced carbon footprint by 15% versus prior month',
+            metrics,
+            issuer: 'Carbon Insights Team',
+            id: `NETZERO-${Date.now()}`
+        });
         downloadSVG(svg, 'certificate-net-zero-hero.svg');
     };
 

@@ -24,7 +24,17 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
         reader.readAsDataURL(file);
     };
 
-    const valid = useMemo(() => name.trim().length > 1 && email.trim().length > 0, [name, email]);
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+    const errors = useMemo(() => {
+        const e = {};
+        if (name.trim().length <= 1) e.name = 'Please enter a full name (at least 2 characters)';
+        if (!email.trim()) e.email = 'Email is required';
+        else if (!emailRegex.test(email.trim())) e.email = 'Enter a valid email address (e.g. name@company.com)';
+        return e;
+    }, [name, email]);
+
+    const valid = useMemo(() => Object.keys(errors).length === 0, [errors]);
 
     const reset = () => {
         setName(''); setEmail(''); setRole('Member'); setAvatar('');
@@ -113,15 +123,17 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                         <div>
                             <label className="text-sm font-medium text-gray-700">Full Name</label>
                             <div className="mt-2 relative">
-                                <input value={name} onChange={(e) => setName(e.target.value)} className="w-full px-4 py-3 mb-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200" placeholder="e.g. Nithya Kevin" />
-                            </div>
+                                    <input value={name} onChange={(e) => setName(e.target.value)} className={`w-full px-4 py-3 mb-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 ${errors.name ? 'border-red-200 focus:ring-red-200' : ''}`} placeholder="e.g. Nithya Kevin" />
+                                    {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name}</p>}
+                                </div>
                         </div>
 
                         <div>
                             <label className="text-sm font-medium text-gray-700">Email</label>
                             <div className="mt-2 relative">
                                 <Mail className="absolute left-6 top-3 text-gray-300" />
-                                <input value={email} onChange={(e) => setEmail(e.target.value)} className="pl-14 w-full px-4 py-3 mb-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200" placeholder="name@company.com" />
+                                <input value={email} onChange={(e) => setEmail(e.target.value)} className={`pl-14 w-full px-4 py-3 mb-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 ${errors.email ? 'border-red-200 focus:ring-red-200' : ''}`} placeholder="name@company.com" />
+                                {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
                             </div>
                         </div>
 
@@ -159,7 +171,7 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                                 aria-label={member ? 'Save member' : 'Add member'}
                                 disabled={!valid}
                                 onClick={handleAdd}
-                                className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-white font-semibold shadow-lg transform transition duration-150 ease-in-out hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed bg-gradient-to-r from-emerald-500 to-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300`}
+                                className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-white font-semibold shadow-lg transform transition duration-150 ease-in-out hover:scale-105 ${!valid ? 'opacity-50 cursor-not-allowed' : ''} bg-gradient-to-r from-emerald-500 to-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300`}
                             >
                                 <UserPlus className="w-4 h-4" />
                                 <span>{member ? 'Save' : 'Add Member'}</span>

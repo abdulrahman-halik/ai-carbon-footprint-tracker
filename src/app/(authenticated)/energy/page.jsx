@@ -1,11 +1,13 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from "chart.js";
 import EnergyHeader from "@/features/energy/EnergyHeader";
 import StatsGrid from "@/features/energy/StatsGrid";
 import UsageChart from "@/features/energy/UsageChart";
 import MeterModal from "@/features/energy/MeterModal";
+import SavedMeterCards from "@/features/energy/SavedMeterCards";
+import EnergyTips from "@/features/energy/EnergyTips";
 
 ChartJS.register(
     CategoryScale,
@@ -23,18 +25,77 @@ export default function EnergyPage() {
     const [reading, setReading] = useState('');
     const [date, setDate] = useState('');
     const [readings, setReadings] = useState([]);
+    const [notes, setNotes] = useState('');
+    const [editingId, setEditingId] = useState(null);
     const [savedToast, setSavedToast] = useState(false);
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem('energy.readings');
+            if (raw) setReadings(JSON.parse(raw));
+        } catch (e) {
+            console.error('Failed to load energy readings', e);
+        }
+    }, []);
+
+    const persist = (next) => {
+        setReadings(next);
+        try {
+            localStorage.setItem('energy.readings', JSON.stringify(next));
+        } catch (e) {
+            console.error('Failed to persist energy readings', e);
+        }
+    };
 
     const openMeter = () => setIsMeterOpen(true);
     const closeMeter = () => setIsMeterOpen(false);
     const handleSave = () => {
-        const entry = { id: Date.now(), reading: Number(reading) || 0, date: date || new Date().toISOString().slice(0,10) };
-        setReadings(prev => [entry, ...prev].slice(0,8));
+        const entry = { id: editingId || Date.now(), reading: Number(reading) || 0, date: date || new Date().toISOString().slice(0,10), notes: notes.trim() };
+        let next;
+        if (editingId) {
+            next = readings.map(r => (r.id === editingId ? entry : r));
+        } else {
+            next = [entry, ...readings].slice(0, 12);
+        }
+        persist(next);
         setSavedToast(true);
         setTimeout(() => setSavedToast(false), 1800);
         setIsMeterOpen(false);
         setReading('');
         setDate('');
+        setNotes('');
+        setEditingId(null);
+    };
+
+    const handleEdit = (id) => {
+        const found = readings.find(r => r.id === id);
+        if (!found) return;
+        setReading(String(found.reading));
+        setDate(found.date);
+        setNotes(found.notes || '');
+        setEditingId(id);
+        setIsMeterOpen(true);
+    };
+
+    const handleDelete = (id) => {
+        if (!window.confirm('Delete this reading?')) return;
+        const next = readings.filter(r => r.id !== id);
+        persist(next);
+        if (editingId === id) {
+            setEditingId(null);
+            setIsMeterOpen(false);
+            setReading('');
+            setDate('');
+            setNotes('');
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setIsMeterOpen(false);
+        setReading('');
+        setDate('');
+        setNotes('');
     };
 
     const data = {
@@ -80,39 +141,15 @@ export default function EnergyPage() {
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-10">
             <EnergyHeader onAdd={openMeter} />
-            <MeterModal isOpen={isMeterOpen} onClose={closeMeter} reading={reading} setReading={setReading} date={date} setDate={setDate} readings={readings} onSave={handleSave} savedToast={savedToast} />
+            <MeterModal isOpen={isMeterOpen} onClose={handleCancelEdit} reading={reading} setReading={setReading} date={date} setDate={setDate} notes={notes} setNotes={setNotes} readings={readings} onSave={handleSave} savedToast={savedToast} />
             <StatsGrid />
             <UsageChart data={data} options={options} />
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="glass-card p-0 overflow-hidden flex flex-col">
-                    <div className="p-6 bg-amber-50 border-b border-amber-100 flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg text-amber-500 shadow-sm">
-                            <svg className="w-5 h-5 text-amber-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M11 3.055A9 9 0 1 0 20.945 13H19.5A7.5 7.5 0 1 1 11 3.055z"/></svg>
-                        </div>
-                        <h3 className="font-semibold text-gray-900">Energy Saving Tip</h3>
-                    </div>
-                    <div className="p-6">
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                            Switching to LED bulbs can use up to <strong>90% less energy</strong> than traditional incandescent bulbs and last up to 25 times longer. It's the easiest switch with the biggest impact!
-                        </p>
-                    </div>
-                </div>
-
-                <div className="glass-card p-0 overflow-hidden flex flex-col">
-                    <div className="p-6 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg text-gray-700 shadow-sm">
-                            <svg className="w-5 h-5 text-gray-700" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3a1 1 0 0 1 1 1v7h7a1 1 0 1 1 0 2h-7v7a1 1 0 1 1-2 0v-7H4a1 1 0 1 1 0-2h7V4a1 1 0 0 1 1-1z"/></svg>
-                        </div>
-                        <h3 className="font-semibold text-gray-900">Phantom Power</h3>
-                    </div>
-                    <div className="p-6">
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                            Electronics plugged in but not in use (TVs, chargers, computers) can account for up to <strong>10%</strong> of your monthly electricity bill. Use power strips to turn them all off at once.
-                        </p>
-                    </div>
-                </div>
+            <div className="mt-6">
+                <SavedMeterCards readings={readings} onEdit={handleEdit} onDelete={handleDelete} editingId={editingId} onCancel={handleCancelEdit} />
             </div>
+
+            <EnergyTips />
         </div>
     );
 }

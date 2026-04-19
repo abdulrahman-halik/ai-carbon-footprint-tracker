@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState } from "react";
-import { GoalThermometer } from "@/features/behavior/GoalThermometer";
-import { Plus } from "lucide-react";
+import GoalHeader from '@/features/goals/GoalHeader';
+import GoalStats from '@/features/goals/GoalStats';
+import GoalEmptyState from '@/features/goals/GoalEmptyState';
 import GoalCard from '@/features/goals/GoalCard';
 import NewGoalModal from '@/features/goals/NewGoalModal';
 
@@ -14,42 +15,70 @@ export default function GoalsPage() {
     ]);
     const [isNewGoalOpen, setIsNewGoalOpen] = useState(false);
     const [newGoal, setNewGoal] = useState({ title: '', current: '', target: '', unit: '' });
+    const [editingId, setEditingId] = useState(null);
 
-    const openNewGoal = () => setIsNewGoalOpen(true);
-    const closeNewGoal = () => setIsNewGoalOpen(false);
+    const openNewGoal = () => {
+        setEditingId(null);
+        setNewGoal({ title: '', current: '', target: '', unit: '' });
+        setIsNewGoalOpen(true);
+    };
+
+    const closeNewGoal = () => {
+        setIsNewGoalOpen(false);
+        setEditingId(null);
+        setNewGoal({ title: '', current: '', target: '', unit: '' });
+    };
+
+    const openEditGoal = (goal) => {
+        setEditingId(goal.id);
+        setNewGoal({ title: goal.title || '', current: String(goal.current || ''), target: String(goal.target || ''), unit: goal.unit || '' });
+        setIsNewGoalOpen(true);
+    };
 
     const handleSaveGoal = () => {
-        const id = Date.now();
         const parsedCurrent = parseFloat(newGoal.current) || 0;
         const parsedTarget = parseFloat(newGoal.target) || 0;
-        setGoals(prev => [
-            ...prev,
-            { id, title: newGoal.title || `Goal ${prev.length + 1}`, current: parsedCurrent, target: parsedTarget, unit: newGoal.unit || '', completed: parsedCurrent >= parsedTarget }
-        ]);
-        setNewGoal({ title: '', current: '', target: '', unit: '' });
+
+        if (editingId) {
+            setGoals(prev => prev.map(g => g.id === editingId ? { ...g, title: newGoal.title || g.title, current: parsedCurrent, target: parsedTarget, unit: newGoal.unit || g.unit, completed: parsedCurrent >= parsedTarget } : g));
+        } else {
+            const id = Date.now();
+            setGoals(prev => [
+                ...prev,
+                { id, title: newGoal.title || `Goal ${prev.length + 1}`, current: parsedCurrent, target: parsedTarget, unit: newGoal.unit || '', completed: parsedCurrent >= parsedTarget }
+            ]);
+        }
+
         closeNewGoal();
     };
 
+    const handleDeleteGoal = (id) => {
+        if (!confirm || window.confirm('Delete this goal?')) {
+            setGoals(prev => prev.filter(g => g.id !== id));
+        }
+    };
+
+    const completedCount = goals.filter(g => g.completed).length;
+    const inProgressCount = goals.filter(g => !g.completed).length;
+    const avgProgress = goals.length > 0 ? Math.round(goals.reduce((sum, g) => sum + Math.min(100, Math.round((g.current / (g.target || 1)) * 100)), 0) / goals.length) : 0;
+
     return (
-        <div className="space-y-8">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900">Sustainability Goals</h1>
-                    <p className="text-gray-500 mt-1">Track your progress towards a greener lifestyle.</p>
+        <div className="space-y-8 max-w-7xl mx-auto pb-10">
+            <GoalHeader inProgressCount={inProgressCount} completedCount={completedCount} avgProgress={avgProgress} onNewGoal={openNewGoal} />
+
+            <GoalStats totalGoals={goals.length} completedCount={completedCount} avgProgress={avgProgress} />
+
+            {goals.length === 0 ? (
+                <GoalEmptyState />
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {goals.map((goal) => (
+                        <GoalCard key={goal.id} goal={goal} onEdit={() => openEditGoal(goal)} onDelete={() => handleDeleteGoal(goal.id)} />
+                    ))}
                 </div>
-                <button onClick={openNewGoal} className="flex items-center gap-2 bg-emerald-600 text-white px-4 py-2 rounded-lg hover:bg-emerald-700 transition-colors">
-                    <Plus size={18} />
-                    New Goal
-                </button>
-            </div>
+            )}
 
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {goals.map((goal) => (
-                    <GoalCard key={goal.id} goal={goal} />
-                ))}
-            </div>
-
-            <NewGoalModal isOpen={isNewGoalOpen} onClose={closeNewGoal} newGoal={newGoal} setNewGoal={setNewGoal} onSave={handleSaveGoal} />
+            <NewGoalModal isOpen={isNewGoalOpen} onClose={closeNewGoal} newGoal={newGoal} setNewGoal={setNewGoal} onSave={handleSaveGoal} editingId={editingId} />
         </div>
     );
 }

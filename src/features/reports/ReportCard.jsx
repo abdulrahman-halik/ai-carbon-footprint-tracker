@@ -10,7 +10,18 @@ export default function ReportCard({ report }) {
     const badge = user?.name || report.badge;
 
     const handleDownload = () => {
-        const svg = createCertificateSVG({ title: `${report.month} Summary`, subtitle: `Emissions: ${report.emissions} • Saved: ${report.saved}`, badge, month: report.month });
+        const metrics = [
+            { label: 'Emissions', value: report.emissions },
+            { label: 'Carbon Saved', value: report.saved }
+        ];
+        const svg = createCertificateSVG({
+            title: `${report.month} Impact Certificate`,
+            recipient: badge || 'Community Member',
+            achievement: `Performance summary for ${report.month}`,
+            metrics,
+            issuer: 'Carbon Insights Team',
+            id: `RPT-${report.id}-${Date.now()}`
+        });
         const filename = `report-${report.month.replace(/\s+/g, '-').toLowerCase()}.svg`;
         downloadSVG(svg, filename);
     };

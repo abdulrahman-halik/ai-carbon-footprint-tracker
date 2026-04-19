@@ -2,7 +2,7 @@
 import React from 'react';
 
 export default function Sparkline({ logs = [] }) {
-    if (!logs || logs.length === 0) return null;
+    if (!logs || logs.length < 2) return null;
     const max = Math.max(...logs.map(l => l.liters || 0), 1);
     const width = Math.max(80, logs.length * 12);
     return (
