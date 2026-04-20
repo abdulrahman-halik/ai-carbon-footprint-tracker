@@ -24,7 +24,7 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
         reader.readAsDataURL(file);
     };
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 
     const errors = useMemo(() => {
         const e = {};

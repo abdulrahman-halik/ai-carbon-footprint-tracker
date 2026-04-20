@@ -180,13 +180,39 @@ const mockApi = {
      */
     getStats: async () => {
         await delay(500);
-        return {
+        const defaultStats = {
             budget: { percentage: 45, used: 450, total: 1000 },
             neighbors: { diffPercentage: 12, user: 450, avg: 512 },
             bestPerformance: { day: "Tuesday", change: 25, compareLabel: "vs last week" },
             majorImpact: { category: "Business Travel", percentage: 40, label: "of total this month" },
             warning: { title: "High Commute", change: 15, label: "vs last month" }
         };
+
+        if (typeof window !== "undefined") {
+            const savedStats = localStorage.getItem("dashboard_stats");
+            if (savedStats) return JSON.parse(savedStats);
+            localStorage.setItem("dashboard_stats", JSON.stringify(defaultStats));
+        }
+        return defaultStats;
+    },
+
+    /**
+     * Mock logging an activity and updating stats
+     */
+    logActivity: async (data) => {
+        await delay(800);
+        if (typeof window !== "undefined") {
+            const stats = JSON.parse(localStorage.getItem("dashboard_stats") || '{"budget":{"percentage":45,"used":450,"total":1000}}');
+
+            // Simulating carbon impact based on logic
+            const impact = Math.floor(Math.random() * 10) + 2; // 2-12 kg impact
+            stats.budget.used += impact;
+            stats.budget.percentage = Math.round((stats.budget.used / stats.budget.total) * 100);
+
+            localStorage.setItem("dashboard_stats", JSON.stringify(stats));
+            return { success: true, impact, totalUsed: stats.budget.used };
+        }
+        return { success: true, impact: 5, totalUsed: 455 };
     },
 
     /**
