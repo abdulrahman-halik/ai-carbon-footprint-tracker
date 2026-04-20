@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Sun, Search, User as UserIcon, Leaf, LogOut } from "lucide-react";
+import { Menu, Sun, User as UserIcon, Leaf, LogOut } from "lucide-react";
 import NotificationBell from "@/features/notifications/NotificationBell";
 import Link from "next/link";
 import Image from "next/image";
@@ -12,7 +12,6 @@ import { useAuth } from "@/hooks/useAuth";
 export default function Header({ onMenuClick }) {
     const [user, setUser] = useState(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [searchQuery, setSearchQuery] = useState("");
     const dropdownRef = useRef(null);
     const router = useRouter();
     const { logout } = useAuth();
@@ -81,17 +80,7 @@ export default function Header({ onMenuClick }) {
             </div>
 
             <div className="flex items-center gap-3 sm:gap-6">
-                {/* Search Bar */}
-                <div className="hidden lg:flex items-center gap-3 rounded-full bg-gray-100/80 px-5 py-2.5 w-72 transition-all focus-within:bg-white focus-within:ring-2 focus-within:ring-emerald-100 focus-within:shadow-sm">
-                    <Search size={18} className="text-gray-400" />
-                    <input
-                        type="text"
-                        value={searchQuery}
-                        onChange={(e) => setSearchQuery(e.target.value)}
-                        placeholder="Search Activity..."
-                        className="bg-transparent text-sm outline-none w-full placeholder:text-gray-400 text-gray-700 font-medium"
-                    />
-                </div>
+
 
                 {/* Notifications */}
                 <NotificationBell />

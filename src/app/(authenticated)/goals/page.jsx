@@ -1,8 +1,8 @@
 "use client";
 
 import React, { useState } from "react";
-import GoalHeader, { GoalStats } from '@/features/goals/GoalHeader';
-import GoalCard, { GoalEmptyState } from '@/features/goals/GoalCard';
+import { GoalHeader, GoalStats } from '@/features/goals/GoalHeader';
+import { GoalCard, GoalEmptyState } from '@/features/goals/GoalCard';
 import NewGoalModal from '@/features/goals/GoalModal';
 
 export default function GoalsPage() {

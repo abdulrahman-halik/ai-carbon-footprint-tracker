@@ -4,7 +4,6 @@ import { Target, Type, Hash, Ruler } from 'lucide-react';
 import { Modal, ModalContent } from '@/components/ui/Modal';
 import { GoalThermometer } from '@/features/behavior/GoalThermometer';
 
-// --- GoalModalHeader ---
 export function GoalModalHeader({ editingId, onClose }) {
     return (
         <div className="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-green-600 rounded-t-2xl p-6 text-white overflow-hidden">
@@ -26,7 +25,6 @@ export function GoalModalHeader({ editingId, onClose }) {
     );
 }
 
-// --- GoalForm ---
 export function GoalForm({ newGoal, setNewGoal, onSave, onClose, editingId }) {
     return (
         <div className="space-y-5">
@@ -108,7 +106,6 @@ export function GoalForm({ newGoal, setNewGoal, onSave, onClose, editingId }) {
     );
 }
 
-// --- GoalPreview ---
 export function GoalPreview({ newGoal }) {
     const currentVal = Number(newGoal.current) || 0;
     const targetVal = Number(newGoal.target) || 0;
@@ -147,7 +144,6 @@ export function GoalPreview({ newGoal }) {
     );
 }
 
-// --- Main Modal Component ---
 export default function NewGoalModal({ isOpen, onClose, newGoal, setNewGoal, onSave, editingId }) {
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
