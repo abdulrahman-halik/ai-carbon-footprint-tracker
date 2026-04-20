@@ -1,6 +1,6 @@
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             import { z } from "zod";
-
+ui
 export const loginSchema = z.object({
     email: z.string()
         .min(1, "Email is required")
