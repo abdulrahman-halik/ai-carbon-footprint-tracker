@@ -4,7 +4,7 @@ import React from "react";
 import Link from "next/link";
 import { ArrowRight, Zap } from "lucide-react";
 
-export default function DashboardHero({ displayName, onNewEntry }) {
+export default function DashboardHero({ displayName }) {
     return (
         <section className="relative overflow-hidden rounded-3xl border border-white/70 bg-gradient-to-br from-emerald-100 via-teal-100 to-sky-100 p-8 sm:p-10 shadow-2xl">
             <div className="pointer-events-none absolute right-0 top-0 h-48 w-48 -translate-y-12 translate-x-10 rounded-full bg-white/70 blur-3xl" />
@@ -28,13 +28,6 @@ export default function DashboardHero({ displayName, onNewEntry }) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-3">
-                    <button
-                        onClick={onNewEntry}
-                        className="group inline-flex items-center gap-2 rounded-2xl bg-emerald-700 px-6 py-3 text-sm font-bold text-white shadow-xl shadow-emerald-600/25 transition-all hover:translate-y-[-1px] hover:bg-emerald-800"
-                    >
-                        <span>New Entry</span>
-                        <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    </button>
                     <Link
                         href="/emissions"
                         className="inline-flex items-center gap-2 rounded-2xl border border-emerald-200 bg-white/70 px-6 py-3 text-sm font-semibold text-emerald-800 shadow-sm transition-all hover:bg-white"

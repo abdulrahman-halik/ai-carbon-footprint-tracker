@@ -2,8 +2,6 @@
 
 import React, { useState, useEffect } from "react";
 import mockApi from "@/mockApi";
-import { Modal, ModalContent, ModalHeader, ModalTitle } from "@/components/ui/Modal";
-import ActivityLogWizard from "@/features/tracking/ActivityLogWizard";
 import DashboardStatsGrid from "./DashboardStatsGrid";
 import DashboardSidebar from "./DashboardSidebar";
 import { useAuth } from "@/hooks/useAuth";
@@ -18,7 +16,6 @@ import LearningCard from "./LearningCard";
 export default function MainDashboard() {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
-    const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
     const { user } = useAuth();
     const displayName = user?.name?.trim() || "User";
 
@@ -53,7 +50,7 @@ export default function MainDashboard() {
             <div className="pointer-events-none absolute top-48 left-10 h-48 w-48 rounded-full bg-sky-200/60 blur-3xl" />
 
             {/* Greeting hero */}
-            <DashboardHero displayName={displayName} onNewEntry={() => setIsNewEntryOpen(true)} />
+            <DashboardHero displayName={displayName} />
 
             {/* Quick stats */}
             <DashboardStatsGrid stats={stats} />
@@ -70,20 +67,8 @@ export default function MainDashboard() {
                 </div>
 
                 {/* Right: Quick Actions + Recent Activity */}
-                <DashboardSidebar onNewEntry={() => setIsNewEntryOpen(true)} />
+                <DashboardSidebar />
             </div>
-
-            {/* New Entry modal */}
-            <Modal isOpen={isNewEntryOpen} onClose={() => setIsNewEntryOpen(false)}>
-                <ModalContent className="max-w-2xl bg-gradient-to-br from-white to-gray-50/50">
-                    <ModalHeader>
-                        <ModalTitle className="text-2xl">Log New Activity</ModalTitle>
-                    </ModalHeader>
-                    <div className="p-2 sm:p-4">
-                        <ActivityLogWizard />
-                    </div>
-                </ModalContent>
-            </Modal>
         </div>
     );
 }

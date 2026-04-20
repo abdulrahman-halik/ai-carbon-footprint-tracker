@@ -8,9 +8,8 @@ import Link from 'next/link';
  *   • Quick Actions grid (Log Travel, Invite Team, New Project, Browse Courses)
  *   • Recent Activity timeline
  *
- * @param {Function} onNewEntry - Opens the New Entry modal
  */
-export default function DashboardSidebar({ onNewEntry }) {
+export default function DashboardSidebar() {
     return (
         <div className="space-y-6">
             {/* Quick Actions */}
@@ -20,13 +19,6 @@ export default function DashboardSidebar({ onNewEntry }) {
                     <span className="text-[10px] font-semibold uppercase tracking-[0.2em] text-emerald-600">Boost</span>
                 </div>
                 <div className="grid grid-cols-2 gap-3">
-                    <button
-                        onClick={onNewEntry}
-                        className="flex flex-col items-center justify-center p-4 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/60 border border-emerald-100/60 text-emerald-700 transition-all group hover:-translate-y-0.5 hover:shadow-lg"
-                    >
-                        <Zap className="w-6 h-6 mb-2 text-emerald-500" />
-                        <span className="text-xs font-bold text-center">Log Travel</span>
-                    </button>
                     <button className="flex flex-col items-center justify-center p-4 rounded-2xl bg-gradient-to-br from-sky-50 to-sky-100/60 border border-sky-100/60 text-sky-700 transition-all group hover:-translate-y-0.5 hover:shadow-lg">
                         <Users className="w-6 h-6 mb-2 text-sky-500" />
                         <span className="text-xs font-bold text-center">Invite Team</span>

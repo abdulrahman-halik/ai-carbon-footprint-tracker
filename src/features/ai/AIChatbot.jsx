@@ -1,7 +1,9 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from "react-hook-form";
-import { MessageSquare, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, Sparkles } from 'lucide-react';
+
+const API_BASE = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000";
 
 export default function AIChatbot() {
     const [isOpen, setIsOpen] = useState(false);
@@ -10,62 +12,41 @@ export default function AIChatbot() {
     ]);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
-
-    const {
-        register,
-        handleSubmit,
-        reset,
-        watch,
-    } = useForm({
-        defaultValues: {
-            message: "",
-        },
-    });
-
+    const { register, handleSubmit, reset, watch } = useForm({ defaultValues: { message: "" } });
     const inputText = watch("message");
 
-    const scrollToBottom = () => {
-        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-    };
-
     useEffect(() => {
-        scrollToBottom();
+        messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
     }, [messages, isTyping, isOpen]);
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if (!data.message.trim()) return;
-
         const userMsg = { id: Date.now(), text: data.message, sender: 'user' };
-        setMessages(prev => [...prev, userMsg]);
+        const nextMessages = [...messages, userMsg];
+        setMessages(nextMessages);
         reset();
         setIsTyping(true);
 
-        // Simulate AI response
-        setTimeout(() => {
-            const aiResponseText = getAIResponse(userMsg.text);
-            const aiMsg = { id: Date.now() + 1, text: aiResponseText, sender: 'ai' };
-            setMessages(prev => [...prev, aiMsg]);
+        try {
+            const response = await fetch(`${API_BASE}/api/assistant/chat`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    messages: nextMessages.map((m) => ({ role: m.sender === "user" ? "user" : "assistant", content: m.text })),
+                }),
+            });
+            if (!response.ok) throw new Error(`Error: ${response.status}`);
+            const result = await response.json();
+            setMessages(prev => [...prev, { id: Date.now() + 1, text: result.reply || "Sorry, I could not generate a response.", sender: 'ai' }]);
+        } catch {
+            setMessages(prev => [...prev, { id: Date.now() + 1, text: "Sorry, I'm having trouble connecting. Please try again.", sender: 'ai' }]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
-    };
-
-    const getAIResponse = (text) => {
-        const lowerText = text.toLowerCase();
-        if (lowerText.includes("electricity") || lowerText.includes("energy")) {
-            return "To reduce electricity usage, try switching to LED bulbs, unplugging idle electronics, and using natural light during the day. Did you know this could save up to 15% on your bill?";
         }
-        if (lowerText.includes("car") || lowerText.includes("drive") || lowerText.includes("transport")) {
-            return "Consider carpooling or using public transport. If you bike just twice a week instead of driving, you could reduce your carbon emissions by significantly!";
-        }
-        if (lowerText.includes("food") || lowerText.includes("diet") || lowerText.includes("meat")) {
-            return "Reducing meat consumption, especially beef, is one of the most impactful changes. Try a 'Meatless Monday' to start!";
-        }
-        return "That's a great question! I'm constantly learning. Focus on small, consistent changes like reducing waste and conserving water.";
     };
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
-            {/* Chat Window */}
             {isOpen && (
                 <div className="mb-4 w-[350px] md:w-[400px] h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in slide-in-from-bottom-10 fade-in duration-300">
                     {/* Header */}
@@ -87,7 +68,7 @@ export default function AIChatbot() {
                         </button>
                     </div>
 
-                    {/* Messages Area */}
+                    {/* Messages */}
                     <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50/50">
                         {messages.map((msg) => (
                             <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
@@ -111,7 +92,7 @@ export default function AIChatbot() {
                         <div ref={messagesEndRef} />
                     </div>
 
-                    {/* Input Area */}
+                    {/* Input */}
                     <form onSubmit={handleSubmit(onSubmit)} className="p-3 bg-white border-t border-gray-100">
                         <div className="relative flex items-center">
                             <input
@@ -135,24 +116,17 @@ export default function AIChatbot() {
                 </div>
             )}
 
-            {/* Floating Toggle Button */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={`group flex items-center justify-center w-14 h-14 rounded-full shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 ${isOpen ? 'bg-gray-800 text-white rotate-90 scale-0 opacity-0' : 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white hover:-translate-y-1 block opacity-100 scale-100'
-                    }`}
-                style={{ position: isOpen ? 'absolute' : 'relative', pointerEvents: isOpen ? 'none' : 'auto' }}
-            >
-                <MessageSquare size={24} className="group-hover:scale-110 transition-transform" />
-                <span className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-white">1</span>
-            </button>
-            {/* Helper button to close when open if the X is missed or for alternative toggle interactions if needed, though hidden when closed effectively by logic above */}
-            <button
-                onClick={() => setIsOpen(!isOpen)}
-                className={`group flex items-center justify-center w-14 h-14 rounded-full shadow-lg bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-900 transition-all duration-300 ${!isOpen ? 'hidden' : 'flex'
-                    }`}
-            >
-                <X size={24} />
-            </button>
+            {/* Toggle Button */}
+            {isOpen ? (
+                <button onClick={() => setIsOpen(false)} className="flex items-center justify-center w-14 h-14 rounded-full shadow-lg bg-gray-800 text-gray-300 hover:text-white hover:bg-gray-900 transition-all duration-300">
+                    <X size={24} />
+                </button>
+            ) : (
+                <button onClick={() => setIsOpen(true)} className="group flex items-center justify-center w-14 h-14 rounded-full shadow-lg hover:shadow-emerald-500/30 bg-gradient-to-br from-emerald-500 to-teal-600 text-white hover:-translate-y-1 transition-all duration-300">
+                    <MessageSquare size={24} className="group-hover:scale-110 transition-transform" />
+                    <span className="absolute -top-2 -right-2 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold border-2 border-white">1</span>
+                </button>
+            )}
         </div>
     );
 }
