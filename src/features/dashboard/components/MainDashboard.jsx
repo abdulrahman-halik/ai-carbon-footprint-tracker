@@ -3,9 +3,7 @@
 import React, { useState, useEffect } from "react";
 import {
     BookOpen,
-    Bell,
     ArrowRight,
-    Zap,
 } from "lucide-react";
 import Link from "next/link";
 import mockApi from "@/mockApi";
@@ -54,15 +52,6 @@ export default function MainDashboard() {
                 <div>
                     <h1 className="text-3xl font-bold text-gray-900 tracking-tight">Welcome back, User</h1>
                     <p className="text-gray-500 mt-1">Here is what&apos;s happening today.</p>
-                </div>
-                <div className="flex gap-3">
-                    <button
-                        onClick={() => setIsNewEntryOpen(true)}
-                        className="flex items-center gap-2 px-4 py-2 bg-emerald-600 shadow-md shadow-emerald-600/20 rounded-lg text-sm font-bold text-white hover:bg-emerald-700 transition-all cursor-pointer group"
-                    >
-                        <span>New Entry</span>
-                        <Zap className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                    </button>
                 </div>
             </div>
 

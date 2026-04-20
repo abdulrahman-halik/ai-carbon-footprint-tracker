@@ -1,11 +1,12 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Label } from '@/components/ui/Label';
-import { ArrowRight, Check, Car, Utensils, Plane, Zap, ShoppingBag } from 'lucide-react';
+import { ArrowRight, Car, Utensils, Plane, Zap, ShoppingBag } from 'lucide-react';
+
+const ESTIMATED_REPORT_KEY = 'eco_estimated_report';
 
 const questions = [
     {
@@ -66,13 +67,18 @@ export default function EstimatorPage() {
     const [step, setStep] = useState(0);
     const [score, setScore] = useState(0);
     const [showResult, setShowResult] = useState(false);
+    const [answers, setAnswers] = useState({});
 
-    const handleAnswer = (points) => {
+    const handleAnswer = (points, label) => {
+        const questionId = questions[step]?.id;
+        const nextAnswers = questionId ? { ...answers, [questionId]: label } : answers;
         const newScore = score + points;
         if (step < questions.length - 1) {
+            setAnswers(nextAnswers);
             setScore(newScore);
             setStep(step + 1);
         } else {
+            setAnswers(nextAnswers);
             setScore(newScore);
             setShowResult(true);
         }
@@ -83,6 +89,26 @@ export default function EstimatorPage() {
         if (totalScore < 12) return { text: "Conscious Citizen 🌍", color: "text-blue-600", desc: "You're doing well, but there's room for improvement." };
         return { text: "Carbon Intensive 🏭", color: "text-orange-600", desc: "Your footprint is higher than average. We can help you reduce it." };
     };
+
+    useEffect(() => {
+        if (!showResult) return;
+
+        const feedback = getResultFeedback(score);
+        const reportPayload = {
+            score,
+            level: feedback.text,
+            description: feedback.desc,
+            createdAt: new Date().toISOString(),
+            answers,
+            source: 'quick-estimator',
+        };
+
+        try {
+            localStorage.setItem(ESTIMATED_REPORT_KEY, JSON.stringify(reportPayload));
+        } catch (error) {
+            console.error('Failed to save estimator report:', error);
+        }
+    }, [showResult, score, answers]);
 
     const currentQuestion = questions[step];
     const Icon = currentQuestion?.icon;
@@ -103,7 +129,7 @@ export default function EstimatorPage() {
                             {currentQuestion.options.map((option) => (
                                 <button
                                     key={option.label}
-                                    onClick={() => handleAnswer(option.score)}
+                                    onClick={() => handleAnswer(option.score, option.label)}
                                     className="w-full text-left p-4 rounded-xl border border-gray-200 hover:bg-gray-50 hover:border-primary transition-all flex items-center justify-between group"
                                 >
                                     <span className="font-medium text-gray-700 group-hover:text-primary">{option.label}</span>
@@ -139,10 +165,10 @@ export default function EstimatorPage() {
                             </div>
                         </CardContent>
                         <CardFooter className="flex flex-col gap-3">
-                            <Link href="/register" className="w-full">
-                                <Button className="w-full h-12 text-lg">Unlock Full Report</Button>
+                            <Link href="/reports" className="w-full">
+                                <Button className="w-full h-12 text-lg">View Full Report</Button>
                             </Link>
-                            <Button variant="ghost" onClick={() => { setStep(0); setScore(0); setShowResult(false); }}>
+                            <Button variant="ghost" onClick={() => { setStep(0); setScore(0); setAnswers({}); setShowResult(false); }}>
                                 Start Over
                             </Button>
                         </CardFooter>
