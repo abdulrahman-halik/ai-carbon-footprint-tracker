@@ -198,18 +198,24 @@ export function TeamCollaboration() {
                     statusColor: isActive ? 'bg-gray-100 text-gray-500' : 'bg-emerald-100 text-emerald-700',
                 };
             });
-            const changed = updated.find(m => m.id === id);
-            console.log('Toggled status for', id, changed && changed.status);
             toast.success('Member status updated');
             return updated;
         });
     };
 
     const filtered = useMemo(() => {
-        if (!query) return teamMembers;
-        const q = query.toLowerCase();
-        return teamMembers.filter(m => m.name.toLowerCase().includes(q) || (m.role || '').toLowerCase().includes(q));
-    }, [teamMembers, query]);
+        let result = teamMembers;
+        // Apply status filter
+        if (filter !== 'All') {
+            result = result.filter(m => m.status === filter);
+        }
+        // Apply text search
+        if (query) {
+            const q = query.toLowerCase();
+            result = result.filter(m => m.name.toLowerCase().includes(q) || (m.role || '').toLowerCase().includes(q));
+        }
+        return result;
+    }, [teamMembers, query, filter]);
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

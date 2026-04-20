@@ -51,6 +51,25 @@ function WizardContent() {
     const stepIndex = currentStep - 1;
     const step = WIZARD_STEPS[stepIndex] || WIZARD_STEPS[0];
 
+    const handleFinish = async () => {
+        try {
+            setIsSubmitting(true);
+            await mockApi.submitOnboarding({
+                userId: user?.id,
+                completed: true
+            });
+            // The AuthProvider's user isn't directly listening to localStorage changes unless reloaded/refetched.
+            // A hard refresh or router.push will trigger the guard. Since RouteGuard checks user.onboardingCompleted, 
+            // we should ideally update the React state. For mock behavior, a simple router check works 
+            // if we reload, or we can just redirect to dashboard and let AuthProvider pull from localStorage next time.
+            // A window.location.href ensures the page correctly re-initializes contexts from localStorage:
+            window.location.href = '/dashboard';
+        } catch (error) {
+            console.error(error);
+            setIsSubmitting(false);
+        }
+    };
+
     // Render specific component based on step ID
     const renderStepContent = () => {
         switch (step.id) {
@@ -79,32 +98,8 @@ function WizardContent() {
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                             </svg>
                         </div>
-                        <div className="text-center max-w-md">
+                        <div className="text-center max-w-md pb-12">
                             <p className="text-gray-600 text-lg leading-relaxed">{step.description}</p>
-                            <Button
-                                className="mt-8 w-full"
-                                disabled={isSubmitting}
-                                onClick={async () => {
-                                    try {
-                                        setIsSubmitting(true);
-                                        await mockApi.submitOnboarding({
-                                            userId: user?.id,
-                                            completed: true
-                                        });
-                                        // The AuthProvider's user isn't directly listening to localStorage changes unless reloaded/refetched.
-                                        // A hard refresh or router.push will trigger the guard. Since RouteGuard checks user.onboardingCompleted, 
-                                        // we should ideally update the React state. For mock behavior, a simple router check works 
-                                        // if we reload, or we can just redirect to dashboard and let AuthProvider pull from localStorage next time.
-                                        // A window.location.href ensures the page correctly re-initializes contexts from localStorage:
-                                        window.location.href = '/dashboard';
-                                    } catch (error) {
-                                        console.error(error);
-                                        setIsSubmitting(false);
-                                    }
-                                }}
-                            >
-                                {isSubmitting ? "Saving..." : "Go to Dashboard"}
-                            </Button>
                         </div>
                     </div>
                 );
@@ -118,7 +113,13 @@ function WizardContent() {
     };
 
     return (
-        <WizardLayout title={step.title} subtitle={step.subtitle}>
+        <WizardLayout
+            title={step.title}
+            subtitle={step.subtitle}
+            onFinish={handleFinish}
+            finishLabel="Go to Dashboard"
+            isSubmitting={isSubmitting}
+        >
             {renderStepContent()}
         </WizardLayout>
     );

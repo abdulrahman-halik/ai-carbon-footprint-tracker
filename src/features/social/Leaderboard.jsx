@@ -69,16 +69,30 @@ export function LeaderItem({ user, index }) {
     );
 }
 
-const MOCK_LEADERBOARD = [
-    { id: 1, name: 'Alice', score: 120, avatar: 'A' },
-    { id: 2, name: 'Bob', score: 110, avatar: 'B' },
-    { id: 3, name: 'Charlie', score: 95, avatar: 'C' },
-    { id: 4, name: 'You', score: 85, avatar: 'Y', isCurrentUser: true },
-    { id: 5, name: 'Diana', score: 80, avatar: 'D' },
-];
+const MOCK_LEADERBOARD = {
+    weekly: [
+        { id: 1, name: 'Alice', score: 120, avatar: 'A' },
+        { id: 2, name: 'Bob', score: 110, avatar: 'B' },
+        { id: 3, name: 'Charlie', score: 95, avatar: 'C' },
+        { id: 4, name: 'You', score: 85, avatar: 'Y', isCurrentUser: true },
+        { id: 5, name: 'Diana', score: 80, avatar: 'D' },
+    ],
+    monthly: [
+        { id: 2, name: 'Bob', score: 430, avatar: 'B' },
+        { id: 4, name: 'You', score: 390, avatar: 'Y', isCurrentUser: true },
+        { id: 1, name: 'Alice', score: 370, avatar: 'A' },
+        { id: 6, name: 'Eve', score: 310, avatar: 'E' },
+    ],
+    'all-time': [
+        { id: 1, name: 'Alice', score: 2850, avatar: 'A' },
+        { id: 3, name: 'Charlie', score: 2600, avatar: 'C' },
+        { id: 4, name: 'You', score: 2400, avatar: 'Y', isCurrentUser: true },
+    ],
+};
 
 export const Leaderboard = () => {
     const [filter, setFilter] = useState('weekly');
+    const users = MOCK_LEADERBOARD[filter] || MOCK_LEADERBOARD.weekly;
 
     return (
         <Card className="w-full h-full border border-white/70 shadow-2xl rounded-3xl overflow-hidden bg-white/85">
@@ -86,7 +100,7 @@ export const Leaderboard = () => {
                 <LeaderboardHeader filter={filter} setFilter={setFilter} />
 
                 <div className="space-y-3">
-                    {MOCK_LEADERBOARD.map((user, index) => (
+                    {users.map((user, index) => (
                         <LeaderItem key={user.id} user={user} index={index} />
                     ))}
                 </div>
