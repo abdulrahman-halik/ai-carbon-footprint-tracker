@@ -1,18 +1,11 @@
 "use client";
 
-import { Zap, TrendingUp, Lightbulb, Plug } from "lucide-react";
-import { Line } from "react-chartjs-2";
-import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
-    PointElement,
-    LineElement,
-    Title,
-    Tooltip,
-    Legend,
-    Filler,
-} from "chart.js";
+import React, { useState, useEffect } from "react";
+import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from "chart.js";
+import { EnergyHeader, EnergyTips } from "@/features/energy/EnergyInfo";
+import { StatsGrid, UsageChart } from "@/features/energy/EnergyAnalytics";
+import { MeterModal } from "@/features/energy/MeterEntry";
+import { MeterList } from "@/features/energy/MeterList";
 
 ChartJS.register(
     CategoryScale,
@@ -26,6 +19,83 @@ ChartJS.register(
 );
 
 export default function EnergyPage() {
+    const [isMeterOpen, setIsMeterOpen] = useState(false);
+    const [reading, setReading] = useState('');
+    const [date, setDate] = useState('');
+    const [readings, setReadings] = useState([]);
+    const [notes, setNotes] = useState('');
+    const [editingId, setEditingId] = useState(null);
+    const [savedToast, setSavedToast] = useState(false);
+
+    useEffect(() => {
+        try {
+            const raw = localStorage.getItem('energy.readings');
+            if (raw) setReadings(JSON.parse(raw));
+        } catch (e) {
+            console.error('Failed to load energy readings', e);
+        }
+    }, []);
+
+    const persist = (next) => {
+        setReadings(next);
+        try {
+            localStorage.setItem('energy.readings', JSON.stringify(next));
+        } catch (e) {
+            console.error('Failed to persist energy readings', e);
+        }
+    };
+
+    const openMeter = () => setIsMeterOpen(true);
+    const closeMeter = () => setIsMeterOpen(false);
+    const handleSave = () => {
+        const entry = { id: editingId || Date.now(), reading: Number(reading) || 0, date: date || new Date().toISOString().slice(0, 10), notes: notes.trim() };
+        let next;
+        if (editingId) {
+            next = readings.map(r => (r.id === editingId ? entry : r));
+        } else {
+            next = [entry, ...readings].slice(0, 12);
+        }
+        persist(next);
+        setSavedToast(true);
+        setTimeout(() => setSavedToast(false), 1800);
+        setIsMeterOpen(false);
+        setReading('');
+        setDate('');
+        setNotes('');
+        setEditingId(null);
+    };
+
+    const handleEdit = (id) => {
+        const found = readings.find(r => r.id === id);
+        if (!found) return;
+        setReading(String(found.reading));
+        setDate(found.date);
+        setNotes(found.notes || '');
+        setEditingId(id);
+        setIsMeterOpen(true);
+    };
+
+    const handleDelete = (id) => {
+        if (!window.confirm('Delete this reading?')) return;
+        const next = readings.filter(r => r.id !== id);
+        persist(next);
+        if (editingId === id) {
+            setEditingId(null);
+            setIsMeterOpen(false);
+            setReading('');
+            setDate('');
+            setNotes('');
+        }
+    };
+
+    const handleCancelEdit = () => {
+        setEditingId(null);
+        setIsMeterOpen(false);
+        setReading('');
+        setDate('');
+        setNotes('');
+    };
+
     const data = {
         labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "23:59"],
         datasets: [
@@ -68,101 +138,16 @@ export default function EnergyPage() {
 
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-10">
-            {/* Header */}
-            <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-                <div>
-                    <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                        <Zap className="text-amber-500" size={32} />
-                        Energy Monitor
-                    </h1>
-                    <p className="text-gray-500 mt-1">Track your electricity consumption and renewable energy usage.</p>
-                </div>
-                <div className="flex gap-3">
-                    <button className="bg-amber-500 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-amber-100 hover:bg-amber-600 transition-colors">
-                        Add Meter Reading
-                    </button>
-                </div>
+            <EnergyHeader onAdd={openMeter} />
+            <MeterModal isOpen={isMeterOpen} onClose={handleCancelEdit} reading={reading} setReading={setReading} date={date} setDate={setDate} notes={notes} setNotes={setNotes} readings={readings} onSave={handleSave} savedToast={savedToast} />
+            <StatsGrid />
+            <UsageChart data={data} options={options} />
+
+            <div className="mt-6">
+                <MeterList readings={readings} onEdit={handleEdit} onDelete={handleDelete} editingId={editingId} onCancel={handleCancelEdit} />
             </div>
 
-            {/* Stats Overview */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="glass-card p-6 flex flex-col">
-                    <span className="text-gray-500 text-sm font-medium">Daily Usage</span>
-                    <div className="flex items-end gap-2 mt-2">
-                        <span className="text-4xl font-bold text-gray-900">12.4</span>
-                        <span className="text-gray-500 mb-1">kWh</span>
-                    </div>
-                    <div className="mt-4 flex items-center gap-2 text-rose-600 bg-rose-50 w-fit px-2 py-1 rounded-full text-xs font-medium">
-                        <TrendingUp size={14} />
-                        <span>5% higher than annual avg</span>
-                    </div>
-                </div>
-
-                <div className="glass-card p-6 flex flex-col">
-                    <span className="text-gray-500 text-sm font-medium">Renewable Mix</span>
-                    <div className="flex items-end gap-2 mt-2">
-                        <span className="text-4xl font-bold text-emerald-600">42%</span>
-                        <span className="text-gray-500 mb-1">Green Energy</span>
-                    </div>
-                    <div className="w-full bg-gray-100 rounded-full h-2 mt-4">
-                        <div className="bg-emerald-500 h-2 rounded-full" style={{ width: '42%' }}></div>
-                    </div>
-                </div>
-
-                <div className="glass-card p-6 flex flex-col">
-                    <span className="text-gray-500 text-sm font-medium">Estimated Cost</span>
-                    <div className="flex items-end gap-2 mt-2">
-                        <span className="text-4xl font-bold text-gray-900">$48.20</span>
-                        <span className="text-gray-500 mb-1">This Month</span>
-                    </div>
-                    <p className="text-xs text-gray-400 mt-4">Based on avg rate of $0.14/kWh</p>
-                </div>
-            </div>
-
-            {/* Main Chart */}
-            <div className="glass-card p-8">
-                <div className="flex items-center justify-between mb-6">
-                    <h3 className="text-lg font-semibold text-gray-900">Usage Trends (Today)</h3>
-                    <div className="flex items-center gap-2">
-                        <span className="w-3 h-3 rounded-full bg-amber-500"></span>
-                        <span className="text-sm text-gray-600">Peak Hours</span>
-                    </div>
-                </div>
-                <div className="h-[300px] w-full">
-                    <Line data={data} options={options} />
-                </div>
-            </div>
-
-            {/* Insights & Tips */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="glass-card p-0 overflow-hidden flex flex-col">
-                    <div className="p-6 bg-amber-50 border-b border-amber-100 flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg text-amber-500 shadow-sm">
-                            <Lightbulb size={20} />
-                        </div>
-                        <h3 className="font-semibold text-gray-900">Energy Saving Tip</h3>
-                    </div>
-                    <div className="p-6">
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                            Switching to LED bulbs can use up to <strong>90% less energy</strong> than traditional incandescent bulbs and last up to 25 times longer. It's the easiest switch with the biggest impact!
-                        </p>
-                    </div>
-                </div>
-
-                <div className="glass-card p-0 overflow-hidden flex flex-col">
-                    <div className="p-6 bg-gray-50 border-b border-gray-100 flex items-center gap-3">
-                        <div className="bg-white p-2 rounded-lg text-gray-700 shadow-sm">
-                            <Plug size={20} />
-                        </div>
-                        <h3 className="font-semibold text-gray-900">Phantom Power</h3>
-                    </div>
-                    <div className="p-6">
-                        <p className="text-gray-600 text-sm leading-relaxed">
-                            Electronics plugged in but not in use (TVs, chargers, computers) can account for up to <strong>10%</strong> of your monthly electricity bill. Use power strips to turn them all off at once.
-                        </p>
-                    </div>
-                </div>
-            </div>
+            <EnergyTips />
         </div>
     );
 }
