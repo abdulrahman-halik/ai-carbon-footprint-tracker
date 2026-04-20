@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useMemo, useEffect } from "react";
 import { toast } from 'react-hot-toast';
 import AddMemberModal from './AddMemberModal';
@@ -5,6 +6,128 @@ import TeamHeader from './TeamHeader';
 import MemberGrid from './MemberGrid';
 import TeamControls from './TeamControls';
 import TeamSidebar from './TeamSidebar';
+=======
+"use client";
+
+import React, { useState, useMemo, useEffect } from "react";
+import { toast } from 'react-hot-toast';
+import { UserPlus, Users, CheckCircle, Zap } from 'lucide-react';
+import AddMemberModal from './AddMemberModal';
+import { MemberGrid } from './MemberManagement';
+
+export function TeamHeader({ onOpen, memberCount = 0 }) {
+    return (
+        <div className="flex items-center justify-between mb-6">
+            <div>
+                <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">Team Collaboration</h2>
+                <p className="text-sm text-gray-500 mt-1">Collaborate with your team and track shared sustainability goals.</p>
+                <div className="mt-4 w-28 h-1 rounded-full bg-gradient-to-r from-emerald-400 to-emerald-200" />
+            </div>
+
+            <div className="flex items-center gap-4">
+                <div className="px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 font-semibold text-sm shadow-inner">{memberCount} members</div>
+                <button
+                    onClick={onOpen}
+                    aria-label="Add member"
+                    className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-semibold text-white shadow-lg transform transition duration-150 ease-in-out hover:scale-105 bg-gradient-to-r from-emerald-500 to-emerald-400"
+                >
+                    <UserPlus size={16} />
+                    Add Member
+                </button>
+            </div>
+        </div>
+    );
+}
+
+export function TeamControls({ query, setQuery, filter, setFilter }) {
+    return (
+        <div className="mt-4 mb-6 flex items-center gap-4">
+            <div className="flex-1">
+                <input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search team members or roles"
+                    className="w-full px-4 py-2 border rounded-lg shadow-sm focus:ring-2 focus:ring-emerald-200"
+                />
+            </div>
+
+            <div className="flex items-center gap-3">
+                <div className="text-sm text-gray-500">Filter:</div>
+                <select value={filter} onChange={(e) => setFilter(e.target.value)} className="px-3 py-2 border rounded-lg shadow-sm bg-white">
+                    <option>All</option>
+                    <option>Active</option>
+                    <option>In Progress</option>
+                    <option>Inactive</option>
+                </select>
+            </div>
+        </div>
+    );
+}
+
+export function TeamSidebar({ members = [] }) {
+    const total = members.length;
+    const active = members.filter(m => m.status === 'Active').length;
+    const inProgress = members.filter(m => m.status === 'In Progress').length;
+    const inactive = members.filter(m => m.status === 'Inactive').length;
+
+    return (
+        <div className="bg-gradient-to-br from-white to-emerald-50 rounded-2xl p-6 shadow-sm border border-gray-100">
+            <div className="flex items-center justify-between">
+                <div>
+                    <h3 className="text-lg font-bold text-gray-900">Team Snapshot</h3>
+                    <p className="text-sm text-gray-500">Quick overview of your team's activity</p>
+                </div>
+                <div className="bg-emerald-50 p-2 rounded-lg">
+                    <Users className="text-emerald-600" />
+                </div>
+            </div>
+
+            <div className="mt-6 grid grid-cols-2 gap-3">
+                <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
+                    <div className="text-xs text-gray-500">Members</div>
+                    <div className="text-2xl font-extrabold text-gray-900">{total}</div>
+                </div>
+                <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
+                    <div className="text-xs text-gray-500">Active</div>
+                    <div className="text-2xl font-extrabold text-emerald-600">{active}</div>
+                </div>
+                <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
+                    <div className="text-xs text-gray-500">In progress</div>
+                    <div className="text-2xl font-extrabold text-amber-600">{inProgress}</div>
+                </div>
+                <div className="p-3 bg-white rounded-lg shadow-sm border border-gray-100">
+                    <div className="text-xs text-gray-500">Inactive</div>
+                    <div className="text-2xl font-extrabold text-gray-500">{inactive}</div>
+                </div>
+            </div>
+
+            <div className="mt-6">
+                <h4 className="text-sm font-semibold text-gray-800">Recent Activity</h4>
+                <ul className="mt-3 space-y-3">
+                    <li className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-emerald-50 flex items-center justify-center text-emerald-600">
+                            <CheckCircle size={16} />
+                        </div>
+                        <div>
+                            <div className="text-sm font-medium text-gray-900">Mission milestone reached</div>
+                            <div className="text-xs text-gray-500">2 days ago</div>
+                        </div>
+                    </li>
+                    <li className="flex items-start gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center text-blue-600">
+                            <Zap size={16} />
+                        </div>
+                        <div>
+                            <div className="text-sm font-medium text-gray-900">New project added</div>
+                            <div className="text-xs text-gray-500">4 days ago</div>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    );
+}
+>>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 
 export function TeamCollaboration() {
     const DEFAULT_MEMBERS = [
@@ -85,18 +208,36 @@ export function TeamCollaboration() {
                     statusColor: isActive ? 'bg-gray-100 text-gray-500' : 'bg-emerald-100 text-emerald-700',
                 };
             });
+<<<<<<< HEAD
             const changed = updated.find(m => m.id === id);
             console.log('Toggled status for', id, changed && changed.status);
+=======
+>>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
             toast.success('Member status updated');
             return updated;
         });
     };
 
     const filtered = useMemo(() => {
+<<<<<<< HEAD
         if (!query) return teamMembers;
         const q = query.toLowerCase();
         return teamMembers.filter(m => m.name.toLowerCase().includes(q) || (m.role || '').toLowerCase().includes(q));
     }, [teamMembers, query]);
+=======
+        let result = teamMembers;
+        // Apply status filter
+        if (filter !== 'All') {
+            result = result.filter(m => m.status === filter);
+        }
+        // Apply text search
+        if (query) {
+            const q = query.toLowerCase();
+            result = result.filter(m => m.name.toLowerCase().includes(q) || (m.role || '').toLowerCase().includes(q));
+        }
+        return result;
+    }, [teamMembers, query, filter]);
+>>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 
     return (
         <div className="bg-white rounded-2xl shadow-sm border border-gray-100 p-6">

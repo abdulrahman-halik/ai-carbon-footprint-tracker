@@ -17,7 +17,7 @@ import { ChevronRight, ChevronLeft, Check } from "lucide-react";
  * @param {string} props.subtitle - Current step subtitle
  * @param {React.ReactNode} props.children - The step content
  */
-export default function WizardLayout({ title, subtitle, children }) {
+export default function WizardLayout({ title, subtitle, children, onFinish, finishLabel, isSubmitting }) {
     const { currentStep, totalSteps, nextStep, prevStep, isStepValid } = useOnboarding();
 
     // Calculate progress percentage
@@ -63,13 +63,14 @@ export default function WizardLayout({ title, subtitle, children }) {
                         <Button
                             variant="ghost"
                             onClick={prevStep}
-                            disabled={currentStep === 1}
+                            disabled={currentStep === 1 || isSubmitting}
                             className={currentStep === 1 ? "invisible" : ""}
                         >
                             <Icon icon={ChevronLeft} className="mr-2" size={20} />
                             Back
                         </Button>
 
+<<<<<<< HEAD
                         {currentStep !== totalSteps && (
                             <Button
                                 onClick={nextStep}
@@ -78,6 +79,16 @@ export default function WizardLayout({ title, subtitle, children }) {
                                 size="lg"
                             >
                                 Next
+=======
+                        <Button
+                            onClick={currentStep === totalSteps ? onFinish : nextStep}
+                            disabled={!isStepValid || isSubmitting}
+                            className="px-8"
+                            size="lg"
+                        >
+                            {isSubmitting ? "Saving..." : (currentStep === totalSteps ? (finishLabel || "Finish") : "Next")}
+                            {currentStep !== totalSteps && !isSubmitting && (
+>>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                                 <Icon icon={ChevronRight} className="ml-2" size={20} />
                             </Button>
                         )}

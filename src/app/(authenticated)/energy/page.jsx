@@ -2,12 +2,19 @@
 
 import React, { useState, useEffect } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from "chart.js";
+<<<<<<< HEAD
 import EnergyHeader from "@/features/energy/EnergyHeader";
 import StatsGrid from "@/features/energy/StatsGrid";
 import UsageChart from "@/features/energy/UsageChart";
 import MeterModal from "@/features/energy/MeterModal";
 import SavedMeterCards from "@/features/energy/SavedMeterCards";
 import EnergyTips from "@/features/energy/EnergyTips";
+=======
+import { EnergyHeader, EnergyTips } from "@/features/energy/EnergyInfo";
+import { StatsGrid, UsageChart } from "@/features/energy/EnergyAnalytics";
+import { MeterModal } from "@/features/energy/MeterEntry";
+import { MeterList } from "@/features/energy/MeterList";
+>>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 
 ChartJS.register(
     CategoryScale,
@@ -50,7 +57,11 @@ export default function EnergyPage() {
     const openMeter = () => setIsMeterOpen(true);
     const closeMeter = () => setIsMeterOpen(false);
     const handleSave = () => {
+<<<<<<< HEAD
         const entry = { id: editingId || Date.now(), reading: Number(reading) || 0, date: date || new Date().toISOString().slice(0,10), notes: notes.trim() };
+=======
+        const entry = { id: editingId || Date.now(), reading: Number(reading) || 0, date: date || new Date().toISOString().slice(0, 10), notes: notes.trim() };
+>>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
         let next;
         if (editingId) {
             next = readings.map(r => (r.id === editingId ? entry : r));
@@ -146,7 +157,11 @@ export default function EnergyPage() {
             <UsageChart data={data} options={options} />
 
             <div className="mt-6">
+<<<<<<< HEAD
                 <SavedMeterCards readings={readings} onEdit={handleEdit} onDelete={handleDelete} editingId={editingId} onCancel={handleCancelEdit} />
+=======
+                <MeterList readings={readings} onEdit={handleEdit} onDelete={handleDelete} editingId={editingId} onCancel={handleCancelEdit} />
+>>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
             </div>
 
             <EnergyTips />
