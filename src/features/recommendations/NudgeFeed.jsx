@@ -44,7 +44,7 @@ export const NudgeFeed = () => {
                 <div className="mx-auto h-24 w-24 bg-blue-50/50 rounded-full flex items-center justify-center mb-4">
                     <span className="text-4xl">🎉</span>
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">You're all caught up!</h3>
+                <h3 className="text-lg font-bold text-gray-900 mb-2">You&apos;re all caught up!</h3>
                 <p className="text-gray-500 max-w-sm mx-auto">
                     Great job acting on your recommendations. Check back later for more personalized insights to help reduce your footprint.
                 </p>

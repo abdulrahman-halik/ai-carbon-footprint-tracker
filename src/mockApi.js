@@ -4,62 +4,139 @@
  */
 
 const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api";
+
+const getStoredToken = () => {
+    if (typeof window === "undefined") return null;
+    return localStorage.getItem("access_token");
+};
+
+const storeToken = (token) => {
+    if (typeof window === "undefined") return;
+    localStorage.setItem("access_token", token);
+};
+
+const clearToken = () => {
+    if (typeof window === "undefined") return;
+    localStorage.removeItem("access_token");
+};
+
+const normalizeErrorMessage = async (response, fallback) => {
+    try {
+        const body = await response.json();
+        if (typeof body?.detail === "string") return body.detail;
+        if (Array.isArray(body?.detail) && body.detail.length > 0) {
+            return body.detail[0]?.msg || fallback;
+        }
+    } catch {
+        // no-op
+    }
+    return fallback;
+};
+
+const mapUserFromApi = (user, token) => ({
+    id: user?._id || user?.id,
+    name: user?.full_name || user?.name || "Eco User",
+    email: user?.email,
+    token: token || getStoredToken() || "",
+    onboardingCompleted: Boolean(user?.onboarding_completed),
+});
+
+const fetchCurrentUser = async (token) => {
+    const meRes = await fetch(`${API_BASE_URL}/users/me`, {
+        method: "GET",
+        headers: {
+            Authorization: `Bearer ${token}`,
+        },
+        credentials: "include",
+    });
+
+    if (!meRes.ok) {
+        const msg = await normalizeErrorMessage(meRes, "Unable to fetch current user");
+        throw new Error(msg);
+    }
+
+    return meRes.json();
+};
 
 const authService = {
     /**
-     * Mock logging in a user
+     * Log in a user against backend API
      * @param {Object} credentials - { email, password }
      * @returns {Promise<Object>}
      */
     login: async (credentials) => {
-        await delay(1000); // Simulate network request
+        const formData = new URLSearchParams();
+        formData.append("username", credentials.email || "");
+        formData.append("password", credentials.password || "");
 
-        // Mock validation (accept any non-empty values for now)
-        if (credentials.email && credentials.password) {
-            const user = {
-                name: "Eco Warrior",
-                email: credentials.email,
-                token: "mock-jwt-token-123456",
-                onboardingCompleted: true // Returning user defaults to true for mock testing
-            };
+        const loginRes = await fetch(`${API_BASE_URL}/auth/login`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: formData,
+            credentials: "include",
+        });
 
-            localStorage.setItem("user", JSON.stringify(user));
-            return user;
+        if (!loginRes.ok) {
+            const msg = await normalizeErrorMessage(loginRes, "Invalid credentials");
+            throw new Error(msg);
         }
 
-        throw new Error("Invalid credentials");
+        const tokenData = await loginRes.json();
+        storeToken(tokenData.access_token);
+
+        const userData = await fetchCurrentUser(tokenData.access_token);
+        const user = mapUserFromApi(userData, tokenData.access_token);
+
+        localStorage.setItem("user", JSON.stringify(user));
+        return user;
     },
 
     /**
-     * Mock registering a user
+     * Register user in backend API, then log in
      * @param {Object} userData - { name, email, password }
      * @returns {Promise<Object>}
      */
     register: async (userData) => {
-        await delay(1000); // Simulate network request
-
-        if (userData.email && userData.password && userData.name) {
-            const user = {
-                name: userData.name,
+        const registerRes = await fetch(`${API_BASE_URL}/auth/register`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
                 email: userData.email,
-                token: "mock-jwt-token-register-789012",
-                onboardingCompleted: false // New user has not completed onboarding
-            };
+                password: userData.password,
+                full_name: userData.name,
+            }),
+            credentials: "include",
+        });
 
-            localStorage.setItem("user", JSON.stringify(user));
-            return user;
+        if (!registerRes.ok) {
+            const msg = await normalizeErrorMessage(registerRes, "Registration failed");
+            throw new Error(msg);
         }
 
-        throw new Error("Invalid registration data");
+        // Backend register endpoint returns profile only; login to get token + consistent local state.
+        return authService.login({ email: userData.email, password: userData.password });
     },
 
     /**
-     * Mock logging out a user
+     * Log out from backend and clear local session
      * @returns {Promise<void>}
      */
     logout: async () => {
-        await delay(500);
+        try {
+            await fetch(`${API_BASE_URL}/auth/logout`, {
+                method: "POST",
+                credentials: "include",
+            });
+        } catch {
+            // Even if backend logout fails, clear client session to avoid lock-in.
+        }
         localStorage.removeItem("user");
+        clearToken();
     },
 
     /**
@@ -90,31 +167,40 @@ const authService = {
     },
 
     /**
-     * Mock submit onboarding data
+     * Submit onboarding data to backend and update local user state
      * @param {Object} data - Onboarding data
      * @returns {Promise<Object>}
      */
     submitOnboarding: async (data) => {
-        await delay(800);
+        const token = getStoredToken();
+        if (!token) {
+            throw new Error("Please sign in again to complete onboarding.");
+        }
 
-        // Mock default successful response with dummy data
-        const dummyData = {
-            id: "eco-profile-" + Math.floor(Math.random() * 10000),
-            status: "active",
-            createdAt: new Date().toISOString(),
-            ...data
-        };
+        const res = await fetch(`${API_BASE_URL}/onboarding/complete`, {
+            method: "PUT",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+            },
+            credentials: "include",
+            body: JSON.stringify({ profile: data }),
+        });
+
+        if (!res.ok) {
+            const msg = await normalizeErrorMessage(res, "Failed to save onboarding data");
+            throw new Error(msg);
+        }
+
+        const updatedUser = await res.json();
+        const mapped = mapUserFromApi(updatedUser, token);
 
         if (typeof window !== "undefined") {
-            const userJson = localStorage.getItem("user");
-            if (userJson) {
-                const userObj = JSON.parse(userJson);
-                userObj.onboardingCompleted = true;
-                localStorage.setItem("user", JSON.stringify(userObj));
-            }
-            localStorage.setItem("onboarding_profile", JSON.stringify(dummyData));
+            localStorage.setItem("user", JSON.stringify(mapped));
+            localStorage.setItem("onboarding_profile", JSON.stringify(data));
         }
-        return dummyData;
+
+        return data;
     },
 
     /**

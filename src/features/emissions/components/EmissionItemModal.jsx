@@ -13,7 +13,8 @@ export default function EmissionItemModal({ isOpen, onClose, onSave, item }) {
             setCategory(item.category || 'Custom');
             setValue(item.value || 0);
         } else if (!isOpen) {
-            setCategory('Custom'); setValue(0);
+            setCategory('Custom');
+            setValue(0);
         }
     }, [item, isOpen]);
 

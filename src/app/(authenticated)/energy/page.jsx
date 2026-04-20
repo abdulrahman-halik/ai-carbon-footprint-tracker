@@ -32,6 +32,7 @@ export default function EnergyPage() {
     useEffect(() => {
         try {
             const raw = localStorage.getItem('energy.readings');
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             if (raw) setReadings(JSON.parse(raw));
         } catch (e) {
             console.error('Failed to load energy readings', e);

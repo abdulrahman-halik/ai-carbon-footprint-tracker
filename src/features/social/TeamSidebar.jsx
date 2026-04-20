@@ -14,7 +14,7 @@ export default function TeamSidebar({ members = [] }) {
       <div className="flex items-center justify-between">
         <div>
           <h3 className="text-lg font-bold text-gray-900">Team Snapshot</h3>
-          <p className="text-sm text-gray-500">Quick overview of your team's activity</p>
+          <p className="text-sm text-gray-500">Quick overview of your team&apos;s activity</p>
         </div>
         <div className="bg-emerald-50 p-2 rounded-lg">
           <Users className="text-emerald-600" />

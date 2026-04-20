@@ -58,6 +58,7 @@ export function TeamCollaboration() {
             const raw = localStorage.getItem('team.members');
             if (raw) {
                 const parsed = JSON.parse(raw);
+                // eslint-disable-next-line react-hooks/set-state-in-effect
                 if (Array.isArray(parsed) && parsed.length) setTeamMembers(parsed);
             }
         } catch (e) {

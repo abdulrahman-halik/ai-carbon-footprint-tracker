@@ -36,6 +36,7 @@ export default function EmissionsDashboard() {
     };
 
     // Run on first render
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     useEffect(() => { handleCalculate(); }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
     // Chart data helpers

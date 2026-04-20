@@ -86,6 +86,7 @@ export default function ReportsPage() {
             const saved = localStorage.getItem(ESTIMATED_REPORT_KEY);
             if (!saved) return;
             const parsed = JSON.parse(saved);
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setEstimate(parsed);
         } catch (error) {
             console.error('Failed to load estimated report:', error);
