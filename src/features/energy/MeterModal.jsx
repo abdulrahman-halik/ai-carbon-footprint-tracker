@@ -1,7 +1,7 @@
 "use client";
 
 import React from "react";
-import { Zap, X } from "lucide-react";
+import { Zap } from "lucide-react";
 import { Modal, ModalContent } from "@/components/ui/Modal";
 import MeterForm from "@/features/energy/MeterForm";
 import MeterPreview from "@/features/energy/MeterPreview";
@@ -25,9 +25,6 @@ export default function MeterModal({ isOpen, onClose, reading, setReading, date,
                                 <p className="text-amber-100 text-sm mt-0.5">Track your consumption over time</p>
                             </div>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
-                            <X className="w-5 h-5" />
-                        </button>
                     </div>
 
                     {savedToast && (

@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { Target, X } from 'lucide-react';
+import { Target } from 'lucide-react';
 
 export default function GoalModalHeader({ editingId, onClose }) {
     return (
@@ -18,9 +18,6 @@ export default function GoalModalHeader({ editingId, onClose }) {
                         <p className="text-emerald-100 text-sm mt-0.5">Set a target and track your progress</p>
                     </div>
                 </div>
-                <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
-                    <X className="w-5 h-5" />
-                </button>
             </div>
         </div>
     );

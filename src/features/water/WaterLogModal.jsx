@@ -1,6 +1,6 @@
 "use client";
 import React from 'react';
-import { Droplets, X } from 'lucide-react';
+import { Droplets } from 'lucide-react';
 import { Modal, ModalContent } from '@/components/ui/Modal';
 import LogForm from './LogForm';
 import RecentEntries from './RecentEntries';
@@ -24,9 +24,6 @@ export default function WaterLogModal({ isOpen, onClose, savedToast, liters, set
                                 <p className="text-sky-100 text-sm mt-0.5">Track your daily consumption trends</p>
                             </div>
                         </div>
-                        <button onClick={onClose} className="p-2 hover:bg-white/20 rounded-xl transition-colors">
-                            <X className="w-5 h-5" />
-                        </button>
                     </div>
 
                     {savedToast && (
