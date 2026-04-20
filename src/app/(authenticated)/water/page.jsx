@@ -1,12 +1,19 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import WaterHeader from '@/features/water/WaterHeader';
 import WaterLogModal from '@/features/water/WaterLogModal';
 import WaterStats from '@/features/water/WaterStats';
 import WaterChart from '@/features/water/WaterChart';
 import WaterTips from '@/features/water/WaterTips';
 import SavedUsageCards from '@/features/water/SavedUsageCards';
+=======
+import { WaterHeader, WaterStats, WaterTips } from '@/features/water/WaterDashboardUI';
+import { WaterLogModal } from '@/features/water/WaterLogForm';
+import { WaterChart } from '@/features/water/WaterVisualization';
+import { SavedUsageCards } from '@/features/water/WaterLogHistory';
+>>>>>>> origin/main
 
 export default function WaterPage() {
     // chart data/options moved to features/water/waterData.js
@@ -56,12 +63,20 @@ export default function WaterPage() {
     };
 
     const handleSaveLog = () => {
+<<<<<<< HEAD
         const entry = { id: editingId || Date.now(), liters: Number(liters) || 0, date: logDate || new Date().toISOString().slice(0,10) };
+=======
+        const entry = { id: editingId || Date.now(), liters: Number(liters) || 0, date: logDate || new Date().toISOString().slice(0, 10) };
+>>>>>>> origin/main
         if (editingId) {
             const next = logs.map(l => l.id === editingId ? entry : l);
             persist(next);
         } else {
+<<<<<<< HEAD
             const next = [entry, ...logs].slice(0,50);
+=======
+            const next = [entry, ...logs].slice(0, 50);
+>>>>>>> origin/main
             persist(next);
         }
         setSavedToast(true);
@@ -74,7 +89,11 @@ export default function WaterPage() {
         if (!found) return;
         setEditingId(id);
         setLiters(String(found.liters || ''));
+<<<<<<< HEAD
         setLogDate(found.date || new Date().toISOString().slice(0,10));
+=======
+        setLogDate(found.date || new Date().toISOString().slice(0, 10));
+>>>>>>> origin/main
         setIsLogOpen(true);
     };
 
@@ -85,7 +104,11 @@ export default function WaterPage() {
         }
     };
 
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> origin/main
 
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-10">
