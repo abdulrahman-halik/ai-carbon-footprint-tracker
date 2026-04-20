@@ -20,28 +20,31 @@ export const SimulatorTool = () => {
     const projectedFootprint = Math.round(BASE_FOOTPRINT - totalSavings);
 
     return (
-        <Card className="w-full shadow-xl border-0 ring-1 ring-gray-200/50 bg-white/50 backdrop-blur-sm overflow-hidden">
-            <div className="p-6 sm:p-8 space-y-8">
-                <SimulatorHeader />
+        <div className="relative">
+            <div className="pointer-events-none absolute -inset-1 rounded-[28px] bg-gradient-to-r from-emerald-300/60 via-teal-300/60 to-amber-300/60 blur-xl" />
+            <Card className="relative w-full border border-white/70 bg-white/70 shadow-2xl backdrop-blur-xl overflow-hidden">
+                <div className="p-6 sm:p-8 space-y-8">
+                    <SimulatorHeader />
 
-                <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                    <SimulatorControls
-                        transportReduction={transportReduction}
-                        setTransportReduction={setTransportReduction}
-                        dietPlantBased={dietPlantBased}
-                        setDietPlantBased={setDietPlantBased}
-                        energyEfficiency={energyEfficiency}
-                        setEnergyEfficiency={setEnergyEfficiency}
-                    />
+                    <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                        <SimulatorControls
+                            transportReduction={transportReduction}
+                            setTransportReduction={setTransportReduction}
+                            dietPlantBased={dietPlantBased}
+                            setDietPlantBased={setDietPlantBased}
+                            energyEfficiency={energyEfficiency}
+                            setEnergyEfficiency={setEnergyEfficiency}
+                        />
 
-                    <SimulatorResults
-                        projectedFootprint={projectedFootprint}
-                        savings={savings}
-                        baseFootprint={BASE_FOOTPRINT}
-                    />
+                        <SimulatorResults
+                            projectedFootprint={projectedFootprint}
+                            savings={savings}
+                            baseFootprint={BASE_FOOTPRINT}
+                        />
+                    </div>
                 </div>
-            </div>
-        </Card>
+            </Card>
+        </div>
     );
 };
 

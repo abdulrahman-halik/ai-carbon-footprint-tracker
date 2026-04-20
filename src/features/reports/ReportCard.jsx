@@ -27,10 +27,10 @@ export default function ReportCard({ report }) {
     };
 
     return (
-        <div className="glass-card flex flex-col group hover:border-indigo-200 transition-colors">
+        <div className="glass-card flex flex-col group bg-white/85 border border-white/70 shadow-xl hover:shadow-2xl transition-all">
             <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold ${report.color === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-blue-100 text-blue-700'}`}>
+                    <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-xl font-bold shadow-sm ${report.color === 'emerald' ? 'bg-emerald-100 text-emerald-700' : 'bg-sky-100 text-sky-700'}`}>
                         {report.score}
                     </div>
                     <div>
@@ -54,12 +54,12 @@ export default function ReportCard({ report }) {
                 </div>
             </div>
 
-            <div className="mt-auto pt-4 border-t border-gray-100 flex gap-3">
-                <button onClick={handleDownload} className="flex-1 flex items-center justify-center gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 py-2 rounded-lg transition-colors border border-gray-200">
+            <div className="mt-auto pt-4 border-t border-emerald-100/70 flex gap-3">
+                <button onClick={handleDownload} className="flex-1 flex items-center justify-center gap-2 text-sm font-semibold text-emerald-700 hover:bg-emerald-50 py-2 rounded-xl transition-colors border border-emerald-100/70">
                     <Download size={16} />
                     PDF
                 </button>
-                <button className="flex items-center justify-center p-2 text-gray-400 hover:text-indigo-600 transition-colors rounded-lg hover:bg-indigo-50">
+                <button className="flex items-center justify-center p-2 text-gray-400 hover:text-emerald-600 transition-colors rounded-xl hover:bg-emerald-50">
                     <Share2 size={18} />
                 </button>
             </div>

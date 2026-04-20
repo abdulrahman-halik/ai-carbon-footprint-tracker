@@ -11,9 +11,9 @@ export default function LeaderItem({ user, index }) {
 
     return (
         <div
-            className={`group flex items-center justify-between p-4 rounded-xl transition-all duration-300 ${user.isCurrentUser
-                ? 'bg-gradient-to-r from-green-50 to-emerald-50 border border-green-100 shadow-sm'
-                : 'hover:bg-gray-50 border border-transparent hover:border-gray-100'
+            className={`group flex items-center justify-between p-4 rounded-2xl transition-all duration-300 ${user.isCurrentUser
+                ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/70 border border-emerald-200/70 shadow-md'
+                : 'hover:bg-emerald-50/40 border border-transparent hover:border-emerald-100/70'
             }`}
         >
             <div className="flex items-center space-x-4">
@@ -22,7 +22,7 @@ export default function LeaderItem({ user, index }) {
                 </div>
 
                 <div className="flex items-center space-x-3">
-                    <div className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm ${user.isCurrentUser ? 'bg-green-500' : 'bg-indigo-400'}`}>
+                    <div className={`h-10 w-10 rounded-full flex items-center justify-center text-sm font-bold text-white shadow-sm ${user.isCurrentUser ? 'bg-emerald-500' : 'bg-sky-500'}`}>
                         {user.avatar}
                     </div>
                     <div>

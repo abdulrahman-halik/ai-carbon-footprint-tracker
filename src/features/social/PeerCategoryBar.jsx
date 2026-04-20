@@ -13,7 +13,7 @@ export default function PeerCategoryBar({ cat, userVal, avgVal }) {
                     <span className="ml-2 text-sm font-bold text-gray-600">{avgVal} <span className="text-xs font-normal text-gray-400">kg</span></span>
                 </div>
             </div>
-            <div className={`relative h-10 ${cat.bg} rounded-xl overflow-hidden shadow-inner`}>
+            <div className={`relative h-10 ${cat.bg} rounded-2xl overflow-hidden shadow-inner`}>
                 <div
                     className="absolute top-0 bottom-0 w-0.5 bg-gray-400/50 z-10 border-r border-dashed border-gray-600"
                     style={{ left: `${(avgVal / maxVal) * 100}%` }}
@@ -27,7 +27,7 @@ export default function PeerCategoryBar({ cat, userVal, avgVal }) {
                 </div>
 
                 <div
-                    className={`h-full bg-gradient-to-r ${cat.color} rounded-r-xl transition-all duration-1000 ease-out flex items-center justify-end pr-3 shadow-sm relative z-0 group-hover:brightness-110`}
+                    className={`h-full bg-gradient-to-r ${cat.color} rounded-r-2xl transition-all duration-1000 ease-out flex items-center justify-end pr-3 shadow-sm relative z-0 group-hover:brightness-110`}
                     style={{ width: `${(userVal / maxVal) * 100}%` }}
                 >
                     <span className="text-xs font-bold text-white drop-shadow-sm filter">{userVal}</span>

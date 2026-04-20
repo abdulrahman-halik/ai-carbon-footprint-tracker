@@ -13,11 +13,11 @@ export const PeerComparison = ({ userStats, peerStats }) => {
     ];
 
     return (
-        <Card className="w-full h-full border-0 shadow-lg shadow-gray-200/50 rounded-2xl overflow-hidden ring-1 ring-black/5">
+        <Card className="w-full h-full border border-white/70 shadow-2xl rounded-3xl overflow-hidden bg-white/85">
             <div className="p-6 space-y-8">
                 <div>
                     <h3 className="text-xl font-bold text-gray-900">Peer Comparison</h3>
-                    <p className="mt-1 text-sm text-gray-500">How your footprint compares to similar households.</p>
+                    <p className="mt-1 text-sm text-gray-600">How your footprint compares to similar households.</p>
                 </div>
 
                 <div className="space-y-8">

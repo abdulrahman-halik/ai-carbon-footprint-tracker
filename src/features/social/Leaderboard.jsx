@@ -15,7 +15,7 @@ export const Leaderboard = () => {
     const [filter, setFilter] = useState('weekly');
 
     return (
-        <Card className="w-full h-full border-0 shadow-lg shadow-gray-200/50 rounded-2xl overflow-hidden ring-1 ring-black/5 bg-white">
+        <Card className="w-full h-full border border-white/70 shadow-2xl rounded-3xl overflow-hidden bg-white/85">
             <div className="p-6 space-y-6">
                 <LeaderboardHeader filter={filter} setFilter={setFilter} />
 

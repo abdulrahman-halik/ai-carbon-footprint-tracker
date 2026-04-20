@@ -30,11 +30,18 @@ export default function ReportsPage() {
     ];
 
     return (
-        <div className="space-y-8 max-w-7xl mx-auto pb-10">
+        <div className="relative space-y-10 max-w-7xl mx-auto pb-10">
+            <div className="pointer-events-none absolute -top-10 right-6 h-40 w-40 rounded-full bg-emerald-200/60 blur-3xl" />
+            <div className="pointer-events-none absolute -top-6 left-1/3 h-32 w-32 rounded-full bg-amber-200/60 blur-3xl" />
+            <div className="pointer-events-none absolute top-48 left-10 h-48 w-48 rounded-full bg-sky-200/60 blur-3xl" />
+
             <ReportsHeader />
             <FeaturedCertificate />
 
-            <h3 className="text-xl font-bold text-gray-900 mt-8">Monthly Summaries</h3>
+            <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-gray-900">Monthly Summaries</h3>
+                <span className="rounded-2xl border border-emerald-200 bg-white/70 px-4 py-2 text-xs font-semibold text-emerald-800">2 reports ready</span>
+            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {reports.map((report) => (
                     <ReportCard key={report.id} report={report} />

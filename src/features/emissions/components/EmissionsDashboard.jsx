@@ -1,10 +1,9 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { EmissionSparkline } from "./EmissionSparkline";
-import { ImpactVisualizer } from "./ImpactVisualizer";
-import { Button } from "@/components/ui/Button";
-import { Calculator } from 'lucide-react';
+import EmissionsHero from "./EmissionsHero";
+import EmissionsChartsRow from "./EmissionsChartsRow";
+import EmissionsBreakdownHeader from "./EmissionsBreakdownHeader";
 import { calculateCarbonFootprint, getFootprintFeedback } from '@/lib/carbonCalculator';
 import EmissionsInputForm from "./EmissionsInputForm";
 import EmissionsSummaryCards from "./EmissionsSummaryCards";
@@ -92,18 +91,13 @@ export default function EmissionsDashboard() {
     }
 
     return (
-        <div className="space-y-6">
-            {/* Header */}
-            <div className="flex justify-between items-center">
-                <div>
-                    <h2 className="text-2xl font-bold text-gray-900">Emissions Dashboard</h2>
-                    <p className="text-gray-600">Track and analyze your carbon footprint</p>
-                </div>
-                <Button onClick={() => setShowInputs(!showInputs)} variant="outline" className="flex items-center gap-2">
-                    <Calculator className="w-4 h-4" />
-                    {showInputs ? 'Hide' : 'Update'} Data
-                </Button>
-            </div>
+        <div className="relative space-y-8">
+            <div className="pointer-events-none absolute -top-10 right-6 h-40 w-40 rounded-full bg-emerald-200/60 blur-3xl" />
+            <div className="pointer-events-none absolute -top-6 left-1/3 h-32 w-32 rounded-full bg-amber-200/60 blur-3xl" />
+            <div className="pointer-events-none absolute top-48 left-10 h-48 w-48 rounded-full bg-sky-200/60 blur-3xl" />
+
+            {/* Hero */}
+            <EmissionsHero showInputs={showInputs} onToggleInputs={() => setShowInputs(!showInputs)} />
 
             {/* Collapsible input form */}
             {showInputs && (
@@ -120,36 +114,9 @@ export default function EmissionsDashboard() {
             <EmissionsSummaryCards results={results} feedback={feedback} />
 
             {/* Charts row */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                <div className="glass-card bg-white border-none shadow-sm p-6 lg:col-span-2">
-                    <div className="flex justify-between items-center mb-6">
-                        <div>
-                            <h3 className="text-lg font-bold text-gray-900">Weekly Trends</h3>
-                            <p className="text-xs text-gray-500 uppercase tracking-wide">Carbon Footprint History</p>
-                        </div>
-                        <span className="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-1 rounded">↘ -8%</span>
-                    </div>
-                    <div className="h-[300px] w-full">
-                        <EmissionSparkline data={emissionsData} className="h-full w-full" />
-                    </div>
-                </div>
-                <div className="glass-card bg-white border-none shadow-sm p-8">
-                    <div className="mb-8">
-                        <h3 className="text-xl font-bold text-gray-900">Impact Breakdown</h3>
-                        <p className="text-sm text-gray-500 font-medium">Where your emissions come from</p>
-                    </div>
-                    <div className="h-[340px] w-full">
-                        <ImpactVisualizer data={impactData} />
-                    </div>
-                </div>
-            </div>
+            <EmissionsChartsRow emissionsData={emissionsData} impactData={impactData} />
 
-            <div className="flex items-center justify-between">
-                <h3 className="text-lg font-bold text-gray-900">Detailed Breakdown</h3>
-                <div className="flex items-center gap-3">
-                    <button onClick={openNewItem} className="px-3 py-1 rounded-lg bg-emerald-50 text-emerald-700">Add Item</button>
-                </div>
-            </div>
+            <EmissionsBreakdownHeader onAddItem={openNewItem} />
 
             {/* Detailed breakdown table (includes custom items) */}
             <EmissionsBreakdownTable breakdown={results.breakdown} extraEntries={customItems} onEditExtra={openEditItem} onDeleteExtra={handleDeleteItem} />

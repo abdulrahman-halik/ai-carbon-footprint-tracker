@@ -6,7 +6,7 @@ import ScenarioSlider from './ScenarioSlider';
 export default function SimulatorControls({ transportReduction, setTransportReduction, dietPlantBased, setDietPlantBased, energyEfficiency, setEnergyEfficiency }) {
     return (
         <div className="lg:col-span-7 space-y-8">
-            <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm space-y-6 hover:shadow-md transition-shadow duration-300">
+            <div className="bg-white/80 p-6 rounded-3xl border border-white/70 shadow-xl space-y-6 backdrop-blur-md hover:shadow-2xl transition-shadow duration-300">
                 <ScenarioSlider
                     label="Reduce Car Travel"
                     value={transportReduction}

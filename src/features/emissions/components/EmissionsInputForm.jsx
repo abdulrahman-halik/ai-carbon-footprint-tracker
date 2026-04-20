@@ -45,9 +45,9 @@ export default function EmissionsInputForm({ inputs, loading, onChange, onCalcul
     const feedback = useMemo(() => getFootprintFeedback(preview.totalFootprint), [preview]);
 
     return (
-        <Card className="shadow-lg border-0 ring-1 ring-gray-200/50">
+        <Card className="shadow-2xl border border-white/70 bg-white/80 backdrop-blur-xl">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <div className="md:col-span-2 border-r border-gray-50 p-6">
+                <div className="md:col-span-2 border-r border-emerald-100/60 p-6">
                     <div className="flex items-start justify-between mb-4">
                         <div>
                             <CardHeader className="p-0">
@@ -55,8 +55,8 @@ export default function EmissionsInputForm({ inputs, loading, onChange, onCalcul
                                 <p className="text-sm text-gray-500 mt-1">Adjust your inputs to recalculate your monthly footprint instantly.</p>
                             </CardHeader>
                         </div>
-                        <div className="hidden md:flex items-center gap-3 text-sm text-gray-500">
-                            <Calculator className="w-5 h-5 text-gray-400" />
+                        <div className="hidden md:flex items-center gap-3 text-sm text-emerald-700">
+                            <Calculator className="w-5 h-5 text-emerald-500" />
                             Live Preview
                         </div>
                     </div>
@@ -68,8 +68,8 @@ export default function EmissionsInputForm({ inputs, loading, onChange, onCalcul
                                 return (
                                     <div key={section.title} className="space-y-4">
                                         <div className="flex items-center gap-2">
-                                            <div className="p-2 rounded-md bg-gray-50 border border-gray-100">
-                                                <Icon className="w-4 h-4 text-gray-600" />
+                                            <div className="p-2 rounded-md bg-emerald-50 border border-emerald-100/70">
+                                                <Icon className="w-4 h-4 text-emerald-600" />
                                             </div>
                                             <h3 className="font-medium text-gray-900">{section.title}</h3>
                                         </div>
@@ -112,7 +112,7 @@ export default function EmissionsInputForm({ inputs, loading, onChange, onCalcul
                 </div>
 
                 <div className="md:col-span-1 p-6">
-                    <div className="bg-gradient-to-br from-emerald-50 to-white p-4 rounded-2xl border border-gray-100 shadow-sm">
+                    <div className="bg-gradient-to-br from-emerald-50 via-white to-sky-50 p-4 rounded-3xl border border-white/70 shadow-lg">
                         <div className="flex items-center justify-between">
                             <div>
                                 <h4 className="text-sm font-semibold text-gray-700">Estimated Monthly Footprint</h4>
@@ -131,14 +131,14 @@ export default function EmissionsInputForm({ inputs, loading, onChange, onCalcul
                                         <span className="text-gray-700 font-medium">{b.category}</span>
                                         <span className="text-xs text-gray-500">{b.value.toFixed(1)} kg</span>
                                     </div>
-                                    <div className="w-full bg-gray-200 h-2 rounded-full mt-1">
+                                    <div className="w-full bg-emerald-100 h-2 rounded-full mt-1">
                                         <div className="h-2 rounded-full" style={{ width: `${b.percentage}%`, backgroundColor: b.color }} />
                                     </div>
                                 </div>
                             ))}
                         </div>
 
-                        <div className="mt-5 p-3 bg-white rounded-lg border border-gray-50">
+                        <div className="mt-5 p-3 bg-white/80 rounded-2xl border border-white/70">
                             <div className="flex items-start gap-3">
                                 <div className={"p-2 rounded-full " + (feedback.level === 'excellent' ? 'bg-green-100' : feedback.level === 'good' ? 'bg-blue-100' : feedback.level === 'average' ? 'bg-yellow-100' : 'bg-orange-100') }>
                                     <Calculator className="w-5 h-5 text-gray-700" />

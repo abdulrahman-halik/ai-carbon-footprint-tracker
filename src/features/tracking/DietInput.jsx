@@ -30,10 +30,10 @@ export const DietInput = ({ onUpdate }) => {
                             onClick={() => handleSelect(d.id)}
                             className={`group relative flex items-center space-x-4 p-4 rounded-2xl border-2 transition-all duration-200 text-left ${dietType === d.id
                                 ? 'bg-emerald-50 border-emerald-500 shadow-md transform scale-[1.02]'
-                                : 'bg-white border-gray-100 hover:border-emerald-200 hover:bg-emerald-50/30'
+                                : 'bg-white/80 border-white/70 hover:border-emerald-200 hover:bg-emerald-50/40'
                                 }`}
                         >
-                            <span className="text-3xl bg-white p-2 rounded-full shadow-sm">{d.icon}</span>
+                            <span className="text-3xl bg-white/80 p-2 rounded-full shadow-sm">{d.icon}</span>
                             <div>
                                 <span className={`block text-sm font-bold ${dietType === d.id ? 'text-emerald-800' : 'text-gray-700'
                                     }`}>

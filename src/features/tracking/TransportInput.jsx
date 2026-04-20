@@ -23,7 +23,7 @@ export const TransportInput = ({ onUpdate }) => {
                             onClick={() => handleUpdate(m, distance)}
                             className={`group relative p-4 rounded-2xl border-2 text-sm font-bold capitalize transition-all duration-200 ${mode === m
                                 ? 'bg-emerald-50 border-emerald-500 text-emerald-700 shadow-md transform scale-[1.02]'
-                                : 'bg-white border-gray-100 text-gray-500 hover:border-emerald-200 hover:bg-emerald-50/30'
+                                : 'bg-white/80 border-white/70 text-gray-600 hover:border-emerald-200 hover:bg-emerald-50/40'
                                 }`}
                         >
                             <span className="block text-2xl mb-2">{getTransportIcon(m)}</span>
@@ -44,7 +44,7 @@ export const TransportInput = ({ onUpdate }) => {
                         min="0"
                         value={distance}
                         onChange={(e) => handleUpdate(mode, parseFloat(e.target.value) || 0)}
-                        className="w-full pl-4 pr-12 py-3 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-emerald-500 transition-all text-lg font-medium"
+                        className="w-full pl-4 pr-12 py-3 rounded-xl border-emerald-100/70 bg-white/70 focus:bg-white focus:border-emerald-500 focus:ring-emerald-500 transition-all text-lg font-medium"
                         placeholder="0"
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 font-medium pointer-events-none">km</span>

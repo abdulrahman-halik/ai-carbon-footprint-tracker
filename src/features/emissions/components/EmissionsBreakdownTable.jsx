@@ -20,7 +20,7 @@ export default function EmissionsBreakdownTable({ breakdown, extraEntries = [], 
     const sorted = withPerc.sort((a, b) => b.value - a.value);
 
     return (
-        <Card className="shadow-lg border-0 ring-1 ring-gray-200/50">
+        <Card className="shadow-2xl border border-white/70 bg-white/80 backdrop-blur-xl">
             <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                     <TrendingUp className="w-5 h-5" />
@@ -38,7 +38,7 @@ export default function EmissionsBreakdownTable({ breakdown, extraEntries = [], 
                                     <span className="text-sm text-gray-500 ml-2">({Number(item.percentage).toFixed(1)}%)</span>
                                 </div>
                             </div>
-                            <div className="w-full bg-gray-200 rounded-full h-3">
+                            <div className="w-full bg-emerald-100 rounded-full h-3">
                                 <div
                                     className="h-3 rounded-full transition-all duration-500"
                                     style={{ width: `${Number(item.percentage)}%`, backgroundColor: item.color }}

@@ -22,12 +22,12 @@ export default function EmissionsSummaryCards({ results, feedback }) {
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Total Footprint */}
-            <div className="glass-card bg-white border-none shadow-sm hover:shadow-md p-6">
+            <div className="glass-card bg-white/85 border border-white/70 shadow-xl hover:shadow-2xl p-6 rounded-3xl">
                 <div className="flex justify-between items-start mb-4">
-                    <span className="bg-blue-50 text-blue-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                    <span className="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
                         Total Footprint
                     </span>
-                    <div className="bg-blue-500 rounded-full p-1">
+                    <div className="bg-emerald-500 rounded-full p-1">
                         <Calculator className="w-4 h-4 text-white" />
                     </div>
                 </div>
@@ -41,7 +41,7 @@ export default function EmissionsSummaryCards({ results, feedback }) {
             </div>
 
             {/* Energy */}
-            <div className="glass-card bg-white border-none shadow-sm hover:shadow-md p-6">
+            <div className="glass-card bg-white/85 border border-white/70 shadow-xl hover:shadow-2xl p-6 rounded-3xl">
                 <div className="flex justify-between items-start mb-4">
                     <span className="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
                         Energy
@@ -58,19 +58,19 @@ export default function EmissionsSummaryCards({ results, feedback }) {
             </div>
 
             {/* Transport */}
-            <div className="glass-card bg-white border-none shadow-sm hover:shadow-md p-6">
+            <div className="glass-card bg-white/85 border border-white/70 shadow-xl hover:shadow-2xl p-6 rounded-3xl">
                 <div className="flex justify-between items-start mb-4">
-                    <span className="bg-orange-50 text-orange-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
+                    <span className="bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
                         Transport
                     </span>
-                    <div className="bg-orange-500 rounded-full p-1">
+                    <div className="bg-amber-500 rounded-full p-1">
                         <Car className="w-4 h-4 text-white" />
                     </div>
                 </div>
                 <div className="space-y-1">
                     <h3 className="text-2xl font-bold text-gray-900">{results.categories.transport.toFixed(1)}</h3>
                     <p className="text-sm text-gray-500">kg CO₂e / month</p>
-                    <p className="text-xs text-orange-600 font-medium">{transportPct}% of total</p>
+                    <p className="text-xs text-amber-700 font-medium">{transportPct}% of total</p>
                 </div>
             </div>
         </div>
