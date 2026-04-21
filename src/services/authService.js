@@ -28,10 +28,12 @@ const authService = {
     },
 
     register: async (userData) => {
-        const response = await apiClient.post("/api/auth/register", userData);
-        // After registration, we might need to login or just return user data
-        // For simplicity, let's assume registration doesn't auto-login or does return UserOut
-        return response.data;
+        await apiClient.post("/api/auth/register", userData);
+        // Automatically login after successful registration
+        return await authService.login({
+            email: userData.email,
+            password: userData.password
+        });
     },
 
     logout: async () => {

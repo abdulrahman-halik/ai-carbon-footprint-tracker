@@ -4,12 +4,19 @@ import Link from "next/link";
 import { BarChart3, TrendingDown, ArrowRight, Droplets, Zap } from "lucide-react";
 import { MiniBarChart } from "./DashboardCharts";
 
-const WEEKLY_EMISSIONS = [30, 45, 35, 50, 38, 20, 28];
-const WEEKLY_WATER = [145, 132, 155, 120, 140, 148, 150];
-const WEEKLY_ENERGY = [280, 310, 295, 340, 300, 260, 290];
 const DAYS = ["M", "T", "W", "T", "F", "S", "S"];
 
-export default function DashboardTrends() {
+export default function DashboardTrends({ emissions = [], water = [], energy = [] }) {
+    // Fill with zeroes if data is short or missing
+    const fillData = (arr, length = 7) => {
+        const result = [...arr];
+        while (result.length < length) result.unshift(0);
+        return result.slice(-length);
+    };
+
+    const emissionsData = fillData(emissions);
+    const waterData = fillData(water);
+    const energyData = fillData(energy);
     return (
         <div className="lg:col-span-2 space-y-6">
             {/* Weekly Emissions Trend */}
@@ -34,7 +41,7 @@ export default function DashboardTrends() {
                     </div>
                 </div>
                 <div className="p-6">
-                    <MiniBarChart data={WEEKLY_EMISSIONS} color="#10b981" />
+                    <MiniBarChart data={emissionsData} color="#10b981" />
                     <div className="flex justify-between mt-2">
                         {DAYS.map((d, i) => (
                             <span key={i} className="text-[10px] text-gray-400 font-medium flex-1 text-center">{d}</span>
@@ -59,7 +66,7 @@ export default function DashboardTrends() {
                         </div>
                         <Link href="/water" className="text-[10px] font-medium text-sky-600 hover:underline">Details →</Link>
                     </div>
-                    <MiniBarChart data={WEEKLY_WATER} color="#0ea5e9" />
+                    <MiniBarChart data={waterData} color="#0ea5e9" />
                     <div className="flex justify-between mt-2">
                         {DAYS.map((d, i) => (
                             <span key={i} className="text-[10px] text-gray-400 flex-1 text-center">{d}</span>
@@ -68,7 +75,7 @@ export default function DashboardTrends() {
                     <div className="mt-4 flex items-center justify-between pt-3 border-t border-gray-50">
                         <span className="text-xs text-gray-500">Avg / day</span>
                         <span className="text-sm font-bold text-sky-600">
-                            {Math.round(WEEKLY_WATER.reduce((a, b) => a + b, 0) / WEEKLY_WATER.length)} L
+                            {Math.round(waterData.reduce((a, b) => a + b, 0) / (waterData.length || 1))} L
                         </span>
                     </div>
                 </div>
@@ -87,7 +94,7 @@ export default function DashboardTrends() {
                         </div>
                         <Link href="/energy" className="text-[10px] font-medium text-amber-600 hover:underline">Details →</Link>
                     </div>
-                    <MiniBarChart data={WEEKLY_ENERGY} color="#f59e0b" />
+                    <MiniBarChart data={energyData} color="#f59e0b" />
                     <div className="flex justify-between mt-2">
                         {DAYS.map((d, i) => (
                             <span key={i} className="text-[10px] text-gray-400 flex-1 text-center">{d}</span>
@@ -96,7 +103,7 @@ export default function DashboardTrends() {
                     <div className="mt-4 flex items-center justify-between pt-3 border-t border-gray-50">
                         <span className="text-xs text-gray-500">Avg / day</span>
                         <span className="text-sm font-bold text-amber-600">
-                            {Math.round(WEEKLY_ENERGY.reduce((a, b) => a + b, 0) / WEEKLY_ENERGY.length)} kWh
+                            {Math.round(energyData.reduce((a, b) => a + b, 0) / (energyData.length || 1))} kWh
                         </span>
                     </div>
                 </div>
