@@ -48,7 +48,7 @@ export default function DashboardSidebar({ onNewEntry }) {
             {/* Quick Actions */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <h2 className="text-base font-bold text-gray-900 mb-4">Quick Actions</h2>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {QUICK_ACTIONS.map((action) => {
                         const Icon = action.icon;
                         const c = COLOR_MAP[action.color];

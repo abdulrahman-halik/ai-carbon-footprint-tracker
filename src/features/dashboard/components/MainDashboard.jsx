@@ -1,7 +1,8 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import mockApi from "@/mockApi";
+import dashboardService from "@/services/dashboardService";
+import authService from "@/services/authService";
 import { Modal, ModalContent, ModalHeader, ModalTitle } from "@/components/ui/Modal";
 import ActivityLogWizard from "@/features/tracking/ActivityLogWizard";
 import DashboardStatsGrid from "./DashboardStatsGrid";
@@ -26,9 +27,9 @@ export default function MainDashboard() {
 
     const fetchData = async () => {
         try {
-            const statsRes = await mockApi.getStats();
+            const statsRes = await dashboardService.getStats();
             setStats(statsRes);
-            const u = mockApi.getCurrentUser();
+            const u = authService.getCurrentUser();
             setUser(u);
         } catch (err) {
             console.error("Dashboard fetch error:", err);

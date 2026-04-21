@@ -5,7 +5,7 @@ import WizardLayout from "@/features/onboarding/WizardLayout";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { useRouter } from "next/navigation";
-import mockApi from "@/mockApi";
+import onboardingService from "@/services/onboardingService";
 import { useAuth } from "@/hooks/useAuth";
 
 // Placeholder configuration for the wizard steps
@@ -42,7 +42,7 @@ import BehaviorStageStep from "@/features/onboarding/BehaviorStageStep";
 import { Card } from "@/components/ui/Card";
 
 function WizardContent() {
-    const { currentStep } = useOnboarding();
+    const { currentStep, onboardingData } = useOnboarding();
     const router = useRouter();
     const { user } = useAuth();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -54,14 +54,16 @@ function WizardContent() {
     const handleFinish = async () => {
         try {
             setIsSubmitting(true);
-            await mockApi.submitOnboarding({
-                userId: user?.id,
-                completed: true
-            });
-            // The AuthProvider's user isn't directly listening to localStorage changes unless reloaded/refetched.
-            // A hard refresh or router.push will trigger the guard. Since RouteGuard checks user.onboardingCompleted, 
-            // we should ideally update the React state. For mock behavior, a simple router check works 
-            // if we reload, or we can just redirect to dashboard and let AuthProvider pull from localStorage next time.
+            const userOut = await onboardingService.completeOnboarding(onboardingData);
+
+            // Update local user data with onboarding completion status
+            const currentLocalUser = JSON.parse(localStorage.getItem("user") || "{}");
+            localStorage.setItem("user", JSON.stringify({
+                ...currentLocalUser,
+                ...userOut,
+                onboarding_completed: true
+            }));
+
             // A window.location.href ensures the page correctly re-initializes contexts from localStorage:
             window.location.href = '/dashboard';
         } catch (error) {

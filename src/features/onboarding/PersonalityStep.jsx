@@ -14,7 +14,7 @@ const TRAITS = [
 
 export default function PersonalityStep() {
     const { onboardingData, updateData, setIsStepValid } = useOnboarding();
-    const [scores, setScores] = useState(onboardingData.personality || {});
+    const [scores, setScores] = useState(onboardingData.personality || TRAITS.reduce((acc, trait) => ({ ...acc, [trait.id]: 5 }), {}));
 
     // Initialize with default values if not present (optional, or force user to pick)
     // Here we start empty or with existing data
