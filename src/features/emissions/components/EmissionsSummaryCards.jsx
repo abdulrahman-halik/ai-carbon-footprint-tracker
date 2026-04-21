@@ -55,24 +55,6 @@ export default function EmissionsSummaryCards({ results, feedback }) {
     }[feedback?.level] ?? 'bg-orange-100 text-orange-800';
 
     return (
-<<<<<<< HEAD
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {/* Total Footprint */}
-            <div className="glass-card bg-white/85 border border-white/70 shadow-xl hover:shadow-2xl p-6 rounded-3xl">
-                <div className="flex justify-between items-start mb-4">
-                    <span className="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
-                        Total Footprint
-                    </span>
-                    <div className="bg-emerald-500 rounded-full p-1">
-                        <Calculator className="w-4 h-4 text-white" />
-                    </div>
-                </div>
-                <div className="space-y-1">
-                    <h3 className="text-3xl font-bold text-gray-900">{results.totalFootprint.toFixed(1)}</h3>
-                    <p className="text-sm text-gray-500">kg CO₂e / month</p>
-                    <div className={`inline-block px-2 py-1 rounded text-xs font-medium mt-2 ${levelClass}`}>
-                        {feedback?.text}
-=======
         <div className="space-y-4">
             {/* Hero total card */}
             <div className="glass-card bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-6 rounded-xl shadow-md">
@@ -86,46 +68,11 @@ export default function EmissionsSummaryCards({ results, feedback }) {
                         <div className={`inline-block px-2 py-1 rounded text-xs font-bold ${levelClass}`}>
                             {feedback?.text}
                         </div>
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                     </div>
                 </div>
                 {feedback?.desc && <p className="text-xs text-emerald-100 mt-3">{feedback.desc}</p>}
             </div>
 
-<<<<<<< HEAD
-            {/* Energy */}
-            <div className="glass-card bg-white/85 border border-white/70 shadow-xl hover:shadow-2xl p-6 rounded-3xl">
-                <div className="flex justify-between items-start mb-4">
-                    <span className="bg-emerald-50 text-emerald-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
-                        Energy
-                    </span>
-                    <div className="bg-emerald-500 rounded-full p-1">
-                        <Zap className="w-4 h-4 text-white" />
-                    </div>
-                </div>
-                <div className="space-y-1">
-                    <h3 className="text-2xl font-bold text-gray-900">{results.categories.energy.toFixed(1)}</h3>
-                    <p className="text-sm text-gray-500">kg CO₂e / month</p>
-                    <p className="text-xs text-emerald-600 font-medium">{energyPct}% of total</p>
-                </div>
-            </div>
-
-            {/* Transport */}
-            <div className="glass-card bg-white/85 border border-white/70 shadow-xl hover:shadow-2xl p-6 rounded-3xl">
-                <div className="flex justify-between items-start mb-4">
-                    <span className="bg-amber-50 text-amber-700 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider">
-                        Transport
-                    </span>
-                    <div className="bg-amber-500 rounded-full p-1">
-                        <Car className="w-4 h-4 text-white" />
-                    </div>
-                </div>
-                <div className="space-y-1">
-                    <h3 className="text-2xl font-bold text-gray-900">{results.categories.transport.toFixed(1)}</h3>
-                    <p className="text-sm text-gray-500">kg CO₂e / month</p>
-                    <p className="text-xs text-amber-700 font-medium">{transportPct}% of total</p>
-                </div>
-=======
             {/* 4 category cards */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
                 <StatCard
@@ -156,7 +103,6 @@ export default function EmissionsSummaryCards({ results, feedback }) {
                     subtitle={<span className="text-purple-600">{shoppingPct}% of total</span>}
                     impactLevel={getImpactLevel(categories.shopping || 0, 20, 60)}
                 />
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
             </div>
         </div>
     );

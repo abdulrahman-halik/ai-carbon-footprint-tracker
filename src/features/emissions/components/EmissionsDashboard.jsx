@@ -1,16 +1,5 @@
 "use client";
 
-<<<<<<< HEAD
-import React, { useState, useEffect } from "react";
-import EmissionsHero from "./EmissionsHero";
-import EmissionsChartsRow from "./EmissionsChartsRow";
-import EmissionsBreakdownHeader from "./EmissionsBreakdownHeader";
-import { calculateCarbonFootprint, getFootprintFeedback } from '@/lib/carbonCalculator';
-import EmissionsInputForm from "./EmissionsInputForm";
-import EmissionsSummaryCards from "./EmissionsSummaryCards";
-import EmissionsBreakdownTable from "./EmissionsBreakdownTable";
-import EmissionItemModal from "./EmissionItemModal";
-=======
 import React, { useState, useEffect, useCallback } from "react";
 import { Calculator, Leaf } from 'lucide-react';
 import { Button } from "@/components/ui/Button";
@@ -41,7 +30,6 @@ const DEFAULT_INPUTS = {
     // Shopping
     clothing: 2, electronics: 0, online_orders: 4,
 };
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 
 export default function EmissionsDashboard() {
     const [inputs, setInputs] = useState(DEFAULT_INPUTS);
@@ -113,15 +101,6 @@ export default function EmissionsDashboard() {
     };
 
     return (
-<<<<<<< HEAD
-        <div className="relative space-y-8">
-            <div className="pointer-events-none absolute -top-10 right-6 h-40 w-40 rounded-full bg-emerald-200/60 blur-3xl" />
-            <div className="pointer-events-none absolute -top-6 left-1/3 h-32 w-32 rounded-full bg-amber-200/60 blur-3xl" />
-            <div className="pointer-events-none absolute top-48 left-10 h-48 w-48 rounded-full bg-sky-200/60 blur-3xl" />
-
-            {/* Hero */}
-            <EmissionsHero showInputs={showInputs} onToggleInputs={() => setShowInputs(!showInputs)} />
-=======
         <div className="space-y-6">
             {/* Header */}
             <div className="flex justify-between items-center flex-wrap gap-3">
@@ -136,21 +115,12 @@ export default function EmissionsDashboard() {
                     {showInputs ? 'Hide' : 'Update'} Data
                 </Button>
             </div>
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 
             {/* Collapsible input form */}
             {showInputs && (
                 <EmissionsInputForm
-<<<<<<< HEAD
-                    inputs={inputs}
-                    loading={loading}
-                    onChange={handleInputChange}
-                    onCalculate={handleCalculate}
-                    onCancel={() => setShowInputs(false)}
-=======
                     inputs={inputs} loading={loading}
                     onChange={handleInputChange} onCalculate={handleCalculate}
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                 />
             )}
 
@@ -176,16 +146,6 @@ export default function EmissionsDashboard() {
             />
 
             {/* Charts row */}
-<<<<<<< HEAD
-            <EmissionsChartsRow emissionsData={emissionsData} impactData={impactData} />
-
-            <EmissionsBreakdownHeader onAddItem={openNewItem} />
-
-            {/* Detailed breakdown table (includes custom items) */}
-            <EmissionsBreakdownTable breakdown={results.breakdown} extraEntries={customItems} onEditExtra={openEditItem} onDeleteExtra={handleDeleteItem} />
-
-            <EmissionItemModal isOpen={isItemModalOpen} onClose={() => setIsItemModalOpen(false)} onSave={(it) => { if (editingItem) handleSaveItem(it); else handleAddItem(it); }} item={editingItem} />
-=======
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="glass-card bg-white border-none shadow-sm p-6 lg:col-span-2">
                     <div className="flex justify-between items-center mb-4">
@@ -215,7 +175,6 @@ export default function EmissionsDashboard() {
 
             {/* Breakdown table */}
             <EmissionsBreakdownTable breakdown={results.breakdown} />
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
         </div>
     );
 }

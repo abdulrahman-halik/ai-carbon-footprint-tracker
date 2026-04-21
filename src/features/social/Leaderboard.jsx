@@ -102,11 +102,7 @@ export const Leaderboard = () => {
                 <LeaderboardHeader filter={filter} setFilter={setFilter} />
 
                 <div className="space-y-3">
-<<<<<<< HEAD
-                    {MOCK_LEADERBOARD.map((user, index) => (
-=======
                     {users.map((user, index) => (
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                         <LeaderItem key={user.id} user={user} index={index} />
                     ))}
                 </div>

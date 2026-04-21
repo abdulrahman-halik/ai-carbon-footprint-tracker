@@ -1,21 +1,11 @@
 "use client";
 
-<<<<<<< HEAD
-import React, { useState, useEffect } from "react";
-=======
 import React, { useState, useEffect, useMemo } from "react";
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 import mockApi from "@/mockApi";
 import { Modal, ModalContent, ModalHeader, ModalTitle } from "@/components/ui/Modal";
 import ActivityLogWizard from "@/features/tracking/ActivityLogWizard";
 import DashboardStatsGrid from "./DashboardStatsGrid";
 import DashboardSidebar from "./DashboardSidebar";
-import { useAuth } from "@/hooks/useAuth";
-import DashboardHero from "./DashboardHero";
-import EmissionsSnapshotCard from "./EmissionsSnapshotCard";
-import LearningCard from "./LearningCard";
-
-// Sub-components
 import DashboardHero from "./DashboardHero";
 import DashboardInsights from "./DashboardInsights";
 import DashboardTrends from "./DashboardTrends";
@@ -30,10 +20,6 @@ export default function MainDashboard() {
     const [stats, setStats] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
-<<<<<<< HEAD
-    const { user } = useAuth();
-    const displayName = user?.name?.trim() || "User";
-=======
     const [user, setUser] = useState(null);
 
     const fetchData = async () => {
@@ -48,7 +34,6 @@ export default function MainDashboard() {
             setLoading(false);
         }
     };
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 
     useEffect(() => {
         fetchData();
@@ -78,33 +63,12 @@ export default function MainDashboard() {
     }
 
     return (
-<<<<<<< HEAD
-        <div className="relative space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="pointer-events-none absolute -top-10 right-6 h-40 w-40 rounded-full bg-emerald-200/60 blur-3xl" />
-            <div className="pointer-events-none absolute -top-6 left-1/3 h-32 w-32 rounded-full bg-amber-200/60 blur-3xl" />
-            <div className="pointer-events-none absolute top-48 left-10 h-48 w-48 rounded-full bg-sky-200/60 blur-3xl" />
-
-            {/* Greeting hero */}
-            <DashboardHero displayName={displayName} onNewEntry={() => setIsNewEntryOpen(true)} />
-=======
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 pb-4">
 
             <DashboardHero user={user} greeting={greeting} />
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 
             <DashboardStatsGrid stats={stats} />
 
-<<<<<<< HEAD
-            {/* Main content */}
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left: Emissions snapshot + Learning */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Emissions snapshot */}
-                    <EmissionsSnapshotCard stats={stats} />
-
-                    {/* Learning */}
-                    <LearningCard />
-=======
             <DashboardInsights />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -112,7 +76,6 @@ export default function MainDashboard() {
                     <DashboardTrends />
                     <DashboardGoals />
                     <DashboardComparisons stats={stats} />
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                 </div>
 
                 <DashboardSidebar onNewEntry={() => setIsNewEntryOpen(true)} />

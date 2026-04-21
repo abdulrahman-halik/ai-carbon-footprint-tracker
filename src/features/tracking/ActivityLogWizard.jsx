@@ -36,18 +36,10 @@ export const ActivityLogWizard = ({ onComplete }) => {
 
     if (submitted) {
         return (
-<<<<<<< HEAD
-            <div className="glass-card w-full text-center py-16 animate-in fade-in zoom-in duration-300 bg-white/80 border border-white/70 shadow-2xl">
-                <div className="mx-auto h-20 w-20 bg-emerald-100/60 rounded-full flex items-center justify-center mb-6 shadow-sm ring-4 ring-emerald-50">
-                    <svg className="w-10 h-10 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-=======
             <div className="glass-card w-full text-center py-10 px-6 animate-in fade-in zoom-in duration-500">
                 {/* Success Icon */}
                 <div className="mx-auto h-20 w-20 bg-emerald-100 rounded-full flex items-center justify-center mb-5 shadow-emerald-100 shadow-lg ring-4 ring-emerald-50">
                     <CheckCircle2 className="w-10 h-10 text-emerald-600" />
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">Activity Logged!</h3>
                 <p className="text-gray-500 mt-1 text-sm max-w-xs mx-auto">
@@ -162,12 +154,8 @@ export const ActivityLogWizard = ({ onComplete }) => {
                 </button>
                 <button
                     onClick={handleNext}
-<<<<<<< HEAD
-                    className="px-8 py-2.5 bg-emerald-700 text-white text-sm font-semibold rounded-xl hover:bg-emerald-800 shadow-lg shadow-emerald-300/40 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all"
-=======
                     disabled={isSubmitting}
                     className="flex items-center justify-center gap-2 px-8 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 shadow-lg shadow-gray-200 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all min-w-[140px]"
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                 >
                     {isSubmitting ? (
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

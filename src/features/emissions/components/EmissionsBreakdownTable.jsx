@@ -30,11 +30,7 @@ export default function EmissionsBreakdownTable({ breakdown, extraEntries = [], 
     const topItem = sorted[0];
 
     return (
-<<<<<<< HEAD
-        <Card className="shadow-2xl border border-white/70 bg-white/80 backdrop-blur-xl">
-=======
         <Card className="shadow-sm border-0 ring-1 ring-gray-200/50">
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
             <CardHeader>
                 <CardTitle className="flex items-center gap-2 text-base">
                     <TrendingUp className="w-5 h-5 text-gray-500" />
@@ -53,32 +49,6 @@ export default function EmissionsBreakdownTable({ breakdown, extraEntries = [], 
                     </div>
                 )}
                 <div className="space-y-4">
-<<<<<<< HEAD
-                    {sorted.map((item, index) => (
-                        <div key={item.id || index} className="space-y-2">
-                            <div className="flex justify-between items-center">
-                                <span className="font-medium text-gray-900">{item.category}</span>
-                                <div className="text-right">
-                                    <span className="font-bold text-gray-900">{Number(item.value).toFixed(2)} kg</span>
-                                    <span className="text-sm text-gray-500 ml-2">({Number(item.percentage).toFixed(1)}%)</span>
-                                </div>
-                            </div>
-                            <div className="w-full bg-emerald-100 rounded-full h-3">
-                                <div
-                                    className="h-3 rounded-full transition-all duration-500"
-                                    style={{ width: `${Number(item.percentage)}%`, backgroundColor: item.color }}
-                                />
-                            </div>
-                            {/* Extra actions for custom entries */}
-                            {item.id && (item._custom) && (
-                                <div className="flex justify-end gap-2 mt-2">
-                                    <button onClick={() => onEditExtra && onEditExtra(item)} className="text-sm text-gray-600 px-2 py-1 rounded hover:bg-gray-50">Edit</button>
-                                    <button onClick={() => onDeleteExtra && onDeleteExtra(item.id)} className="text-sm text-red-600 px-2 py-1 rounded hover:bg-red-50">Delete</button>
-                                </div>
-                            )}
-                        </div>
-                    ))}
-=======
                     {sorted.map((item, index) => {
                         const impact = getImpact(item.percentage);
                         return (
@@ -105,7 +75,6 @@ export default function EmissionsBreakdownTable({ breakdown, extraEntries = [], 
                             </div>
                         );
                     })}
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                 </div>
             </CardContent>
         </Card>

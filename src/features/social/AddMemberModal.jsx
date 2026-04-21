@@ -24,11 +24,6 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
         reader.readAsDataURL(file);
     };
 
-<<<<<<< HEAD
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-=======
-
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
 
     const errors = useMemo(() => {
         const e = {};
@@ -127,15 +122,9 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                         <div>
                             <label className="text-sm font-medium text-gray-700">Full Name</label>
                             <div className="mt-2 relative">
-<<<<<<< HEAD
-                                    <input value={name} onChange={(e) => setName(e.target.value)} className={`w-full px-4 py-3 mb-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 ${errors.name ? 'border-red-200 focus:ring-red-200' : ''}`} placeholder="e.g. Nithya Kevin" />
-                                    {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name}</p>}
-                                </div>
-=======
                                 <input value={name} onChange={(e) => setName(e.target.value)} className={`w-full px-4 py-3 mb-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 ${errors.name ? 'border-red-200 focus:ring-red-200' : ''}`} placeholder="e.g. Nithya Kevin" />
                                 {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name}</p>}
                             </div>
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
                         </div>
 
                         <div>
@@ -206,8 +195,4 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
             </ModalContent>
         </Modal>
     );
-<<<<<<< HEAD
 }
-=======
-}
->>>>>>> 48b88ac0bde4c25fc8ea2f622134df6ba38b17d6
