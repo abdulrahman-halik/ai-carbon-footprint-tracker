@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Sidebar from "./Sidebar";
 import Header from "./Header";
-import BottomNav from "./BottomNav";
 import Footer from "./Footer";
 
 export default function DashboardShell({ children }) {
@@ -21,14 +20,14 @@ export default function DashboardShell({ children }) {
                 {/* Mobile Sidebar System */}
                 <Sidebar mobile isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
-                <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-8 scroll-smooth pb-24 lg:pb-8">
+                <main className="flex-1 overflow-y-auto overflow-x-hidden p-4 lg:p-8 scroll-smooth pb-8">
                     <div className="mx-auto max-w-7xl space-y-8">
                         {children}
                     </div>
                     <Footer />
                 </main>
 
-                <BottomNav />
+                {/* BottomNav removed as per user request */}
             </div>
         </div>
     );
