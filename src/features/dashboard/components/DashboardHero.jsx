@@ -11,7 +11,8 @@ export default function DashboardHero({ user, greeting }) {
             <div className="relative flex flex-col md:flex-row md:items-center justify-between gap-5">
                 <div>
                     <p className="text-emerald-100 text-sm font-medium mb-1">
-                        {greeting}, {user?.name || "Eco Warrior"} 👋
+                        {greeting}, {user?.full_name} 👋
+                        {/* {greeting}, {user?.full_name || user?.name || "Eco Warrior"} 👋 */}
                     </p>
                     <h1 className="text-3xl font-extrabold tracking-tight">
                         Your Environmental Dashboard
