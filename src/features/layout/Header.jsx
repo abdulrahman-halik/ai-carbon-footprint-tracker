@@ -94,7 +94,7 @@ export default function Header({ onMenuClick }) {
                         className="flex items-center gap-3 pl-2 pr-1 hover:bg-gray-50 rounded-full transition-colors cursor-pointer group"
                     >
                         <span className="hidden text-sm font-bold text-gray-700 sm:block group-hover:text-gray-900">
-                            {user?.name || "Guest"}
+                            {user?.full_name || user?.name || "Guest"}
                         </span>
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 ring-2 ring-white shadow-sm group-hover:ring-emerald-100 transition-all">
                             {user?.avatar ? (
@@ -113,7 +113,7 @@ export default function Header({ onMenuClick }) {
                                 onClick={() => setIsDropdownOpen(false)}
                                 className="block px-4 py-3 border-b border-gray-100 mb-1 hover:bg-gray-50 transition-colors"
                             >
-                                <p className="text-sm font-medium text-gray-900">{user?.name || "Guest"}</p>
+                                <p className="text-sm font-medium text-gray-900">{user?.full_name || user?.name || "Guest"}</p>
                                 {user?.email && <p className="text-xs text-gray-500 truncate">{user.email}</p>}
                             </Link>
                             <button
