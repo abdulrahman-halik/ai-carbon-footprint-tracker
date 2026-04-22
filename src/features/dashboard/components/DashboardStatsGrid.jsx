@@ -100,19 +100,27 @@ const TrendIcon = ({ trend }) => {
 };
 
 export default function DashboardStatsGrid({ stats }) {
-    // Override first two cards with live stats if available
+    // Override cards with live stats if available
     const cards = STAT_CARDS.map((c) => {
-        if (c.id === "footprint" && stats?.budget) {
-            return { ...c, value: `${stats.budget.used} kg`, subLabel: `of ${stats.budget.total} kg budget` };
+        if (c.id === "footprint" && stats?.total_emissions !== undefined) {
+            return { ...c, value: `${stats.total_emissions.toFixed(1)} kg`, subLabel: "total emissions" };
         }
-        if (c.id === "reduction" && stats?.budget) {
-            return { ...c, value: `${stats.budget.percentage}%` };
+        if (c.id === "water" && stats?.total_water_usage !== undefined) {
+            return { ...c, value: `${stats.total_water_usage.toFixed(0)} L`, subLabel: "total usage" };
+        }
+        if (c.id === "energy" && stats?.total_energy_usage !== undefined) {
+            return { ...c, value: `${stats.total_energy_usage.toFixed(1)} kWh`, subLabel: "total usage" };
+        }
+        if (c.id === "reduction" && stats?.total_emissions !== undefined) {
+            // Simplified logic for reduction display
+            const progress = Math.min(100, Math.max(0, (stats.total_emissions / 1000) * 100));
+            return { ...c, value: `${progress.toFixed(0)}%`, subLabel: "of monthly goal" };
         }
         return c;
     });
 
     return (
-        <div className="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-6 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
             {cards.map((card) => {
                 const Icon = card.icon;
                 return (

@@ -27,7 +27,7 @@ export default function DashboardGoals() {
                     All goals <ArrowRight className="w-3 h-3" />
                 </Link>
             </div>
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 {GOALS.map((g) => {
                     const pct = Math.round((g.current / g.target) * 100);
                     return (

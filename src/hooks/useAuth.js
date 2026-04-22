@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import authService from "@/mockApi";
+import authService from "@/services/authService";
 import { toast } from "react-hot-toast";
 
 const AuthContext = createContext();
@@ -73,7 +73,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    // Forgot Password function
+    // Forgot Password Request function
     const forgotPassword = async (email) => {
         setIsLoading(true);
         try {
@@ -85,8 +85,20 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    // Reset Password Confirm function
+    const resetPassword = async (email, token, password, confirmPassword) => {
+        setIsLoading(true);
+        try {
+            return await authService.resetPassword(email, token, password, confirmPassword);
+        } catch (error) {
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, register, logout, forgotPassword }}>
+        <AuthContext.Provider value={{ user, isLoading, login, register, logout, forgotPassword, resetPassword }}>
             {children}
         </AuthContext.Provider>
     );

@@ -28,12 +28,10 @@ const COLOR_MAP = {
     teal: { bg: "hover:bg-teal-50", border: "hover:border-teal-100", icon: "text-gray-400 group-hover:text-teal-500", text: "group-hover:text-teal-700" },
 };
 
-const RECENT_ACTIVITY = [
+const RECENT_ACTIVITY_MOCK = [
     { icon: Leaf, color: "emerald", label: "Carbon entry logged", time: "10 min ago" },
     { icon: Droplets, color: "sky", label: "Water usage tracked — 145 L", time: "2 hours ago" },
     { icon: Target, color: "purple", label: "Goal updated: Reduce Electricity", time: "Yesterday" },
-    { icon: Zap, color: "amber", label: "Energy reading recorded", time: "Yesterday" },
-    { icon: BookOpen, color: "teal", label: "Completed \"Recycling 101\"", time: "2 days ago" },
 ];
 
 const AI_TIPS = [
@@ -42,13 +40,21 @@ const AI_TIPS = [
     { text: "You're 15% closer to your monthly carbon goal.", href: "/goals" },
 ];
 
-export default function DashboardSidebar({ onNewEntry }) {
+export default function DashboardSidebar({ onNewEntry, activities = [] }) {
+    const displayActivities = activities.length > 0
+        ? activities.slice(0, 5).map(a => ({
+            icon: a.category === "Water" ? Droplets : a.category === "Energy" ? Zap : Leaf,
+            color: a.category === "Water" ? "sky" : a.category === "Energy" ? "amber" : "emerald",
+            label: `${a.category} activity: ${a.value} ${a.unit || 'kg'}`,
+            time: new Date(a.created_at).toLocaleDateString()
+        }))
+        : RECENT_ACTIVITY_MOCK;
     return (
         <div className="space-y-6">
             {/* Quick Actions */}
             <div className="bg-white p-6 rounded-2xl border border-gray-100 shadow-sm">
                 <h2 className="text-base font-bold text-gray-900 mb-4">Quick Actions</h2>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
                     {QUICK_ACTIONS.map((action) => {
                         const Icon = action.icon;
                         const c = COLOR_MAP[action.color];
@@ -111,7 +117,7 @@ export default function DashboardSidebar({ onNewEntry }) {
                     {/* Timeline line */}
                     <div className="absolute left-[7px] top-0 bottom-0 w-px bg-gradient-to-b from-emerald-200 via-gray-200 to-transparent" />
                     <div className="space-y-4">
-                        {RECENT_ACTIVITY.map((item, i) => {
+                        {displayActivities.map((item, i) => {
                             const Icon = item.icon;
                             const dotColors = {
                                 emerald: "bg-emerald-100 text-emerald-600",

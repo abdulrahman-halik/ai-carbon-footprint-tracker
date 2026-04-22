@@ -3,7 +3,9 @@ import React, { useState, useEffect } from 'react';
 import { AlertCircle, CheckCircle2 } from 'lucide-react';
 import { useAuth } from '@/hooks/useAuth';
 import { useRouter } from 'next/navigation';
-import mockApi from '@/mockApi';
+import { toast } from 'react-hot-toast';
+import authService from '@/services/authService';
+import userService from '@/services/userService';
 import ProfileHeader from './ProfileHeader';
 import ProfileForms from './ProfileForms';
 import SecuritySettings from './SecuritySettings';
@@ -52,7 +54,7 @@ export default function UserInfo() {
     const handleSave = async () => {
         try {
             setApiError('');
-            await mockApi.updateProfile(profile);
+            await userService.updateProfile(profile);
             setIsEditing(false);
             flash(setApiSuccess, 'Profile updated successfully');
         } catch { setApiError('Failed to save profile'); }
@@ -62,10 +64,13 @@ export default function UserInfo() {
         try {
             setApiError('');
             if (passwordForm.new !== passwordForm.confirm) throw new Error('Passwords do not match');
-            await mockApi.changePassword(passwordForm.current, passwordForm.new);
+            await userService.changePassword(
+                passwordForm.current,
+                passwordForm.new
+            );
             setIsPasswordModalOpen(false);
             setPasswordForm({ current: '', new: '', confirm: '' });
-            flash(setApiSuccess, 'Password changed successfully');
+            toast.success('Password updated successfully');
         } catch (e) { setApiError(e.message || 'Failed to change password'); }
     };
 
@@ -73,7 +78,7 @@ export default function UserInfo() {
         try {
             setApiError('');
             const next = !twoFactorEnabled;
-            await mockApi.toggle2FA(next);
+            await userService.toggle2FA(next);
             setTwoFactorEnabled(next);
             setIs2FAModalOpen(false);
             flash(setApiSuccess, `2FA ${next ? 'enabled' : 'disabled'} successfully`);
@@ -84,7 +89,7 @@ export default function UserInfo() {
         try {
             setApiError('');
             if (deleteInput !== 'DELETE') throw new Error('Type DELETE to confirm');
-            await mockApi.deleteAccount();
+            await userService.deleteAccount();
             router.push('/');
         } catch (e) { setApiError(e.message || 'Failed to delete account'); }
     };
