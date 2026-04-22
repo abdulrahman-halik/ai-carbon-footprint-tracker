@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import authService from "@/mockApi";
+import authService from "@/services/authService";
 import { toast } from "react-hot-toast";
 
 const AuthContext = createContext();

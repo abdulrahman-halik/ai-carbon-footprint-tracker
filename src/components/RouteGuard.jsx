@@ -25,7 +25,7 @@ export default function RouteGuard({ children }) {
                 setAuthorized(true);
             }
         } else {
-            if (!user.onboardingCompleted) {
+            if (!user.onboarding_completed) {
                 if (pathname !== "/onboarding") {
                     setAuthorized(false);
                     router.push("/onboarding");

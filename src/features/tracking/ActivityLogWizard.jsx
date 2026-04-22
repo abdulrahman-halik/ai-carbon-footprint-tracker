@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/Card';
 import TransportInput from './TransportInput';
 import DietInput from './DietInput';
-import mockApi from '@/mockApi';
+import emissionsService from '@/services/emissionsService';
 import { CheckCircle2 } from "lucide-react";
 
 export const ActivityLogWizard = ({ onComplete }) => {
@@ -24,8 +24,32 @@ export const ActivityLogWizard = ({ onComplete }) => {
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
-            const result = await mockApi.logActivity(logData);
-            setImpactData(result);
+            // Prepare payload according to backend EmissionCreate schema
+            let category = "Transport";
+            let subCategory = logData.mode;
+            let value = parseFloat(getTransportCO2(logData.mode, logData.distance));
+
+            if (logData.diet) {
+                category = "Food";
+                subCategory = logData.diet;
+                value = parseFloat(getDietCO2(logData.diet));
+            }
+
+            const payload = {
+                category: category,
+                sub_category: subCategory,
+                value: value,
+                unit: "kg CO2e",
+                description: `Logged via ActivityLogWizard: ${subCategory}`
+            };
+
+            const result = await emissionsService.logActivity(payload);
+
+            // Adapt real backend response to component needs
+            setImpactData({
+                impact: result.value,
+                totalUsed: 0 // Backend might not return the new total budget directly in this endpoint
+            });
             setSubmitted(true);
         } catch (error) {
             console.error("Failed to log activity:", error);
@@ -182,8 +206,8 @@ const getTransportIcon = (type) => {
 
 /** Estimated kg CO₂ per km (simplified emission factors) */
 const getTransportCO2 = (mode, distance = 0) => {
-    const factors = { car: 0.21, bus: 0.089, train: 0.041, walk: 0 };
-    return ((factors[mode] || 0.21) * distance).toFixed(2);
+    const factors = { car: 0.17, bus: 0.03, train: 0.04, walk: 0 };
+    return ((factors[mode] || 0.17) * distance).toFixed(2);
 };
 
 const getDietIcon = (diet) => {
@@ -203,7 +227,7 @@ const getDietLabel = (diet) => {
 
 /** Estimated daily kg CO₂ by diet type */
 const getDietCO2 = (diet) => {
-    const factors = { 'meat-heavy': 7.2, omnivore: 4.7, vegetarian: 3.3, vegan: 2.1 };
+    const factors = { 'meat-heavy': 7.2, omnivore: 4.7, vegetarian: 3.8, vegan: 2.9 };
     return (factors[diet] || 4.7).toFixed(1);
 };
 

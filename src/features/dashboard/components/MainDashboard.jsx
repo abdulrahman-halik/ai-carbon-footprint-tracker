@@ -1,7 +1,11 @@
 "use client";
 
 import React, { useState, useEffect, useMemo } from "react";
-import mockApi from "@/mockApi";
+import dashboardService from "@/services/dashboardService";
+import authService from "@/services/authService";
+import emissionsService from "@/services/emissionsService";
+import waterService from "@/services/waterService";
+import energyService from "@/services/energyService";
 import { Modal, ModalContent, ModalHeader, ModalTitle } from "@/components/ui/Modal";
 import ActivityLogWizard from "@/features/tracking/ActivityLogWizard";
 import DashboardStatsGrid from "./DashboardStatsGrid";
@@ -23,12 +27,28 @@ export default function MainDashboard() {
     const [loading, setLoading] = useState(true);
     const [isNewEntryOpen, setIsNewEntryOpen] = useState(false);
     const [user, setUser] = useState(null);
+    const [trends, setTrends] = useState({ emissions: [], water: [], energy: [], emissions_raw: [] });
 
     const fetchData = async () => {
         try {
-            const statsRes = await mockApi.getStats();
+            const [statsRes, emissionsRes, waterRes, energyRes] = await Promise.all([
+                dashboardService.getStats(),
+                emissionsService.getEmissions(),
+                waterService.getLogs(),
+                energyService.getLogs()
+            ]);
+
             setStats(statsRes);
-            const u = mockApi.getCurrentUser();
+
+            // Extract daily trends for the last 7 days
+            setTrends({
+                emissions: (emissionsRes || []).map(e => e.value).reverse(),
+                water: (waterRes || []).map(w => w.value).reverse(),
+                energy: (energyRes || []).map(e => e.value).reverse(),
+                emissions_raw: emissionsRes || []
+            });
+
+            const u = authService.getCurrentUser();
             setUser(u);
         } catch (err) {
             console.error("Dashboard fetch error:", err);
@@ -75,12 +95,16 @@ export default function MainDashboard() {
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
-                    <DashboardTrends />
+                    <DashboardTrends
+                        emissions={trends.emissions}
+                        water={trends.water}
+                        energy={trends.energy}
+                    />
                     <DashboardGoals />
                     <DashboardComparisons stats={stats} />
                 </div>
 
-                <DashboardSidebar onNewEntry={() => setIsNewEntryOpen(true)} />
+                <DashboardSidebar onNewEntry={() => setIsNewEntryOpen(true)} activities={trends.emissions_raw || []} />
             </div>
 
             <Modal isOpen={isNewEntryOpen} onClose={handleNewEntryClose}>

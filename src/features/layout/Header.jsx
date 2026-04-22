@@ -6,7 +6,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useState, useEffect, useRef } from "react";
-import authService from "@/mockApi";
+import authService from "@/services/authService";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Header({ onMenuClick }) {
