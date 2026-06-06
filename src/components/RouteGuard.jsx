@@ -16,7 +16,6 @@ export default function RouteGuard({ children }) {
         const isAuthPath = pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/forgot-password");
         const isPublicPath = pathname === "/" || pathname.startsWith("/about") || pathname.startsWith("/estimator") || pathname.startsWith("/learn") || pathname.startsWith("/projects");
 
-        // Follow strict route guard logic
         if (!user) {
             if (!isAuthPath && !isPublicPath) {
                 setAuthorized(false);
@@ -25,15 +24,18 @@ export default function RouteGuard({ children }) {
                 setAuthorized(true);
             }
         } else {
+            // If user hasn't completed onboarding, restrict access to protected inner paths.
+            // If they try to go to /login or /register, redirect them to finish onboarding.
             if (!user.onboarding_completed) {
-                if (pathname !== "/onboarding") {
+                if (!isPublicPath && pathname !== "/onboarding") {
                     setAuthorized(false);
                     router.push("/onboarding");
                 } else {
                     setAuthorized(true);
                 }
             } else {
-                if (pathname === "/onboarding" || isAuthPath || pathname === "/") {
+                // Block users from repeating onboarding or accessing auth paths if already completed
+                if (user.onboarding_completed && (pathname === "/onboarding" || isAuthPath)) {
                     setAuthorized(false);
                     router.push("/dashboard");
                 } else {
