@@ -26,7 +26,7 @@ export const SimulatorTool = () => {
     const [energyEfficiency, setEnergyEfficiency] = useState(0);
 
     // Dynamic calculation logic (Derived State)
-    // Simple mock model
+    // Estimated savings are based on common impact proportions from the latest stats
     // Transport accounts for ~30%, Diet ~25%, Energy ~25% of total
     const transportSavings = (baseFootprint * 0.30) * (transportReduction / 100);
     const dietSavings = (baseFootprint * 0.25) * (dietPlantBased / 100);

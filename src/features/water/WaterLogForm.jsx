@@ -6,7 +6,7 @@ import { RecentEntries } from './WaterLogHistory';
 
 export function LogForm({ liters, onLiters, date, onDate, onCancel, onSave }) {
     return (
-        <div className="space-y-5">
+        <div className="space-y-3">
             <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                     <Droplets className="w-4 h-4 text-sky-500" />

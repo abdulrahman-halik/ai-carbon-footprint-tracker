@@ -1,7 +1,7 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from "react-hook-form";
-import { MessageSquare, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, Sparkles } from 'lucide-react';
 
 import insightsService from "@/services/insightsService";
 import mlService from "@/services/mlService";
@@ -49,41 +49,38 @@ export default function AIChatbot() {
             let aiResponseText = "";
             const lowerText = userText.toLowerCase();
 
-            // Intercept special predict command to use ML endpoint
-            if (lowerText === "predict" || lowerText.includes("predict my carbon footprint")) {
+            if (lowerText.includes("predict")) {
                 const stats = await dashboardService.getStats();
                 const features = {
-                    "Age": 30.0,
-                    "Electricity_Usage_kWh_per_month": stats?.total_energy_usage || 0,
-                    "Water_Usage_L_per_day": stats?.total_water_usage || 0,
-                    "Carbon_Footprint_Score": stats?.total_emissions || 0,
+                    Age: 30.0,
+                    Electricity_Usage_kWh_per_month: stats?.total_energy_usage || 0,
+                    Water_Usage_L_per_day: stats?.total_water_usage || 0,
+                    Carbon_Footprint_Score: stats?.total_emissions || 0,
                 };
 
                 try {
                     const response = await mlService.predict(features);
-                    // mlService returns the parsed response body
                     const pred = response?.prediction ?? response;
-                    aiResponseText = `Your predicted carbon footprint based on current data is: ${Number(pred).toFixed(2)} kg CO₂e. Keep improving your sustainable habits!`;
+                    aiResponseText = `Your predicted carbon footprint based on current data is ${Number(pred).toFixed(2)} kg CO₂e. Keep improving your sustainable habits!`;
                 } catch (err) {
-                    // Provide a helpful message if the user is unauthenticated
                     const status = err?.response?.status;
                     if (status === 401) {
                         aiResponseText = "Please log in to get a personalized carbon footprint prediction.";
                     } else {
+                        console.error("Prediction error:", err);
                         aiResponseText = "Sorry, I couldn't compute a prediction right now. Try again later.";
                     }
                 }
             } else {
-                // Otherwise use semantic insight search model
-                const response = await insightsService.search(userText, 1);
-                aiResponseText = response?.insight || "I couldn't find a specific answer for that. Focus on small, consistent changes like reducing waste and conserving water!";
+                const response = await insightsService.search(userText, 3);
+                aiResponseText = response?.insight || response?.results?.[0]?.text || "I couldn't find a specific answer for that. Try a different sustainability question.";
             }
 
             const aiMsg = { id: Date.now() + 1, text: aiResponseText, sender: 'ai' };
             setMessages(prev => [...prev, aiMsg]);
         } catch (error) {
             console.error("AI Error:", error);
-            const errMsg = { id: Date.now() + 1, text: "Sorry, I am having trouble connecting to my neural network. Please try again.", sender: 'ai' };
+            const errMsg = { id: Date.now() + 1, text: "Sorry, I am having trouble connecting to the backend. Please try again later.", sender: 'ai' };
             setMessages(prev => [...prev, errMsg]);
         } finally {
             setIsTyping(false);

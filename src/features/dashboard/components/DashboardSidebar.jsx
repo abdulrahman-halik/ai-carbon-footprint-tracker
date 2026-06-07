@@ -28,12 +28,6 @@ const COLOR_MAP = {
     teal: { bg: "hover:bg-teal-50", border: "hover:border-teal-100", icon: "text-gray-400 group-hover:text-teal-500", text: "group-hover:text-teal-700" },
 };
 
-const RECENT_ACTIVITY_MOCK = [
-    { icon: Leaf, color: "emerald", label: "Carbon entry logged", time: "10 min ago" },
-    { icon: Droplets, color: "sky", label: "Water usage tracked — 145 L", time: "2 hours ago" },
-    { icon: Target, color: "purple", label: "Goal updated: Reduce Electricity", time: "Yesterday" },
-];
-
 const AI_TIPS = [
     { text: "Switch to LED bulbs to cut home energy use by up to 25%.", href: "/emissions" },
     { text: "Your water usage is 12% below average — great job! 💧", href: "/water" },
@@ -45,10 +39,10 @@ export default function DashboardSidebar({ onNewEntry, activities = [] }) {
         ? activities.slice(0, 5).map(a => ({
             icon: a.category === "Water" ? Droplets : a.category === "Energy" ? Zap : Leaf,
             color: a.category === "Water" ? "sky" : a.category === "Energy" ? "amber" : "emerald",
-            label: `${a.category} activity: ${a.value} ${a.unit || 'kg'}`,
-            time: new Date(a.created_at).toLocaleDateString()
+            label: a.category ? `${a.category} activity: ${a.value} ${a.unit || 'kg'}` : `Activity recorded: ${a.value}`,
+            time: a.created_at ? new Date(a.created_at).toLocaleDateString() : "Just now"
         }))
-        : RECENT_ACTIVITY_MOCK;
+        : [];
     return (
         <div className="space-y-6">
             {/* Quick Actions */}
@@ -117,7 +111,7 @@ export default function DashboardSidebar({ onNewEntry, activities = [] }) {
                     {/* Timeline line */}
                     <div className="absolute left-1.75 top-0 bottom-0 w-px bg-linear-to-b from-emerald-200 via-gray-200 to-transparent" />
                     <div className="space-y-4">
-                        {displayActivities.map((item, i) => {
+                        {displayActivities.length > 0 ? displayActivities.map((item, i) => {
                             const Icon = item.icon;
                             const dotColors = {
                                 emerald: "bg-emerald-100 text-emerald-600",
@@ -142,7 +136,11 @@ export default function DashboardSidebar({ onNewEntry, activities = [] }) {
                                     </div>
                                 </div>
                             );
-                        })}
+                        }) : (
+                            <div className="rounded-2xl border border-dashed border-gray-200 bg-gray-50 p-6 text-center text-sm text-gray-500">
+                                No recent activity yet. Log a new sustainability action to see updates here.
+                            </div>
+                        )}
                     </div>
                 </div>
             </div>

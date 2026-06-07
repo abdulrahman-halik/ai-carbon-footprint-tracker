@@ -27,7 +27,7 @@ export function GoalModalHeader({ editingId, onClose }) {
 
 export function GoalForm({ newGoal, setNewGoal, onSave, onClose, editingId }) {
     return (
-        <div className="space-y-5">
+        <div className="space-y-3">
             <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                     <Type className="w-4 h-4 text-emerald-500" />

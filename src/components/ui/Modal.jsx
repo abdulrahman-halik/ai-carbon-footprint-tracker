@@ -29,7 +29,7 @@ const Modal = ({ isOpen, onClose, children }) => {
     return (
         <ModalContext.Provider value={{ onClose }}>
             {isOpen && createPortal(
-                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6">
+                <div className="fixed inset-0 z-50 flex min-h-screen items-end justify-center overflow-y-auto bg-black/10 p-4 sm:items-center sm:p-6">
                     <div
                         className="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity animate-in fade-in duration-200"
                         onClick={onClose}

@@ -26,7 +26,7 @@ export function ArticleCard({ article }) {
                 </h3>
             </CardHeader>
 
-            <CardContent className="flex-grow pb-4">
+            <CardContent className="grow pb-4">
                 <p className="text-gray-500 text-sm line-clamp-3 leading-relaxed">
                     {article.excerpt}
                 </p>

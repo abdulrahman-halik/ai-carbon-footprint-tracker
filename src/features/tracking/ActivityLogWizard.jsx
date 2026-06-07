@@ -154,13 +154,13 @@ export const ActivityLogWizard = ({ onComplete }) => {
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200/50">
                     <div
-                        className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-500 ease-out shadow-lg"
+                        className="h-full bg-linear-to-r from-emerald-400 to-teal-500 transition-all duration-500 ease-out shadow-lg"
                         style={{ width: `${(step / 2) * 100}%` }}
                     />
                 </div>
             </div>
 
-            <div className="min-h-[250px] transition-all duration-300">
+            <div className="min-h-62.5 transition-all duration-300">
                 {step === 1 && <TransportInput onUpdate={handleUpdate} />}
                 {step === 2 && <DietInput onUpdate={handleUpdate} />}
             </div>
@@ -179,7 +179,7 @@ export const ActivityLogWizard = ({ onComplete }) => {
                 <button
                     onClick={handleNext}
                     disabled={isSubmitting}
-                    className="flex items-center justify-center gap-2 px-8 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 shadow-lg shadow-gray-200 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all min-w-[140px]"
+                    className="flex items-center justify-center gap-2 px-8 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 shadow-lg shadow-gray-200 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all min-w-35"
                 >
                     {isSubmitting ? (
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

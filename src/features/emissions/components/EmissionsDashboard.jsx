@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback } from "react";
 import { Calculator, Leaf } from 'lucide-react';
 import { Button } from "@/components/ui/Button";
 import {
@@ -46,14 +46,6 @@ export default function EmissionsDashboard() {
         await new Promise(r => setTimeout(r, 300));
         setResults(calculateCarbonFootprint(inputs));
         setLoading(false);
-    }, [inputs]);
-
-    // Auto-recalculate on input change (debounced)
-    useEffect(() => {
-        const id = setTimeout(() => {
-            setResults(calculateCarbonFootprint(inputs));
-        }, 400);
-        return () => clearTimeout(id);
     }, [inputs]);
 
     if (!results) {
@@ -134,7 +126,7 @@ export default function EmissionsDashboard() {
                         </div>
                         <span className="bg-emerald-50 text-emerald-600 text-xs font-bold px-2 py-1 rounded">↘ -8%</span>
                     </div>
-                    <div className="h-[280px] w-full">
+                    <div className="h-70 w-full">
                         <EmissionSparkline forecast={comparison.forecast} />
                     </div>
                 </div>
@@ -143,7 +135,7 @@ export default function EmissionsDashboard() {
                         <h3 className="text-lg font-bold text-gray-900">Impact Breakdown</h3>
                         <p className="text-sm text-gray-400">Top emission sources</p>
                     </div>
-                    <div className="h-[280px] w-full">
+                    <div className="h-70 w-full">
                         <ImpactVisualizer data={impactData} breakdown={results.breakdown} total={results.totalFootprint} />
                     </div>
                 </div>
