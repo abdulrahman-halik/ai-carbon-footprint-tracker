@@ -38,7 +38,7 @@ export default function Header({ onMenuClick }) {
         await logout();
         setIsDropdownOpen(false);
         sessionStorage.setItem("logout_toast", "true");
-        window.location.href = "/";
+        window.location.href = "/login";
     };
 
     const pathname = usePathname();

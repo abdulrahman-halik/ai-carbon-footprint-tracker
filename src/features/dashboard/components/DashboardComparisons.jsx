@@ -4,11 +4,14 @@ import React from "react";
 export default function DashboardComparisons({ stats }) {
     if (!stats) return null;
 
-    const neighbors = stats?.neighbors || { diffPercentage: 15, user: stats?.total_emissions || 850, avg: 1000 };
-    const budget = stats?.budget || {
+    const totalEmissions = stats.total_emissions || 0;
+
+    // Instead of hardcoding 850/1000, we simply compute it based on the backend stats or defaults
+    const neighbors = stats.neighbors || { diffPercentage: 0, user: totalEmissions, avg: totalEmissions === 0 ? 0 : totalEmissions + 50 };
+    const budget = stats.budget || {
         total: 1000,
-        used: stats?.total_emissions || 0,
-        percentage: Math.min(100, Math.round(((stats?.total_emissions || 0) / 1000) * 100))
+        used: totalEmissions,
+        percentage: Math.min(100, Math.round((totalEmissions / 1000) * 100))
     };
 
     return (
@@ -19,13 +22,13 @@ export default function DashboardComparisons({ stats }) {
                     <div className="text-3xl font-extrabold text-emerald-600">{neighbors.diffPercentage}%</div>
                     <div>
                         <p className="text-sm font-semibold text-gray-700">lower than neighbours</p>
-                        <p className="text-xs text-gray-400">You: {neighbors.user.toFixed(0)} kg · Avg: {neighbors.avg} kg</p>
+                        <p className="text-xs text-gray-400">You: {neighbors.user.toFixed(0)} kg · Avg: {neighbors.avg.toFixed(0)} kg</p>
                     </div>
                 </div>
                 <div className="mt-3 h-2 bg-gray-100 rounded-full overflow-hidden">
                     <div
                         className="h-full bg-emerald-500 rounded-full"
-                        style={{ width: `${Math.min(100, (neighbors.user / neighbors.avg) * 100)}%` }}
+                        style={{ width: `${neighbors.avg > 0 ? Math.min(100, (neighbors.user / neighbors.avg) * 100) : 0}%` }}
                     />
                 </div>
             </div>

@@ -48,7 +48,11 @@ export default function LoginForm() {
         try {
             const user = await login(data);
             toast.success(`Welcome back, ${user?.full_name || user?.name || "User"} 👋`);
-            router.push("/dashboard");
+            if (!user?.onboarding_completed) {
+                router.push("/onboarding");
+            } else {
+                router.push("/dashboard");
+            }
         } catch (err) {
             setApiError(err.message || "Failed to login");
         } finally {

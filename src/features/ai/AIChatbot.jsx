@@ -3,10 +3,14 @@ import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from "react-hook-form";
 import { MessageSquare, X, Send, Bot, User, Sparkles } from 'lucide-react';
 
+import insightsService from "@/services/insightsService";
+import mlService from "@/services/mlService";
+import dashboardService from "@/services/dashboardService";
+
 export default function AIChatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, text: "Hello! I'm your Eco-Assistant. How can I help you reduce your carbon footprint today?", sender: 'ai' }
+        { id: 1, text: "Hello! I'm your Eco-Assistant. You can ask me questions about sustainability, or say 'predict' to get a carbon footprint prediction from your stats!", sender: 'ai' }
     ]);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
@@ -32,35 +36,58 @@ export default function AIChatbot() {
         scrollToBottom();
     }, [messages, isTyping, isOpen]);
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if (!data.message.trim()) return;
 
-        const userMsg = { id: Date.now(), text: data.message, sender: 'user' };
+        const userText = data.message.trim();
+        const userMsg = { id: Date.now(), text: userText, sender: 'user' };
         setMessages(prev => [...prev, userMsg]);
         reset();
         setIsTyping(true);
 
-        // Simulate AI response
-        setTimeout(() => {
-            const aiResponseText = getAIResponse(userMsg.text);
+        try {
+            let aiResponseText = "";
+            const lowerText = userText.toLowerCase();
+
+            // Intercept special predict command to use ML endpoint
+            if (lowerText === "predict" || lowerText.includes("predict my carbon footprint")) {
+                const stats = await dashboardService.getStats();
+                const features = {
+                    "Age": 30.0,
+                    "Electricity_Usage_kWh_per_month": stats?.total_energy_usage || 0,
+                    "Water_Usage_L_per_day": stats?.total_water_usage || 0,
+                    "Carbon_Footprint_Score": stats?.total_emissions || 0,
+                };
+
+                try {
+                    const response = await mlService.predict(features);
+                    // mlService returns the parsed response body
+                    const pred = response?.prediction ?? response;
+                    aiResponseText = `Your predicted carbon footprint based on current data is: ${Number(pred).toFixed(2)} kg CO₂e. Keep improving your sustainable habits!`;
+                } catch (err) {
+                    // Provide a helpful message if the user is unauthenticated
+                    const status = err?.response?.status;
+                    if (status === 401) {
+                        aiResponseText = "Please log in to get a personalized carbon footprint prediction.";
+                    } else {
+                        aiResponseText = "Sorry, I couldn't compute a prediction right now. Try again later.";
+                    }
+                }
+            } else {
+                // Otherwise use semantic insight search model
+                const response = await insightsService.search(userText, 1);
+                aiResponseText = response?.insight || "I couldn't find a specific answer for that. Focus on small, consistent changes like reducing waste and conserving water!";
+            }
+
             const aiMsg = { id: Date.now() + 1, text: aiResponseText, sender: 'ai' };
             setMessages(prev => [...prev, aiMsg]);
+        } catch (error) {
+            console.error("AI Error:", error);
+            const errMsg = { id: Date.now() + 1, text: "Sorry, I am having trouble connecting to my neural network. Please try again.", sender: 'ai' };
+            setMessages(prev => [...prev, errMsg]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
-    };
-
-    const getAIResponse = (text) => {
-        const lowerText = text.toLowerCase();
-        if (lowerText.includes("electricity") || lowerText.includes("energy")) {
-            return "To reduce electricity usage, try switching to LED bulbs, unplugging idle electronics, and using natural light during the day. Did you know this could save up to 15% on your bill?";
         }
-        if (lowerText.includes("car") || lowerText.includes("drive") || lowerText.includes("transport")) {
-            return "Consider carpooling or using public transport. If you bike just twice a week instead of driving, you could reduce your carbon emissions by significantly!";
-        }
-        if (lowerText.includes("food") || lowerText.includes("diet") || lowerText.includes("meat")) {
-            return "Reducing meat consumption, especially beef, is one of the most impactful changes. Try a 'Meatless Monday' to start!";
-        }
-        return "That's a great question! I'm constantly learning. Focus on small, consistent changes like reducing waste and conserving water.";
     };
 
     return (

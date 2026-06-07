@@ -1,10 +1,24 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import ScenarioSlider from './ScenarioSlider';
+import dashboardService from '@/services/dashboardService';
 
 export const SimulatorTool = () => {
-    // Base footprint in kg CO2e
-    const BASE_FOOTPRINT = 12000;
+    // Base footprint in kg CO2e pulled from live stats
+    const [baseFootprint, setBaseFootprint] = useState(12000); // 12000 as fallback
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchStats = async () => {
+            const stats = await dashboardService.getStats();
+            if (stats && stats.total_emissions) {
+                // we assume stats.total_emissions is monthly, scale to annual
+                setBaseFootprint(stats.total_emissions * 12);
+            }
+            setIsLoading(false);
+        };
+        fetchStats();
+    }, []);
 
     // Simulation parameters (percentage reduction)
     const [transportReduction, setTransportReduction] = useState(0);
@@ -14,13 +28,21 @@ export const SimulatorTool = () => {
     // Dynamic calculation logic (Derived State)
     // Simple mock model
     // Transport accounts for ~30%, Diet ~25%, Energy ~25% of total
-    const transportSavings = (BASE_FOOTPRINT * 0.30) * (transportReduction / 100);
-    const dietSavings = (BASE_FOOTPRINT * 0.25) * (dietPlantBased / 100);
-    const energySavings = (BASE_FOOTPRINT * 0.25) * (energyEfficiency / 100);
+    const transportSavings = (baseFootprint * 0.30) * (transportReduction / 100);
+    const dietSavings = (baseFootprint * 0.25) * (dietPlantBased / 100);
+    const energySavings = (baseFootprint * 0.25) * (energyEfficiency / 100);
 
     const totalSavings = transportSavings + dietSavings + energySavings;
     const savings = Math.round(totalSavings);
-    const projectedFootprint = Math.round(BASE_FOOTPRINT - totalSavings);
+    const projectedFootprint = Math.round(baseFootprint - totalSavings);
+
+    if (isLoading) {
+        return (
+            <Card className="w-full shadow-xl border-0 ring-1 ring-gray-200/50 bg-white/50 backdrop-blur-sm p-6 sm:p-8 flex items-center justify-center">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-emerald-500" />
+            </Card>
+        );
+    }
 
     return (
         <Card className="w-full shadow-xl border-0 ring-1 ring-gray-200/50 bg-white/50 backdrop-blur-sm overflow-hidden">
