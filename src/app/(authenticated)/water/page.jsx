@@ -12,7 +12,16 @@ export default function WaterPage() {
     const [isLogOpen, setIsLogOpen] = useState(false);
     const [liters, setLiters] = useState('');
     const [logDate, setLogDate] = useState('');
-    const [logs, setLogs] = useState([]);
+    const [logs, setLogs] = useState(() => {
+        if (typeof window === 'undefined') return [];
+        try {
+            const raw = localStorage.getItem('water_logs');
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            console.error('Failed to load water logs', e);
+            return [];
+        }
+    });
     const [editingId, setEditingId] = useState(null);
     const [savedToast, setSavedToast] = useState(false);
 
@@ -23,16 +32,6 @@ export default function WaterPage() {
             return d;
         }
     };
-
-    // load persisted logs from localStorage on mount
-    useEffect(() => {
-        try {
-            const raw = localStorage.getItem('water_logs');
-            if (raw) setLogs(JSON.parse(raw));
-        } catch (e) {
-            console.error('Failed to load water logs', e);
-        }
-    }, []);
 
     const persist = (next) => {
         setLogs(next);

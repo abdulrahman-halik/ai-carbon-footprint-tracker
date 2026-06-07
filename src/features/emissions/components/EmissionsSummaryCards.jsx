@@ -57,7 +57,7 @@ export default function EmissionsSummaryCards({ results, feedback }) {
     return (
         <div className="space-y-4">
             {/* Hero total card */}
-            <div className="glass-card bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-6 rounded-xl shadow-md">
+            <div className="glass-card bg-linear-to-r from-emerald-500 to-teal-600 text-white p-6 rounded-xl shadow-md">
                 <div className="flex justify-between items-start">
                     <div>
                         <p className="text-xs font-bold uppercase tracking-widest text-emerald-100 mb-1">Total Carbon Footprint</p>

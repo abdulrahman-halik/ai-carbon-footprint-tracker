@@ -1,14 +1,15 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
+import apiClient from "@/lib/apiClient";
 
 export function LeaderboardHeader({ filter, setFilter }) {
     return (
         <div className="flex justify-between items-center border-b border-emerald-100/60 pb-4">
             <div>
                 <h3 className="text-xl font-bold text-gray-900">Community Leaderboard</h3>
-                <p className="text-sm text-gray-600 mt-1">Top savers this week</p>
+                <p className="text-sm text-gray-600 mt-1">Top savers ranking</p>
             </div>
             <div className="relative">
                 <select
@@ -38,7 +39,7 @@ export function LeaderItem({ user, index }) {
     return (
         <div
             className={`group flex items-center justify-between p-4 rounded-2xl transition-all duration-300 ${user.isCurrentUser
-                ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/70 border border-emerald-200/70 shadow-md'
+                ? 'bg-linear-to-r from-emerald-50 to-emerald-100/70 border border-emerald-200/70 shadow-md'
                 : 'hover:bg-emerald-50/40 border border-transparent hover:border-emerald-100/70'
                 }`}
         >
@@ -69,30 +70,21 @@ export function LeaderItem({ user, index }) {
     );
 }
 
-const MOCK_LEADERBOARD = {
-    weekly: [
-        { id: 1, name: 'Alice', score: 120, avatar: 'A' },
-        { id: 2, name: 'Bob', score: 110, avatar: 'B' },
-        { id: 3, name: 'Charlie', score: 95, avatar: 'C' },
-        { id: 4, name: 'You', score: 85, avatar: 'Y', isCurrentUser: true },
-        { id: 5, name: 'Diana', score: 80, avatar: 'D' },
-    ],
-    monthly: [
-        { id: 2, name: 'Bob', score: 430, avatar: 'B' },
-        { id: 4, name: 'You', score: 390, avatar: 'Y', isCurrentUser: true },
-        { id: 1, name: 'Alice', score: 370, avatar: 'A' },
-        { id: 6, name: 'Eve', score: 310, avatar: 'E' },
-    ],
-    'all-time': [
-        { id: 1, name: 'Alice', score: 2850, avatar: 'A' },
-        { id: 3, name: 'Charlie', score: 2600, avatar: 'C' },
-        { id: 4, name: 'You', score: 2400, avatar: 'Y', isCurrentUser: true },
-    ],
-};
-
 export const Leaderboard = () => {
     const [filter, setFilter] = useState('weekly');
-    const users = MOCK_LEADERBOARD[filter] || MOCK_LEADERBOARD.weekly;
+    const [users, setUsers] = useState([]);
+
+    useEffect(() => {
+        const fetchBoard = async () => {
+            try {
+                const res = await apiClient.get('/api/community/leaderboard?limit=10');
+                setUsers(res.data);
+            } catch (err) {
+                console.error("Failed to fetch leaderboard:", err);
+            }
+        };
+        fetchBoard();
+    }, [filter]);
 
     return (
         <Card className="w-full h-full border border-white/70 shadow-2xl rounded-3xl overflow-hidden bg-white/85">
@@ -100,9 +92,11 @@ export const Leaderboard = () => {
                 <LeaderboardHeader filter={filter} setFilter={setFilter} />
 
                 <div className="space-y-3">
-                    {users.map((user, index) => (
+                    {users.length > 0 ? users.map((user, index) => (
                         <LeaderItem key={user.id} user={user} index={index} />
-                    ))}
+                    )) : (
+                        <div className="text-center text-gray-500 py-10">Loading ranking...</div>
+                    )}
                 </div>
             </div>
         </Card>

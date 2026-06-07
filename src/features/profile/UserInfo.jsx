@@ -16,7 +16,7 @@ import SecuritySettings from './SecuritySettings';
  * This file is responsible only for state management and API calls.
  */
 export default function UserInfo() {
-    const { user } = useAuth();
+    const { user, updateUser } = useAuth();
     const router = useRouter();
 
     const [profile, setProfile] = useState({
@@ -43,7 +43,13 @@ export default function UserInfo() {
         if (user) {
             const saved = localStorage.getItem('onboarding_profile');
             const userObj = JSON.parse(localStorage.getItem('user') || '{}');
-            setProfile(prev => ({ ...prev, name: user.name || prev.name, email: user.email || prev.email, ...(saved ? JSON.parse(saved) : {}) }));
+            setProfile(prev => ({
+                ...prev,
+                name: user.full_name || prev.name,
+                email: user.email || prev.email,
+                ...user.profile,
+                ...(saved ? JSON.parse(saved) : {}),
+            }));
             if (userObj.twoFactorEnabled) setTwoFactorEnabled(true);
             setIsLoading(false);
         }
@@ -54,10 +60,17 @@ export default function UserInfo() {
     const handleSave = async () => {
         try {
             setApiError('');
-            await userService.updateProfile(profile);
+            const updatedUser = await userService.updateProfile(profile);
+            updateUser(updatedUser);
+            setProfile(prev => ({
+                ...prev,
+                name: updatedUser.full_name || prev.name,
+            }));
             setIsEditing(false);
             flash(setApiSuccess, 'Profile updated successfully');
-        } catch { setApiError('Failed to save profile'); }
+        } catch (e) {
+            setApiError(e.message || 'Failed to save profile');
+        }
     };
 
     const handleChangePassword = async () => {

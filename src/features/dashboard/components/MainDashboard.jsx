@@ -91,7 +91,7 @@ export default function MainDashboard() {
 
             <DashboardStatsGrid stats={stats} />
 
-            <DashboardInsights />
+            <DashboardInsights stats={stats} trends={trends} />
 
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 space-y-6">
@@ -108,7 +108,7 @@ export default function MainDashboard() {
             </div>
 
             <Modal isOpen={isNewEntryOpen} onClose={handleNewEntryClose}>
-                <ModalContent className="max-w-2xl bg-gradient-to-br from-white to-gray-50/50">
+                <ModalContent className="max-w-2xl bg-linear-to-br from-white to-gray-50/50">
                     <ModalHeader>
                         <ModalTitle className="text-2xl">Log New Activity</ModalTitle>
                     </ModalHeader>

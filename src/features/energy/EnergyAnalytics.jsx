@@ -28,7 +28,7 @@ export function StatsGrid() {
             gradient: "from-amber-500 to-orange-500",
             bg: "bg-amber-50",
             ring: "ring-amber-100",
-            iconBg: "bg-gradient-to-br from-amber-400 to-orange-500",
+            iconBg: "bg-linear-to-br from-amber-400 to-orange-500",
         },
         {
             label: "Renewable Mix",
@@ -39,7 +39,7 @@ export function StatsGrid() {
             gradient: "from-emerald-500 to-teal-500",
             bg: "bg-emerald-50",
             ring: "ring-emerald-100",
-            iconBg: "bg-gradient-to-br from-emerald-400 to-teal-500",
+            iconBg: "bg-linear-to-br from-emerald-400 to-teal-500",
             progress: 42,
         },
         {
@@ -51,7 +51,7 @@ export function StatsGrid() {
             gradient: "from-violet-500 to-purple-500",
             bg: "bg-violet-50",
             ring: "ring-violet-100",
-            iconBg: "bg-gradient-to-br from-violet-400 to-purple-500",
+            iconBg: "bg-linear-to-br from-violet-400 to-purple-500",
         },
     ];
 
@@ -66,7 +66,7 @@ export function StatsGrid() {
                         className={`relative overflow-hidden bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 ring-1 ${stat.ring}`}
                     >
                         {/* Decorative corner gradient */}
-                        <div className={`absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br ${stat.gradient} opacity-10 blur-xl`} />
+                        <div className={`absolute -top-8 -right-8 w-24 h-24 rounded-full bg-linear-to-br ${stat.gradient} opacity-10 blur-xl`} />
 
                         <div className="relative flex items-start justify-between">
                             <div className="space-y-3">
@@ -84,7 +84,7 @@ export function StatsGrid() {
                         {stat.progress !== undefined && (
                             <div className="mt-4 w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
                                 <div
-                                    className={`h-2.5 rounded-full bg-gradient-to-r ${stat.gradient} transition-all duration-1000`}
+                                    className={`h-2.5 rounded-full bg-linear-to-r ${stat.gradient} transition-all duration-1000`}
                                     style={{ width: `${stat.progress}%` }}
                                 />
                             </div>
@@ -172,7 +172,7 @@ export function UsageChart({ data, options }) {
             <div className="p-6 sm:p-8 border-b border-gray-50">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl text-white shadow-lg shadow-amber-200/50">
+                        <div className="p-2.5 bg-linear-to-br from-amber-400 to-orange-500 rounded-xl text-white shadow-lg shadow-amber-200/50">
                             <Activity className="w-5 h-5" />
                         </div>
                         <div>
@@ -193,7 +193,7 @@ export function UsageChart({ data, options }) {
                 </div>
             </div>
             <div className="p-6 sm:p-8">
-                <div className="h-[300px] w-full">
+                <div className="h-75 w-full">
                     <Line data={useData} options={useOptions} />
                 </div>
             </div>

@@ -6,7 +6,7 @@ import { RecentEntries } from './WaterLogHistory';
 
 export function LogForm({ liters, onLiters, date, onDate, onCancel, onSave }) {
     return (
-        <div className="space-y-5">
+        <div className="space-y-3">
             <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                     <Droplets className="w-4 h-4 text-sky-500" />
@@ -44,7 +44,7 @@ export function LogForm({ liters, onLiters, date, onDate, onCancel, onSave }) {
                 <button
                     onClick={onSave}
                     disabled={!liters}
-                    className={`px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-lg transition-all duration-300 ${!liters ? 'bg-sky-300 cursor-not-allowed shadow-none' : 'bg-gradient-to-r from-sky-500 to-cyan-500 shadow-sky-200/50 hover:shadow-xl hover:scale-[1.02]'}`}
+                    className={`px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-lg transition-all duration-300 ${!liters ? 'bg-sky-300 cursor-not-allowed shadow-none' : 'bg-linear-to-r from-sky-500 to-cyan-500 shadow-sky-200/50 hover:shadow-xl hover:scale-[1.02]'}`}
                 >
                     Save Entry
                 </button>
@@ -58,7 +58,7 @@ export function WaterLogModal({ isOpen, onClose, savedToast, liters, setLiters, 
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent className="max-w-3xl">
                 {/* Header */}
-                <div className="relative bg-gradient-to-r from-sky-500 via-cyan-500 to-blue-600 rounded-t-2xl p-6 text-white overflow-hidden">
+                <div className="relative bg-linear-to-r from-sky-500 via-cyan-500 to-blue-600 rounded-t-2xl p-6 text-white overflow-hidden">
                     <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
                     <div className="absolute bottom-0 left-0 -ml-6 -mb-6 w-24 h-24 rounded-full bg-white/10 blur-xl" />
 

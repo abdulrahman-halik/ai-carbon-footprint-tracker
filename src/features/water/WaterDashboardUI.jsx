@@ -4,7 +4,7 @@ import { Droplets, Plus, Waves, Activity, TrendingDown, TrendingUp, BarChart3, A
 
 export function WaterHeader({ onOpen }) {
     return (
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-sky-500 via-cyan-500 to-blue-600 p-8 sm:p-10 text-white shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-sky-500 via-cyan-500 to-blue-600 p-8 sm:p-10 text-white shadow-2xl">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
             <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-48 h-48 rounded-full bg-white/10 blur-2xl" />
@@ -54,7 +54,7 @@ export function WaterStats() {
             trend: { direction: "down", value: "12%", text: "vs last week" },
             gradient: "from-sky-500 to-cyan-500",
             ring: "ring-sky-100",
-            iconBg: "bg-gradient-to-br from-sky-400 to-cyan-500",
+            iconBg: "bg-linear-to-br from-sky-400 to-cyan-500",
         },
         {
             label: "Monthly Total",
@@ -64,7 +64,7 @@ export function WaterStats() {
             trend: { direction: "down", value: "8%", text: "under target" },
             gradient: "from-blue-500 to-indigo-500",
             ring: "ring-blue-100",
-            iconBg: "bg-gradient-to-br from-blue-400 to-indigo-500",
+            iconBg: "bg-linear-to-br from-blue-400 to-indigo-500",
             extra: { label: "Projected", value: "4,500L" },
         },
         {
@@ -74,7 +74,7 @@ export function WaterStats() {
             icon: AlertTriangle,
             gradient: "from-amber-500 to-orange-500",
             ring: "ring-amber-100",
-            iconBg: "bg-gradient-to-br from-amber-400 to-orange-500",
+            iconBg: "bg-linear-to-br from-amber-400 to-orange-500",
             alert: { title: "High Usage Detected", description: "Sunday — check your irrigation system." },
         },
     ];
@@ -90,7 +90,7 @@ export function WaterStats() {
                         className={`relative overflow-hidden bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 ring-1 ${stat.ring}`}
                     >
                         {/* Corner glow */}
-                        <div className={`absolute -top-8 -right-8 w-24 h-24 rounded-full bg-gradient-to-br ${stat.gradient} opacity-10 blur-xl`} />
+                        <div className={`absolute -top-8 -right-8 w-24 h-24 rounded-full bg-linear-to-br ${stat.gradient} opacity-10 blur-xl`} />
 
                         <div className="relative flex items-start justify-between">
                             <div className="space-y-3">
@@ -124,7 +124,7 @@ export function WaterStats() {
 
                         {stat.alert && (
                             <div className="mt-4 flex items-start gap-2.5 bg-amber-50/60 px-3 py-2.5 rounded-xl">
-                                <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                                <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 shrink-0" />
                                 <div>
                                     <p className="text-xs font-bold text-gray-700">{stat.alert.title}</p>
                                     <p className="text-[11px] text-gray-500 mt-0.5">{stat.alert.description}</p>
@@ -172,7 +172,7 @@ export function WaterTips() {
     return (
         <div className="space-y-5">
             <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-xl text-white shadow-lg shadow-sky-200/50">
+                <div className="p-2 bg-linear-to-br from-sky-400 to-cyan-500 rounded-xl text-white shadow-lg shadow-sky-200/50">
                     <Droplets className="w-4 h-4" />
                 </div>
                 <div>
@@ -190,11 +190,11 @@ export function WaterTips() {
                             className={`group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border ${tip.border} ring-1 ring-gray-50`}
                         >
                             {/* Top accent */}
-                            <div className={`h-1.5 bg-gradient-to-r ${tip.gradient}`} />
+                            <div className={`h-1.5 bg-linear-to-r ${tip.gradient}`} />
 
                             <div className="p-6">
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className={`p-3 rounded-2xl bg-gradient-to-br ${tip.gradient} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                                    <div className={`p-3 rounded-2xl bg-linear-to-br ${tip.gradient} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                                         <Icon className="w-5 h-5" />
                                     </div>
                                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${tip.tagColor}`}>

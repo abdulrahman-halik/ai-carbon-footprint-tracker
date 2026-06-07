@@ -4,7 +4,7 @@ import { Leaf, TrendingDown, Target } from "lucide-react";
 
 export default function DashboardHero({ user, greeting }) {
     return (
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-emerald-600 via-teal-500 to-cyan-500 p-7 text-white shadow-xl shadow-emerald-200/40">
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-r from-emerald-600 via-teal-500 to-cyan-500 p-7 text-white shadow-xl shadow-emerald-200/40">
             <div className="absolute -top-12 -right-12 w-56 h-56 rounded-full bg-white/10 blur-3xl" />
             <div className="absolute bottom-0 left-1/3 w-40 h-40 rounded-full bg-teal-300/20 blur-2xl" />
 

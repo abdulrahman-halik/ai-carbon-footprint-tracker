@@ -53,8 +53,12 @@ export default function RegisterForm() {
                 email: data.email,
                 password: data.password,
             });
-            toast.success(`Welcome back, ${user.full_name || user.name || "User"} 👋`);
-            router.push("/dashboard");
+            toast.success(`Welcome back, ${user?.full_name || user?.name || "User"} 👋`);
+            if (!user?.onboarding_completed) {
+                router.push("/onboarding");
+            } else {
+                router.push("/dashboard");
+            }
         } catch (err) {
             setApiError(err.message || "Failed to register");
         } finally {

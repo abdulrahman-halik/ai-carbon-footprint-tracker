@@ -21,7 +21,7 @@ export function SavedUsageCards({ logs = [], onEdit, onDelete, editingId, onCanc
         <div className="space-y-6">
             <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                    <div className="p-2 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-xl text-white shadow-lg shadow-sky-200/50">
+                    <div className="p-2 bg-linear-to-br from-sky-400 to-cyan-500 rounded-xl text-white shadow-lg shadow-sky-200/50">
                         <TrendingUp className="w-4 h-4" />
                     </div>
                     <div>
@@ -41,11 +41,11 @@ export function SavedUsageCards({ logs = [], onEdit, onDelete, editingId, onCanc
                             className="group relative bg-white rounded-2xl p-5 shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-gray-100 ring-1 ring-gray-50 overflow-hidden"
                         >
                             {/* Top gradient accent */}
-                            <div className="absolute top-0 inset-x-0 h-1 bg-gradient-to-r from-sky-400 via-cyan-400 to-blue-400" />
+                            <div className="absolute top-0 inset-x-0 h-1 bg-linear-to-r from-sky-400 via-cyan-400 to-blue-400" />
 
                             <div className="flex items-start gap-4">
-                                <div className="flex-shrink-0">
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-sky-400 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-sky-200/40 group-hover:scale-110 transition-transform duration-300">
+                                <div className="shrink-0">
+                                    <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-sky-400 to-cyan-500 flex items-center justify-center text-white shadow-lg shadow-sky-200/40 group-hover:scale-110 transition-transform duration-300">
                                         <Droplets className="w-6 h-6" />
                                     </div>
                                 </div>
@@ -69,7 +69,7 @@ export function SavedUsageCards({ logs = [], onEdit, onDelete, editingId, onCanc
 
                                     {l.notes && (
                                         <div className="flex items-start gap-1.5 mt-2 bg-sky-50/50 rounded-lg p-2">
-                                            <Droplets className="w-3 h-3 text-sky-400 mt-0.5 flex-shrink-0" />
+                                            <Droplets className="w-3 h-3 text-sky-400 mt-0.5 shrink-0" />
                                             <p className="text-xs text-gray-500 leading-relaxed line-clamp-2">{l.notes}</p>
                                         </div>
                                     )}
@@ -77,7 +77,7 @@ export function SavedUsageCards({ logs = [], onEdit, onDelete, editingId, onCanc
                                     <div className="mt-3">
                                         <div className="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
                                             <div
-                                                className={`h-2 rounded-full transition-all duration-700 ${pct >= 80 ? 'bg-gradient-to-r from-rose-400 to-rose-500' : pct >= 50 ? 'bg-gradient-to-r from-sky-400 to-cyan-500' : 'bg-gradient-to-r from-emerald-400 to-teal-500'}`}
+                                                className={`h-2 rounded-full transition-all duration-700 ${pct >= 80 ? 'bg-linear-to-r from-rose-400 to-rose-500' : pct >= 50 ? 'bg-linear-to-r from-sky-400 to-cyan-500' : 'bg-linear-to-r from-emerald-400 to-teal-500'}`}
                                                 style={{ width: `${pct}%` }}
                                             />
                                         </div>

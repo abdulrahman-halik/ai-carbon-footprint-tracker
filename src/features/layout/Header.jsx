@@ -5,25 +5,18 @@ import NotificationBell from "@/features/notifications/NotificationBell";
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useState, useEffect, useRef } from "react";
-import authService from "@/services/authService";
+import { useEffect, useRef, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
 export default function Header({ onMenuClick }) {
-    const [user, setUser] = useState(null);
+    const { user, logout } = useAuth();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const dropdownRef = useRef(null);
     const router = useRouter();
-    const { logout } = useAuth();
+
+    const currentUser = user ?? { name: "Guest", avatar: null };
 
     useEffect(() => {
-        const currentUser = authService.getCurrentUser();
-        if (currentUser) {
-            setUser(currentUser);
-        } else {
-            setUser({ name: "Guest", avatar: null });
-        }
-
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsDropdownOpen(false);
@@ -38,7 +31,7 @@ export default function Header({ onMenuClick }) {
         await logout();
         setIsDropdownOpen(false);
         sessionStorage.setItem("logout_toast", "true");
-        window.location.href = "/";
+        window.location.href = "/login";
     };
 
     const pathname = usePathname();

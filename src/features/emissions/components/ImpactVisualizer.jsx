@@ -55,8 +55,8 @@ export function ImpactVisualizer({ data, breakdown, total, className }) {
             <div className="grid grid-cols-2 gap-x-6 gap-y-2">
                 {top4.map((item) => (
                     <div key={item.category} className="flex items-center gap-1.5">
-                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
-                        <span className="text-xs text-gray-600 font-medium truncate max-w-[80px]">{item.category}</span>
+                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
+                        <span className="text-xs text-gray-600 font-medium truncate max-w-20">{item.category}</span>
                     </div>
                 ))}
             </div>

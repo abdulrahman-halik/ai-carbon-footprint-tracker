@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useMemo } from 'react';
+import Image from 'next/image';
 import { Modal, ModalContent } from '@/components/ui/Modal';
 import { X, User, Mail, Briefcase, UserPlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
@@ -93,7 +94,7 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent className="max-w-3xl">
-                <div className="bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-t-2xl p-5 text-white shadow-md">
+                <div className="bg-linear-to-r from-emerald-600 to-emerald-400 rounded-t-2xl p-5 text-white shadow-md">
                     <div className="flex items-center justify-between">
                         <div className="flex items-center gap-4">
                             <div className="bg-white/20 p-3 rounded-lg shadow-sm">
@@ -110,7 +111,13 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                 <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 items-start">
                     <div className="flex flex-col items-center md:items-start">
                         <div className="w-32 h-32 rounded-full bg-white overflow-hidden flex items-center justify-center shadow-lg ring-4 ring-emerald-50">
-                            {avatar ? <img src={avatar} alt={name} className="w-full h-full object-cover" /> : <User className="text-emerald-300" size={48} />}
+                            {avatar ? (
+                                <div className="relative w-full h-full">
+                                    <Image src={avatar} alt={name} fill className="object-cover" />
+                                </div>
+                            ) : (
+                                <User className="text-emerald-300" size={48} />
+                            )}
                         </div>
                         <label className="mt-4 w-full md:w-64 flex items-center gap-3 text-sm cursor-pointer">
                             <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
@@ -171,7 +178,7 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                                 aria-label={member ? 'Save member' : 'Add member'}
                                 disabled={!valid}
                                 onClick={handleAdd}
-                                className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-white font-semibold shadow-lg transform transition duration-150 ease-in-out hover:scale-105 ${!valid ? 'opacity-50 cursor-not-allowed' : ''} bg-gradient-to-r from-emerald-500 to-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300`}
+                                className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-white font-semibold shadow-lg transform transition duration-150 ease-in-out hover:scale-105 ${!valid ? 'opacity-50 cursor-not-allowed' : ''} bg-linear-to-r from-emerald-500 to-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300`}
                             >
                                 <UserPlus className="w-4 h-4" />
                                 <span>{member ? 'Save' : 'Add Member'}</span>
@@ -181,8 +188,12 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                         <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-dashed border-gray-100">
                             <h4 className="text-sm font-medium text-gray-700">Preview</h4>
                             <div className="mt-3 flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full overflow-hidden bg-white">
-                                    {avatar ? <img src={avatar} alt={name} className="w-full h-full object-cover" /> : <User className="text-gray-300" />}
+                                <div className="w-12 h-12 rounded-full overflow-hidden bg-white relative">
+                                    {avatar ? (
+                                        <Image src={avatar} alt={name} fill className="object-cover" />
+                                    ) : (
+                                        <User className="text-gray-300" />
+                                    )}
                                 </div>
                                 <div>
                                     <div className="font-semibold text-gray-900">{name || 'New Member'}</div>

@@ -67,7 +67,7 @@ export const ActivityLogWizard = ({ onComplete }) => {
                 </div>
                 <h3 className="text-2xl font-bold text-gray-900">Activity Logged!</h3>
                 <p className="text-gray-500 mt-1 text-sm max-w-xs mx-auto">
-                    Here's a breakdown of what was recorded and how it affects your carbon footprint.
+                    Here is a breakdown of what was recorded and how it affects your carbon footprint.
                 </p>
 
                 {/* What was logged */}
@@ -80,7 +80,7 @@ export const ActivityLogWizard = ({ onComplete }) => {
                             <span className="text-2xl">{getTransportIcon(logData.mode)}</span>
                             <div className="flex-1">
                                 <p className="text-sm font-semibold text-blue-800 capitalize">{logData.mode} travel</p>
-                                <p className="text-xs text-blue-600">{logData.distance || 0} km travelled</p>
+                                <p className="text-xs text-blue-600">{logData.distance || 0} km traveled</p>
                             </div>
                             <span className="text-xs font-bold text-blue-700 bg-blue-100 px-2 py-1 rounded-lg">
                                 ~{getTransportCO2(logData.mode, logData.distance)} kg CO₂
@@ -94,7 +94,7 @@ export const ActivityLogWizard = ({ onComplete }) => {
                             <span className="text-2xl">{getDietIcon(logData.diet)}</span>
                             <div className="flex-1">
                                 <p className="text-sm font-semibold text-emerald-800">{getDietLabel(logData.diet)} diet</p>
-                                <p className="text-xs text-emerald-600">Today's meals</p>
+                                <p className="text-xs text-emerald-600">Meals today</p>
                             </div>
                             <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2 py-1 rounded-lg">
                                 ~{getDietCO2(logData.diet)} kg CO₂
@@ -154,13 +154,13 @@ export const ActivityLogWizard = ({ onComplete }) => {
                 </div>
                 <div className="h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200/50">
                     <div
-                        className="h-full bg-gradient-to-r from-emerald-400 to-teal-500 transition-all duration-500 ease-out shadow-lg"
+                        className="h-full bg-linear-to-r from-emerald-400 to-teal-500 transition-all duration-500 ease-out shadow-lg"
                         style={{ width: `${(step / 2) * 100}%` }}
                     />
                 </div>
             </div>
 
-            <div className="min-h-[250px] transition-all duration-300">
+            <div className="min-h-62.5 transition-all duration-300">
                 {step === 1 && <TransportInput onUpdate={handleUpdate} />}
                 {step === 2 && <DietInput onUpdate={handleUpdate} />}
             </div>
@@ -179,7 +179,7 @@ export const ActivityLogWizard = ({ onComplete }) => {
                 <button
                     onClick={handleNext}
                     disabled={isSubmitting}
-                    className="flex items-center justify-center gap-2 px-8 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 shadow-lg shadow-gray-200 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all min-w-[140px]"
+                    className="flex items-center justify-center gap-2 px-8 py-2.5 bg-gray-900 text-white text-sm font-semibold rounded-xl hover:bg-gray-800 shadow-lg shadow-gray-200 hover:shadow-xl hover:-translate-y-0.5 active:scale-95 transition-all min-w-35"
                 >
                     {isSubmitting ? (
                         <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />

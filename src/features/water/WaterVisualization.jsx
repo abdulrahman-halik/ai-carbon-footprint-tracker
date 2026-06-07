@@ -70,7 +70,7 @@ export function WaterChart() {
             <div className="p-6 sm:p-8 border-b border-gray-50">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                     <div className="flex items-center gap-3">
-                        <div className="p-2.5 bg-gradient-to-br from-sky-400 to-cyan-500 rounded-xl text-white shadow-lg shadow-sky-200/50">
+                        <div className="p-2.5 bg-linear-to-br from-sky-400 to-cyan-500 rounded-xl text-white shadow-lg shadow-sky-200/50">
                             <BarChart3 className="w-5 h-5" />
                         </div>
                         <div>
@@ -91,7 +91,7 @@ export function WaterChart() {
                 </div>
             </div>
             <div className="p-6 sm:p-8">
-                <div className="h-[300px] w-full">
+                <div className="h-75 w-full">
                     <Bar data={waterChartData} options={waterChartOptions} />
                 </div>
             </div>

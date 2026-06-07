@@ -2,14 +2,9 @@ import apiClient from "@/lib/apiClient";
 
 const authService = {
     login: async (credentials) => {
-        const formData = new URLSearchParams();
-        formData.append("username", credentials.email);
-        formData.append("password", credentials.password);
-
-        const response = await apiClient.post("/api/auth/login", formData, {
-            headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-            },
+        const response = await apiClient.post("/api/auth/login", {
+            email: credentials.email,
+            password: credentials.password,
         });
 
         // Fetch user profile after successful login

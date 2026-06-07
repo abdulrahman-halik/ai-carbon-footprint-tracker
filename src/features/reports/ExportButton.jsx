@@ -1,40 +1,30 @@
 "use client";
 import React, { useState } from 'react';
-import { Download, FileText, Printer, Check } from 'lucide-react';
+import { Download, FileText, Printer } from 'lucide-react';
+import reportService from '@/services/reportService';
 
 export default function ExportButton() {
     const [isExporting, setIsExporting] = useState(false);
     const [showMenu, setShowMenu] = useState(false);
+    const [error, setError] = useState('');
 
-    const handleExport = (type) => {
+    const handleExport = async (type) => {
         setIsExporting(true);
         setShowMenu(false);
+        setError('');
 
-        setTimeout(() => {
+        try {
             if (type === 'print') {
                 window.print();
             } else {
-                // Mock download
-                const data = [
-                    ["Date", "Activity", "Carbon (kg)", "Distance (km)", "Type"],
-                    ["2023-10-01", "Commute", "2.5", "15", "Car"],
-                    ["2023-10-02", "Diet", "1.2", "0", "Beef Impact"],
-                    ["2023-10-03", "Energy", "5.0", "0", "Electricity"]
-                ];
-
-                const csvContent = "data:text/csv;charset=utf-8,"
-                    + data.map(e => e.join(",")).join("\n");
-
-                const encodedUri = encodeURI(csvContent);
-                const link = document.createElement("a");
-                link.setAttribute("href", encodedUri);
-                link.setAttribute("download", "my_eco_impact_report.csv");
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
+                await reportService.downloadReport(type === 'yearly' ? 'yearly' : 'monthly');
             }
+        } catch (err) {
+            console.error('Failed to export report:', err);
+            setError('Could not export the report. Please try again.');
+        } finally {
             setIsExporting(false);
-        }, 1500);
+        }
     };
 
     return (
@@ -54,23 +44,32 @@ export default function ExportButton() {
             {showMenu && (
                 <>
                     <div className="fixed inset-0 z-10" onClick={() => setShowMenu(false)} />
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+                    <div className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-xl border border-gray-100 z-20 overflow-hidden animate-in fade-in zoom-in-95 duration-200">
                         <div className="p-1">
                             <button
-                                onClick={() => handleExport('csv')}
+                                onClick={() => handleExport('monthly')}
                                 className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg flex items-center gap-2"
                             >
-                                <FileText size={16} className="text-emerald-600" /> Download CSV
+                                <FileText size={16} className="text-emerald-600" /> Download Monthly CSV
+                            </button>
+                            <button
+                                onClick={() => handleExport('yearly')}
+                                className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg flex items-center gap-2"
+                            >
+                                <FileText size={16} className="text-blue-600" /> Download Yearly CSV
                             </button>
                             <button
                                 onClick={() => handleExport('print')}
                                 className="w-full text-left px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded-lg flex items-center gap-2"
                             >
-                                <Printer size={16} className="text-blue-600" /> Print Report
+                                <Printer size={16} className="text-indigo-600" /> Print Report
                             </button>
                         </div>
                     </div>
                 </>
+            )}
+            {error && (
+                <p className="mt-2 text-sm text-red-600">{error}</p>
             )}
         </div>
     );

@@ -14,7 +14,7 @@ export function ProjectGallery({ projects }) {
                 {projects.map((project) => (
                     <Card key={project.id} className="group hover:shadow-lg transition-all duration-300">
                         <div className="h-48 bg-gray-100 rounded-t-2xl relative overflow-hidden">
-                            <div className="absolute inset-0 bg-gradient-to-tr from-gray-200 to-gray-300 group-hover:scale-105 transition-transform duration-500" />
+                            <div className="absolute inset-0 bg-linear-to-tr from-gray-200 to-gray-300 group-hover:scale-105 transition-transform duration-500" />
                             <Badge className="absolute top-4 right-4 bg-white/90 text-gray-900 hover:bg-white shadow">
                                 {project.type}
                             </Badge>

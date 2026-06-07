@@ -1,12 +1,16 @@
 "use client";
 import React, { useState, useRef, useEffect } from 'react';
 import { useForm } from "react-hook-form";
-import { MessageSquare, X, Send, Bot, User, Sparkles } from 'lucide-react';
+import { MessageSquare, X, Send, Bot, Sparkles } from 'lucide-react';
+
+import insightsService from "@/services/insightsService";
+import mlService from "@/services/mlService";
+import dashboardService from "@/services/dashboardService";
 
 export default function AIChatbot() {
     const [isOpen, setIsOpen] = useState(false);
     const [messages, setMessages] = useState([
-        { id: 1, text: "Hello! I'm your Eco-Assistant. How can I help you reduce your carbon footprint today?", sender: 'ai' }
+        { id: 1, text: "Hello! I'm your Eco-Assistant. You can ask me questions about sustainability, or say 'predict' to get a carbon footprint prediction from your stats!", sender: 'ai' }
     ]);
     const [isTyping, setIsTyping] = useState(false);
     const messagesEndRef = useRef(null);
@@ -32,44 +36,64 @@ export default function AIChatbot() {
         scrollToBottom();
     }, [messages, isTyping, isOpen]);
 
-    const onSubmit = (data) => {
+    const onSubmit = async (data) => {
         if (!data.message.trim()) return;
 
-        const userMsg = { id: Date.now(), text: data.message, sender: 'user' };
+        const userText = data.message.trim();
+        const userMsg = { id: Date.now(), text: userText, sender: 'user' };
         setMessages(prev => [...prev, userMsg]);
         reset();
         setIsTyping(true);
 
-        // Simulate AI response
-        setTimeout(() => {
-            const aiResponseText = getAIResponse(userMsg.text);
+        try {
+            let aiResponseText = "";
+            const lowerText = userText.toLowerCase();
+
+            if (lowerText.includes("predict")) {
+                const stats = await dashboardService.getStats();
+                const features = {
+                    Age: 30.0,
+                    Electricity_Usage_kWh_per_month: stats?.total_energy_usage || 0,
+                    Water_Usage_L_per_day: stats?.total_water_usage || 0,
+                    Carbon_Footprint_Score: stats?.total_emissions || 0,
+                };
+
+                try {
+                    const response = await mlService.predict(features);
+                    const pred = response?.prediction ?? response;
+                    aiResponseText = `Your predicted carbon footprint based on current data is ${Number(pred).toFixed(2)} kg CO₂e. Keep improving your sustainable habits!`;
+                } catch (err) {
+                    const status = err?.response?.status;
+                    if (status === 401) {
+                        aiResponseText = "Please log in to get a personalized carbon footprint prediction.";
+                    } else {
+                        console.error("Prediction error:", err);
+                        aiResponseText = "Sorry, I couldn't compute a prediction right now. Try again later.";
+                    }
+                }
+            } else {
+                const response = await insightsService.search(userText, 3);
+                aiResponseText = response?.insight || response?.results?.[0]?.text || "I couldn't find a specific answer for that. Try a different sustainability question.";
+            }
+
             const aiMsg = { id: Date.now() + 1, text: aiResponseText, sender: 'ai' };
             setMessages(prev => [...prev, aiMsg]);
+        } catch (error) {
+            console.error("AI Error:", error);
+            const errMsg = { id: Date.now() + 1, text: "Sorry, I am having trouble connecting to the backend. Please try again later.", sender: 'ai' };
+            setMessages(prev => [...prev, errMsg]);
+        } finally {
             setIsTyping(false);
-        }, 1500);
-    };
-
-    const getAIResponse = (text) => {
-        const lowerText = text.toLowerCase();
-        if (lowerText.includes("electricity") || lowerText.includes("energy")) {
-            return "To reduce electricity usage, try switching to LED bulbs, unplugging idle electronics, and using natural light during the day. Did you know this could save up to 15% on your bill?";
         }
-        if (lowerText.includes("car") || lowerText.includes("drive") || lowerText.includes("transport")) {
-            return "Consider carpooling or using public transport. If you bike just twice a week instead of driving, you could reduce your carbon emissions by significantly!";
-        }
-        if (lowerText.includes("food") || lowerText.includes("diet") || lowerText.includes("meat")) {
-            return "Reducing meat consumption, especially beef, is one of the most impactful changes. Try a 'Meatless Monday' to start!";
-        }
-        return "That's a great question! I'm constantly learning. Focus on small, consistent changes like reducing waste and conserving water.";
     };
 
     return (
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
             {/* Chat Window */}
             {isOpen && (
-                <div className="mb-4 w-[350px] md:w-[400px] h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in slide-in-from-bottom-10 fade-in duration-300">
+                <div className="mb-4 w-87.5 md:w-100 h-125 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in slide-in-from-bottom-10 fade-in duration-300">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 flex items-center justify-between text-white">
+                    <div className="bg-linear-to-r from-emerald-600 to-teal-600 p-4 flex items-center justify-between text-white">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
                                 <Bot size={18} className="text-white" />
@@ -138,7 +162,7 @@ export default function AIChatbot() {
             {/* Floating Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`group flex items-center justify-center w-14 h-14 rounded-full shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 ${isOpen ? 'bg-gray-800 text-white rotate-90 scale-0 opacity-0' : 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white hover:-translate-y-1 block opacity-100 scale-100'
+                className={`group flex items-center justify-center w-14 h-14 rounded-full shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 ${isOpen ? 'bg-gray-800 text-white rotate-90 scale-0 opacity-0' : 'bg-linear-to-br from-emerald-500 to-teal-600 text-white hover:-translate-y-1 block opacity-100 scale-100'
                     }`}
                 style={{ position: isOpen ? 'absolute' : 'relative', pointerEvents: isOpen ? 'none' : 'auto' }}
             >

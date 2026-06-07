@@ -188,9 +188,9 @@ export const generateAIInsights = (results, inputs) => {
 };
 
 /** Comparison vs average and last-month mock */
-export const getComparisonData = (totalFootprint) => {
+export const getComparisonData = (totalFootprint, historicalFootprint) => {
     const AVERAGE = 430;
-    const lastMonth = +(totalFootprint * (0.92 + Math.random() * 0.16)).toFixed(1);
+    const lastMonth = historicalFootprint ? historicalFootprint : totalFootprint; // We assume historical is passed in.
     const forecast = +(totalFootprint * 1.05).toFixed(1);
     return { average: AVERAGE, lastMonth, forecast, totalFootprint };
 };

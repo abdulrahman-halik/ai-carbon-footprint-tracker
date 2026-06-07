@@ -35,9 +35,9 @@ apiClient.interceptors.response.use(
     (error) => {
         if (error.response && error.response.status === 401) {
             // Handle unauthorized error (e.g., redirect to login or refresh token)
-            if (typeof window !== "undefined") {
-                // localStorage.removeItem("user");
-                // window.location.href = "/login";
+            if (typeof window !== "undefined" && window.location.pathname !== "/login" && window.location.pathname !== "/register") {
+                localStorage.removeItem("user");
+                window.location.href = "/login";
             }
         }
         return Promise.reject(error);

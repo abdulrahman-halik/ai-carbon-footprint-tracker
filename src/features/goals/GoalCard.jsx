@@ -28,13 +28,13 @@ export function GoalCard({ goal, onEdit, onDelete }) {
     return (
         <div className="group relative bg-white/85 rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border border-white/70 ring-1 ring-emerald-50/70 overflow-hidden">
             {/* Top accent */}
-            <div className={`h-0.5 ${isComplete ? 'bg-gradient-to-r from-emerald-300 via-teal-300 to-sky-300' : 'bg-gradient-to-r from-emerald-200 via-teal-200 to-sky-200'}`} />
+            <div className={`h-0.5 ${isComplete ? 'bg-linear-to-r from-emerald-300 via-teal-300 to-sky-300' : 'bg-linear-to-r from-emerald-200 via-teal-200 to-sky-200'}`} />
 
             <div className="p-6">
                 {/* Header */}
                 <div className="flex items-start justify-between gap-3 mb-5">
                     <div className="flex items-start gap-3 flex-1 min-w-0">
-                        <div className={`p-2.5 rounded-xl shadow-sm flex-shrink-0 ${isComplete ? 'bg-emerald-100' : 'bg-gray-100'}`}>
+                        <div className={`p-2.5 rounded-xl shadow-sm shrink-0 ${isComplete ? 'bg-emerald-100' : 'bg-gray-100'}`}>
                             {isComplete ? <Trophy className="w-5 h-5 text-emerald-700" /> : <Target className="w-5 h-5 text-gray-500" />}
                         </div>
                         <div className="min-w-0">

@@ -5,7 +5,7 @@ import { Zap, Plus, Activity, Lightbulb, Plug, Leaf, ArrowRight } from "lucide-r
 
 export function EnergyHeader({ onAdd }) {
     return (
-        <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-amber-100 via-orange-100 to-yellow-100 p-8 sm:p-10 text-amber-900 shadow-2xl">
+        <div className="relative overflow-hidden rounded-3xl bg-linear-to-br from-amber-100 via-orange-100 to-yellow-100 p-8 sm:p-10 text-amber-900 shadow-2xl">
             {/* Decorative elements */}
             <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/40 blur-3xl" />
             <div className="absolute bottom-0 left-0 -ml-12 -mb-12 w-48 h-48 rounded-full bg-white/40 blur-2xl" />
@@ -82,7 +82,7 @@ export function EnergyTips() {
     return (
         <div className="space-y-5">
             <div className="flex items-center gap-3">
-                <div className="p-2 bg-gradient-to-br from-amber-400 to-orange-500 rounded-xl text-white shadow-lg shadow-amber-200/50">
+                <div className="p-2 bg-linear-to-br from-amber-400 to-orange-500 rounded-xl text-white shadow-lg shadow-amber-200/50">
                     <Lightbulb className="w-4 h-4" />
                 </div>
                 <div>
@@ -100,11 +100,11 @@ export function EnergyTips() {
                             className={`group relative overflow-hidden bg-white rounded-2xl shadow-md hover:shadow-xl transition-all duration-300 hover:-translate-y-1 border ${tip.border} ring-1 ring-gray-50`}
                         >
                             {/* Top accent */}
-                            <div className={`h-1.5 bg-gradient-to-r ${tip.gradient}`} />
+                            <div className={`h-1.5 bg-linear-to-r ${tip.gradient}`} />
 
                             <div className="p-6">
                                 <div className="flex items-start justify-between mb-4">
-                                    <div className={`p-3 rounded-2xl bg-gradient-to-br ${tip.gradient} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                                    <div className={`p-3 rounded-2xl bg-linear-to-br ${tip.gradient} text-white shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                                         <Icon className="w-5 h-5" />
                                     </div>
                                     <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full ${tip.tagColor}`}>

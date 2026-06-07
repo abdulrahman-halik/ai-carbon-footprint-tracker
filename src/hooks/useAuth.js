@@ -61,6 +61,18 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateUser = (updatedUser) => {
+        const mergedUser = {
+            ...(user || {}),
+            ...updatedUser,
+        };
+        setUser(mergedUser);
+        if (typeof window !== "undefined") {
+            localStorage.setItem("user", JSON.stringify(mergedUser));
+        }
+        return mergedUser;
+    };
+
     // Logout function
     const logout = async () => {
         setIsLoading(true);
@@ -98,7 +110,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, register, logout, forgotPassword, resetPassword }}>
+        <AuthContext.Provider value={{ user, isLoading, login, register, logout, forgotPassword, resetPassword, updateUser }}>
             {children}
         </AuthContext.Provider>
     );
