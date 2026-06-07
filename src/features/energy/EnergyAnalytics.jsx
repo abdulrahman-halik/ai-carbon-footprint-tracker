@@ -193,7 +193,7 @@ export function UsageChart({ data, options }) {
                 </div>
             </div>
             <div className="p-6 sm:p-8">
-                <div className="h-[300px] w-full">
+                <div className="h-75 w-full">
                     <Line data={useData} options={useOptions} />
                 </div>
             </div>

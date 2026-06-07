@@ -6,7 +6,7 @@ import { Modal, ModalContent } from "@/components/ui/Modal";
 
 export function MeterForm({ reading, onReading, date, onDate, notes, onNotes, onCancel, onSave }) {
     return (
-        <div className="space-y-5">
+        <div className="space-y-3">
             <div>
                 <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
                     <Zap className="w-4 h-4 text-amber-500" />

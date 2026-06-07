@@ -106,7 +106,7 @@ export default function LandingPage() {
                 {/* Background blobs */}
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
                     <div className="absolute top-[-10%] right-[-5%] w-125 h-125 bg-primary-100/50 rounded-full blur-3xl opacity-60" />
-                    <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-3xl opacity-60" />
+                    <div className="absolute bottom-[-10%] left-[-10%] w-150 h-150 bg-blue-100/40 rounded-full blur-3xl opacity-60" />
                 </div>
 
                 <div className="container mx-auto px-4 sm:px-6 lg:px-8 text-center max-w-4xl">
