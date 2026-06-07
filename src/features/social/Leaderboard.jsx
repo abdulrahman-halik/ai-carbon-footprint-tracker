@@ -39,7 +39,7 @@ export function LeaderItem({ user, index }) {
     return (
         <div
             className={`group flex items-center justify-between p-4 rounded-2xl transition-all duration-300 ${user.isCurrentUser
-                ? 'bg-gradient-to-r from-emerald-50 to-emerald-100/70 border border-emerald-200/70 shadow-md'
+                ? 'bg-linear-to-r from-emerald-50 to-emerald-100/70 border border-emerald-200/70 shadow-md'
                 : 'hover:bg-emerald-50/40 border border-transparent hover:border-emerald-100/70'
                 }`}
         >

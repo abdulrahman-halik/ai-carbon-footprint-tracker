@@ -27,7 +27,7 @@ export default function GamificationBadge({ levelData, streakDays = 5 }) {
 
     return (
         <Card className="border-0 shadow-sm overflow-hidden">
-            <div className={`bg-gradient-to-r ${c.bg} p-5 text-white`}>
+            <div className={`bg-linear-to-r ${c.bg} p-5 text-white`}>
                 <div className="flex items-center justify-between">
                     <div>
                         <p className="text-xs font-medium opacity-80 uppercase tracking-wider mb-1">Your Eco Level</p>

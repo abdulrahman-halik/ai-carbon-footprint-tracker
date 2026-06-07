@@ -64,7 +64,7 @@ export function MeterForm({ reading, onReading, date, onDate, notes, onNotes, on
                 <button onClick={onCancel} className="px-5 py-2.5 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 font-medium text-sm transition-colors">
                     Cancel
                 </button>
-                <button onClick={onSave} className="px-6 py-2.5 rounded-xl bg-gradient-to-r from-amber-500 to-orange-500 text-white font-bold text-sm shadow-lg shadow-amber-200/50 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
+                <button onClick={onSave} className="px-6 py-2.5 rounded-xl bg-linear-to-r from-amber-500 to-orange-500 text-white font-bold text-sm shadow-lg shadow-amber-200/50 hover:shadow-xl hover:scale-[1.02] transition-all duration-300">
                     Save Reading
                 </button>
             </div>
@@ -84,7 +84,7 @@ export function MeterPreview({ reading, date, readings = [] }) {
             </div>
 
             {/* Current reading card */}
-            <div className="relative bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white overflow-hidden">
+            <div className="relative bg-linear-to-br from-amber-500 to-orange-500 rounded-2xl p-5 text-white overflow-hidden">
                 <div className="absolute top-0 right-0 -mr-6 -mt-6 w-20 h-20 rounded-full bg-white/10 blur-xl" />
                 <div className="relative">
                     <div className="text-amber-100 text-xs font-medium uppercase tracking-wider">Current Reading</div>
@@ -125,7 +125,7 @@ export function MeterModal({ isOpen, onClose, reading, setReading, date, setDate
         <Modal isOpen={isOpen} onClose={onClose}>
             <ModalContent className="max-w-3xl">
                 {/* Header */}
-                <div className="relative bg-gradient-to-r from-amber-500 via-orange-500 to-yellow-500 rounded-t-2xl p-6 text-white overflow-hidden">
+                <div className="relative bg-linear-to-r from-amber-500 via-orange-500 to-yellow-500 rounded-t-2xl p-6 text-white overflow-hidden">
                     <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
                     <div className="absolute bottom-0 left-0 -ml-6 -mb-6 w-24 h-24 rounded-full bg-white/10 blur-xl" />
 

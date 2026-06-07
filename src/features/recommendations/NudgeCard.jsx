@@ -42,7 +42,7 @@ export const NudgeCard = ({
         <div className={`relative group overflow-hidden rounded-2xl backdrop-blur-xl border ${style.border} ${style.bg} hover:shadow-lg transition-all duration-300 hover:-translate-y-1`}>
             <div className="p-6">
                 <div className="flex items-start gap-5">
-                    <div className={`flex-shrink-0 h-12 w-12 rounded-xl bg-white/60 shadow-sm flex items-center justify-center text-2xl ring-1 ${style.ring}`}>
+                    <div className={`shrink-0 h-12 w-12 rounded-xl bg-white/60 shadow-sm flex items-center justify-center text-2xl ring-1 ${style.ring}`}>
                         {style.icon}
                     </div>
                     <div className="flex-1 min-w-0">
@@ -79,7 +79,7 @@ export const NudgeCard = ({
                             <div className="mt-5 pt-4 border-t border-gray-100/50">
                                 <button
                                     onClick={onAccept}
-                                    className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md hover:shadow-lg transition-all duration-200 transform active:scale-95"
+                                    className="w-full sm:w-auto inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-semibold rounded-xl text-white bg-linear-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 shadow-md hover:shadow-lg transition-all duration-200 transform active:scale-95"
                                 >
                                     I&apos;ll try this action
                                 </button>
@@ -89,7 +89,7 @@ export const NudgeCard = ({
                 </div>
             </div>
             {/* Decorative gradient overlay */}
-            <div className={`absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-gradient-to-br from-white/40 via-transparent to-transparent`} />
+            <div className={`absolute inset-0 pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300 bg-linear-to-br from-white/40 via-transparent to-transparent`} />
         </div>
     );
 };

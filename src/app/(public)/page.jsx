@@ -105,7 +105,7 @@ export default function LandingPage() {
             <section className="relative pt-20 pb-32 md:pt-32 md:pb-48 overflow-hidden">
                 {/* Background blobs */}
                 <div className="absolute top-0 left-0 w-full h-full overflow-hidden -z-10 pointer-events-none">
-                    <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary-100/50 rounded-full blur-3xl opacity-60" />
+                    <div className="absolute top-[-10%] right-[-5%] w-125 h-125 bg-primary-100/50 rounded-full blur-3xl opacity-60" />
                     <div className="absolute bottom-[-10%] left-[-10%] w-[600px] h-[600px] bg-blue-100/40 rounded-full blur-3xl opacity-60" />
                 </div>
 
@@ -120,7 +120,7 @@ export default function LandingPage() {
 
                     <h1 className="text-5xl md:text-7xl font-extrabold tracking-tight text-gray-900 mb-6 leading-tight">
                         Track Your Impact. <br />
-                        <span className="text-transparent bg-clip-text bg-gradient-to-r from-primary to-green-700">
+                        <span className="text-transparent bg-clip-text bg-linear-to-r from-primary to-green-700">
                             Heal the Planet.
                         </span>
                     </h1>

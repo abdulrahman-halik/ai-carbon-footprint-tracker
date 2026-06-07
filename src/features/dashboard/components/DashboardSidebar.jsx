@@ -81,7 +81,7 @@ export default function DashboardSidebar({ onNewEntry, activities = [] }) {
             </div>
 
             {/* AI Tip of the Day */}
-            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 p-5 rounded-2xl text-white shadow-lg shadow-emerald-200/40 relative overflow-hidden">
+            <div className="bg-linear-to-br from-emerald-500 to-teal-600 p-5 rounded-2xl text-white shadow-lg shadow-emerald-200/40 relative overflow-hidden">
                 <div className="absolute -top-6 -right-6 w-24 h-24 bg-white/10 rounded-full blur-2xl" />
                 <div className="relative">
                     <div className="flex items-center gap-2 mb-3">
@@ -98,7 +98,7 @@ export default function DashboardSidebar({ onNewEntry, activities = [] }) {
                                 className="group flex items-start gap-2 bg-white/10 hover:bg-white/20 rounded-xl p-3 transition-colors"
                             >
                                 <span className="text-[11px] text-emerald-50 leading-relaxed flex-1">{tip.text}</span>
-                                <ArrowRight className="w-3.5 h-3.5 text-emerald-200 flex-shrink-0 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
+                                <ArrowRight className="w-3.5 h-3.5 text-emerald-200 shrink-0 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
                             </Link>
                         ))}
                     </div>
@@ -115,7 +115,7 @@ export default function DashboardSidebar({ onNewEntry, activities = [] }) {
                 </div>
                 <div className="relative pl-5">
                     {/* Timeline line */}
-                    <div className="absolute left-[7px] top-0 bottom-0 w-px bg-gradient-to-b from-emerald-200 via-gray-200 to-transparent" />
+                    <div className="absolute left-1.75 top-0 bottom-0 w-px bg-linear-to-b from-emerald-200 via-gray-200 to-transparent" />
                     <div className="space-y-4">
                         {displayActivities.map((item, i) => {
                             const Icon = item.icon;
@@ -128,7 +128,7 @@ export default function DashboardSidebar({ onNewEntry, activities = [] }) {
                             };
                             return (
                                 <div key={i} className="relative flex items-start gap-3 group">
-                                    <div className={`absolute -left-5 w-3.5 h-3.5 rounded-full border-2 border-white shadow flex-shrink-0 flex items-center justify-center ${dotColors[item.color]}`}>
+                                    <div className={`absolute -left-5 w-3.5 h-3.5 rounded-full border-2 border-white shadow shrink-0 flex items-center justify-center ${dotColors[item.color]}`}>
                                         <div className="w-1.5 h-1.5 rounded-full bg-current" />
                                     </div>
                                     <div className="flex-1 bg-gray-50/70 group-hover:bg-gray-50 rounded-xl px-3 py-2.5 transition-colors border border-transparent group-hover:border-gray-100">

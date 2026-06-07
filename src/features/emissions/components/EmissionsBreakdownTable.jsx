@@ -35,7 +35,7 @@ export default function EmissionsBreakdownTable({ breakdown }) {
                 {/* Biggest opportunity callout */}
                 {topItem && (
                     <div className="flex items-center gap-3 mb-4 bg-amber-50 rounded-xl px-4 py-3">
-                        <AlertTriangle className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                        <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
                         <p className="text-sm text-amber-800">
                             <strong>{topItem.category}</strong> is your biggest driver at{' '}
                             <strong>{topItem.percentage.toFixed(1)}%</strong> of total emissions.
@@ -49,13 +49,13 @@ export default function EmissionsBreakdownTable({ breakdown }) {
                             <div key={index} className="space-y-1.5">
                                 <div className="flex justify-between items-center gap-2">
                                     <div className="flex items-center gap-2 min-w-0">
-                                        <div className="w-2.5 h-2.5 rounded-full flex-shrink-0" style={{ backgroundColor: item.color }} />
+                                        <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: item.color }} />
                                         <span className="text-sm font-medium text-gray-800 truncate">{item.category}</span>
-                                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded flex-shrink-0 ${impact.cls}`}>
+                                        <span className={`text-[10px] font-semibold px-1.5 py-0.5 rounded shrink-0 ${impact.cls}`}>
                                             {impact.label}
                                         </span>
                                     </div>
-                                    <div className="text-right flex-shrink-0">
+                                    <div className="text-right shrink-0">
                                         <span className="text-sm font-bold text-gray-900">{item.value.toFixed(2)} kg</span>
                                         <span className="text-xs text-gray-400 ml-1.5">({item.percentage.toFixed(1)}%)</span>
                                     </div>

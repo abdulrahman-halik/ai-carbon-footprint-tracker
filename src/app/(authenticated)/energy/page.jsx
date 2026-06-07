@@ -22,19 +22,19 @@ export default function EnergyPage() {
     const [isMeterOpen, setIsMeterOpen] = useState(false);
     const [reading, setReading] = useState('');
     const [date, setDate] = useState('');
-    const [readings, setReadings] = useState([]);
+    const [readings, setReadings] = useState(() => {
+        if (typeof window === 'undefined') return [];
+        try {
+            const raw = localStorage.getItem('energy.readings');
+            return raw ? JSON.parse(raw) : [];
+        } catch (e) {
+            console.error('Failed to load energy readings', e);
+            return [];
+        }
+    });
     const [notes, setNotes] = useState('');
     const [editingId, setEditingId] = useState(null);
     const [savedToast, setSavedToast] = useState(false);
-
-    useEffect(() => {
-        try {
-            const raw = localStorage.getItem('energy.readings');
-            if (raw) setReadings(JSON.parse(raw));
-        } catch (e) {
-            console.error('Failed to load energy readings', e);
-        }
-    }, []);
 
     const persist = (next) => {
         setReadings(next);

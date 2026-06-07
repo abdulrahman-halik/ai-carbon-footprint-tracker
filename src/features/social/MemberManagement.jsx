@@ -1,17 +1,19 @@
 "use client";
 
 import React from 'react';
+import Image from 'next/image';
 import { Edit2, Trash2 } from 'lucide-react';
 
 export function MemberCard({ member, onEdit, onDelete, onToggleStatus }) {
     return (
         <div className="bg-white rounded-2xl p-4 shadow-sm hover:shadow-lg transform transition-shadow duration-200 hover:-translate-y-1 border border-gray-100">
             <div className="flex items-center gap-4">
-                <div className="relative">
-                    <img
+                <div className="relative w-14 h-14 rounded-full overflow-hidden ring-4 ring-emerald-50 shadow-sm">
+                    <Image
                         src={member.avatar}
                         alt={member.name}
-                        className="w-14 h-14 rounded-full object-cover ring-4 ring-emerald-50 shadow-sm"
+                        fill
+                        className="object-cover"
                     />
                     <button
                         onClick={(e) => { e.stopPropagation(); onToggleStatus && onToggleStatus(member.id); }}

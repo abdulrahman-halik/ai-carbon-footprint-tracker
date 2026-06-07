@@ -127,7 +127,7 @@ export default function DashboardStatsGrid({ stats }) {
                     <Link
                         key={card.id}
                         href={card.href}
-                        className={`relative overflow-hidden group flex flex-col justify-between p-5 rounded-2xl bg-gradient-to-br ${card.accent} border ${card.border} shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300`}
+                        className={`relative overflow-hidden group flex flex-col justify-between p-5 rounded-2xl bg-linear-to-br ${card.accent} border ${card.border} shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300`}
                     >
                         {/* Decorative glow */}
                         <div className="absolute -right-4 -top-4 w-20 h-20 rounded-full bg-white/60 blur-2xl" />

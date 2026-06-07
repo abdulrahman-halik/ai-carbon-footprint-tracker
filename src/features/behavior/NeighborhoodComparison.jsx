@@ -36,10 +36,10 @@ export const NeighborhoodComparison = ({
                         )}
                         <div className="relative w-full bg-gray-100 rounded-2xl overflow-hidden h-32 flex items-end shadow-inner border border-gray-200/50">
                             <div
-                                className={`w-full bg-gradient-to-t ${barGradient} transition-all duration-1000 ease-out rounded-t-lg group-hover:opacity-90 relative shadow-md`}
+                                className={`w-full bg-linear-to-t ${barGradient} transition-all duration-1000 ease-out rounded-t-lg group-hover:opacity-90 relative shadow-md`}
                                 style={{ height: `${userPercent}%` }}
                             >
-                                <div className="absolute inset-x-0 top-0 h-[2px] bg-white/40"></div>
+                                <div className="absolute inset-x-0 top-0 h-0.5 bg-white/40"></div>
                             </div>
                         </div>
                         <span className={`text-sm font-bold mt-3 ${statusColor}`}>You</span>
@@ -50,7 +50,7 @@ export const NeighborhoodComparison = ({
                     <div className="flex flex-col items-center group w-20">
                         <div className="relative w-full bg-gray-100 rounded-2xl overflow-hidden h-32 flex items-end shadow-inner border border-gray-200/50">
                             <div
-                                className="w-full bg-gradient-to-t from-gray-300 to-gray-400 transition-all duration-1000 ease-out rounded-t-lg group-hover:bg-gray-400"
+                                className="w-full bg-linear-to-t from-gray-300 to-gray-400 transition-all duration-1000 ease-out rounded-t-lg group-hover:bg-gray-400"
                                 style={{ height: `${avgPercent}%` }}
                             >
                             </div>

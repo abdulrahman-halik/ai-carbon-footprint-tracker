@@ -227,7 +227,7 @@ export default function ReportsPage() {
             </div>
 
             {/* Featured Certificate Card */}
-            <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white relative overflow-hidden shadow-lg">
+            <div className="bg-linear-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white relative overflow-hidden shadow-lg">
                 <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
                 <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
                     <div>

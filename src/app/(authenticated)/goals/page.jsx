@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { GoalHeader, GoalStats } from '@/features/goals/GoalHeader';
 import { GoalCard, GoalEmptyState } from '@/features/goals/GoalCard';
 import NewGoalModal from '@/features/goals/GoalModal';
@@ -12,7 +12,7 @@ export default function GoalsPage() {
     const [newGoal, setNewGoal] = useState({ title: '', current: '', target: '', unit: '' });
     const [editingId, setEditingId] = useState(null);
 
-    const loadGoals = async () => {
+    const loadGoals = useCallback(async () => {
         try {
             const data = await goalService.getProgress();
             const mapped = data.map(g => ({
@@ -27,10 +27,27 @@ export default function GoalsPage() {
         } catch (e) {
             console.error("Failed to load goals", e);
         }
-    };
+    }, []);
 
     useEffect(() => {
-        loadGoals();
+        const fetchGoals = async () => {
+            try {
+                const data = await goalService.getProgress();
+                const mapped = data.map(g => ({
+                    id: g.goal._id,
+                    title: g.goal.category,
+                    current: g.current_value,
+                    target: g.goal.target_value,
+                    unit: g.goal.category?.toLowerCase().includes('energy') ? 'kWh' : g.goal.category?.toLowerCase().includes('water') ? 'L' : 'kg',
+                    completed: g.percentage_complete >= 100
+                }));
+                setGoals(mapped);
+            } catch (e) {
+                console.error("Failed to load goals", e);
+            }
+        };
+
+        void fetchGoals();
     }, []);
 
     const openNewGoal = () => {

@@ -64,7 +64,7 @@ export default function SecuritySettings({
     return (
         <>
             {/* Account Security card */}
-            <div className="glass-card p-6 bg-gradient-to-b from-gray-50 to-white">
+            <div className="glass-card p-6 bg-linear-to-b from-gray-50 to-white">
                 <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <Shield size={18} className="text-gray-600" />
                     Account Security

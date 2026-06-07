@@ -28,7 +28,7 @@ export function PeerCategoryBar({ cat, userVal, avgVal }) {
                 </div>
 
                 <div
-                    className={`h-full bg-gradient-to-r ${cat.color} rounded-r-2xl transition-all duration-1000 ease-out flex items-center justify-end pr-3 shadow-sm relative z-0 group-hover:brightness-110`}
+                    className={`h-full bg-linear-to-r ${cat.color} rounded-r-2xl transition-all duration-1000 ease-out flex items-center justify-end pr-3 shadow-sm relative z-0 group-hover:brightness-110`}
                     style={{ width: `${(userVal / maxVal) * 100}%` }}
                 >
                     <span className="text-xs font-bold text-white drop-shadow-sm filter">{userVal}</span>

@@ -12,7 +12,7 @@ export function ProjectDetailModal({ project, isOpen, onClose }) {
             <ModalContent className="max-w-2xl">
                 <div className="relative h-48 w-full bg-green-100 overflow-hidden">
                     {/* Placeholder for project image */}
-                    <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-blue-500 opacity-30" />
+                    <div className="absolute inset-0 bg-linear-to-br from-green-400 to-blue-500 opacity-30" />
                     <div className="absolute bottom-4 left-6">
                         <Badge className="bg-white/90 text-green-800 hover:bg-white">{project.type}</Badge>
                     </div>

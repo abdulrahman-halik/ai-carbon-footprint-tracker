@@ -36,7 +36,7 @@ export default function DashboardInsights({ stats, trends }) {
         }
 
         return generated;
-    }, [stats, trends]);
+    }, [stats]);
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -48,7 +48,7 @@ export default function DashboardInsights({ stats, trends }) {
                         className={`flex items-start gap-3 p-4 rounded-2xl border text-sm font-medium ${ALERT_STYLES[ins.type]} animate-in fade-in duration-500`}
                         style={{ animationDelay: `${i * 120}ms` }}
                     >
-                        <Icon className="w-5 h-5 flex-shrink-0 mt-0.5" />
+                        <Icon className="w-5 h-5 shrink-0 mt-0.5" />
                         <p className="leading-snug">{ins.text}</p>
                     </div>
                 );

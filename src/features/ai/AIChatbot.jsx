@@ -94,9 +94,9 @@ export default function AIChatbot() {
         <div className="fixed bottom-6 right-6 z-50 flex flex-col items-end">
             {/* Chat Window */}
             {isOpen && (
-                <div className="mb-4 w-[350px] md:w-[400px] h-[500px] bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in slide-in-from-bottom-10 fade-in duration-300">
+                <div className="mb-4 w-87.5 md:w-100 h-125 bg-white rounded-2xl shadow-2xl flex flex-col overflow-hidden border border-gray-100 animate-in slide-in-from-bottom-10 fade-in duration-300">
                     {/* Header */}
-                    <div className="bg-gradient-to-r from-emerald-600 to-teal-600 p-4 flex items-center justify-between text-white">
+                    <div className="bg-linear-to-r from-emerald-600 to-teal-600 p-4 flex items-center justify-between text-white">
                         <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-white/20 flex items-center justify-center backdrop-blur-sm">
                                 <Bot size={18} className="text-white" />
@@ -165,7 +165,7 @@ export default function AIChatbot() {
             {/* Floating Toggle Button */}
             <button
                 onClick={() => setIsOpen(!isOpen)}
-                className={`group flex items-center justify-center w-14 h-14 rounded-full shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 ${isOpen ? 'bg-gray-800 text-white rotate-90 scale-0 opacity-0' : 'bg-gradient-to-br from-emerald-500 to-teal-600 text-white hover:-translate-y-1 block opacity-100 scale-100'
+                className={`group flex items-center justify-center w-14 h-14 rounded-full shadow-lg hover:shadow-emerald-500/30 transition-all duration-300 ${isOpen ? 'bg-gray-800 text-white rotate-90 scale-0 opacity-0' : 'bg-linear-to-br from-emerald-500 to-teal-600 text-white hover:-translate-y-1 block opacity-100 scale-100'
                     }`}
                 style={{ position: isOpen ? 'absolute' : 'relative', pointerEvents: isOpen ? 'none' : 'auto' }}
             >

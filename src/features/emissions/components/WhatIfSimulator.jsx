@@ -58,10 +58,10 @@ export default function WhatIfSimulator({ baseInputs = {} }) {
 
     return (
         <Card className="border-0 shadow-sm overflow-hidden">
-            <div className="h-1 bg-gradient-to-r from-purple-400 to-pink-500" />
+            <div className="h-1 bg-linear-to-r from-purple-400 to-pink-500" />
             <CardHeader className="pb-3">
                 <CardTitle className="flex items-center gap-2 text-base">
-                    <div className="bg-gradient-to-br from-purple-500 to-pink-600 rounded-lg p-1.5">
+                    <div className="bg-linear-to-br from-purple-500 to-pink-600 rounded-lg p-1.5">
                         <Sliders className="w-4 h-4 text-white" />
                     </div>
                     What-If Simulator

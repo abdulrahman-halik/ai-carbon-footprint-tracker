@@ -40,7 +40,7 @@ export const GoalThermometer = ({
                 <div className="relative h-6 w-full bg-gray-100 rounded-full overflow-hidden shadow-inner border border-gray-200/50">
                     {/* Animated Progress Bar */}
                     <div
-                        className={`absolute top-0 left-0 h-full bg-gradient-to-r ${barGradient} transition-all duration-1000 ease-out rounded-full shadow-lg`}
+                        className={`absolute top-0 left-0 h-full bg-linear-to-r ${barGradient} transition-all duration-1000 ease-out rounded-full shadow-lg`}
                         style={{ width: `${percentage}%` }}
                     >
                         <div className="absolute inset-0 bg-white/20 animate-pulse"></div>

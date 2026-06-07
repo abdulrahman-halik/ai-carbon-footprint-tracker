@@ -6,7 +6,7 @@ import { GoalThermometer } from '@/features/behavior/GoalThermometer';
 
 export function GoalModalHeader({ editingId, onClose }) {
     return (
-        <div className="relative bg-gradient-to-r from-emerald-500 via-teal-500 to-green-600 rounded-t-2xl p-6 text-white overflow-hidden">
+        <div className="relative bg-linear-to-r from-emerald-500 via-teal-500 to-green-600 rounded-t-2xl p-6 text-white overflow-hidden">
             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-2xl" />
             <div className="absolute bottom-0 left-0 -ml-6 -mb-6 w-24 h-24 rounded-full bg-white/10 blur-xl" />
 
@@ -97,7 +97,7 @@ export function GoalForm({ newGoal, setNewGoal, onSave, onClose, editingId }) {
                 <button
                     onClick={onSave}
                     disabled={!newGoal.title || !newGoal.target}
-                    className={`px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-lg transition-all duration-300 ${!newGoal.title || !newGoal.target ? 'bg-emerald-300 cursor-not-allowed shadow-none' : 'bg-gradient-to-r from-emerald-500 to-teal-500 shadow-emerald-200/50 hover:shadow-xl hover:scale-[1.02]'}`}
+                    className={`px-6 py-2.5 rounded-xl text-white font-bold text-sm shadow-lg transition-all duration-300 ${!newGoal.title || !newGoal.target ? 'bg-emerald-300 cursor-not-allowed shadow-none' : 'bg-linear-to-r from-emerald-500 to-teal-500 shadow-emerald-200/50 hover:shadow-xl hover:scale-[1.02]'}`}
                 >
                     {editingId ? 'Update Goal' : 'Save Goal'}
                 </button>
@@ -127,7 +127,7 @@ export function GoalPreview({ newGoal }) {
                 />
             </div>
 
-            <div className="bg-gradient-to-br from-emerald-500 to-teal-600 rounded-2xl p-5 text-white overflow-hidden relative">
+            <div className="bg-linear-to-br from-emerald-500 to-teal-600 rounded-2xl p-5 text-white overflow-hidden relative">
                 <div className="absolute top-0 right-0 -mr-6 -mt-6 w-20 h-20 rounded-full bg-white/10 blur-xl" />
                 <div className="relative">
                     <div className="text-emerald-100 text-xs font-medium uppercase tracking-wider">Progress</div>

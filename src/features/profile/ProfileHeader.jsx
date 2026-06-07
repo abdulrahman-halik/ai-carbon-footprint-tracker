@@ -1,5 +1,6 @@
 "use client";
 import React from 'react';
+import Image from 'next/image';
 import { User, MapPin, Save } from 'lucide-react';
 
 /**
@@ -14,13 +15,15 @@ import { User, MapPin, Save } from 'lucide-react';
  */
 export default function ProfileHeader({ profile, isEditing, onEdit, onSave, onImageUpload }) {
     return (
-        <div className="glass-card p-8 flex flex-col md:flex-row items-center gap-8 bg-gradient-to-r from-emerald-50/50 to-teal-50/50">
+        <div className="glass-card p-8 flex flex-col md:flex-row items-center gap-8 bg-linear-to-r from-emerald-50/50 to-teal-50/50">
             {/* Avatar */}
             <div className="relative">
-                <div className="w-32 h-32 rounded-full bg-gradient-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
+                <div className="w-32 h-32 rounded-full bg-linear-to-br from-emerald-400 to-cyan-500 p-1 shadow-xl">
                     <div className="w-full h-full rounded-full bg-white flex items-center justify-center overflow-hidden">
                         {profile.profilePicture ? (
-                            <img src={profile.profilePicture} alt="Profile" className="w-full h-full object-cover" />
+                            <div className="relative w-full h-full">
+                                <Image src={profile.profilePicture} alt="Profile" fill className="object-cover" />
+                            </div>
                         ) : (
                             <span className="text-4xl font-bold text-emerald-600">
                                 {profile.name ? profile.name.split(' ').map(n => n[0]).join('') : 'U'}
