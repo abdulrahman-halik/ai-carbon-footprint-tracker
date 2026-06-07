@@ -22,7 +22,9 @@ export const resetPasswordConfirmSchema = z
             .min(1, "Email is required")
             .email("Please enter a valid email address")
             .transform((val) => val.toLowerCase().trim()),
-
+        verificationCode: z.string()
+            .min(1, "Verification code is required")
+            .trim(),
         password: z.string()
             .min(8, "Password must be at least 8 characters")
             .max(72, "Password must not exceed 72 characters")
