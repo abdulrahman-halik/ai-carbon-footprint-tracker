@@ -20,7 +20,7 @@ const userService = {
     },
 
     changePassword: async (currentPassword, newPassword) => {
-        const response = await apiClient.put("/api/auth/change-password", {
+        const response = await apiClient.post("/api/auth/change-password", {
             current_password: currentPassword,
             new_password: newPassword
         });

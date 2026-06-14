@@ -20,7 +20,7 @@ export function ArticleCard({ article }) {
 
             <CardHeader className="pb-2">
                 <h3 className="text-xl font-bold text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
-                    <Link href={`/learn/${article.slug}`}>
+                    <Link href={`/learn/${encodeURIComponent(article.slug)}`}>
                         {article.title}
                     </Link>
                 </h3>
@@ -43,7 +43,7 @@ export function ArticleCard({ article }) {
                         {article.readTime}
                     </span>
                 </div>
-                <Link href={`/learn/${article.slug}`} className="text-primary font-medium flex items-center gap-1 hover:underline">
+                <Link href={`/learn/${encodeURIComponent(article.slug)}`} className="text-primary font-medium flex items-center gap-1 hover:underline">
                     Read <ArrowRight size={14} />
                 </Link>
             </CardFooter>

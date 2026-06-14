@@ -6,6 +6,7 @@ import { EnergyHeader, EnergyTips } from "@/features/energy/EnergyInfo";
 import { StatsGrid, UsageChart } from "@/features/energy/EnergyAnalytics";
 import { MeterModal } from "@/features/energy/MeterEntry";
 import { MeterList } from "@/features/energy/MeterList";
+import energyService from "@/services/energyService";
 
 ChartJS.register(
     CategoryScale,
@@ -22,47 +23,62 @@ export default function EnergyPage() {
     const [isMeterOpen, setIsMeterOpen] = useState(false);
     const [reading, setReading] = useState('');
     const [date, setDate] = useState('');
-    const [readings, setReadings] = useState(() => {
-        if (typeof window === 'undefined') return [];
-        try {
-            const raw = localStorage.getItem('energy.readings');
-            return raw ? JSON.parse(raw) : [];
-        } catch (e) {
-            console.error('Failed to load energy readings', e);
-            return [];
-        }
-    });
+    const [readings, setReadings] = useState([]);
     const [notes, setNotes] = useState('');
     const [editingId, setEditingId] = useState(null);
     const [savedToast, setSavedToast] = useState(false);
 
-    const persist = (next) => {
-        setReadings(next);
+    useEffect(() => {
+        fetchReadings();
+    }, []);
+
+    const fetchReadings = async () => {
         try {
-            localStorage.setItem('energy.readings', JSON.stringify(next));
+            const rawData = await energyService.getLogs();
+            if (rawData && Array.isArray(rawData)) {
+                setReadings(rawData.map(r => ({
+                    id: r._id || r.id,
+                    reading: r.value,
+                    date: r.date,
+                    notes: r.notes || ''
+                })));
+            }
         } catch (e) {
-            console.error('Failed to persist energy readings', e);
+            console.error("Failed to fetch energy readings", e);
         }
     };
 
     const openMeter = () => setIsMeterOpen(true);
     const closeMeter = () => setIsMeterOpen(false);
-    const handleSave = () => {
-        const entry = { id: editingId || Date.now(), reading: Number(reading) || 0, date: date || new Date().toISOString().slice(0, 10), notes: notes.trim() };
-        let next;
-        if (editingId) {
-            next = readings.map(r => (r.id === editingId ? entry : r));
-        } else {
-            next = [entry, ...readings].slice(0, 12);
+
+    const handleSave = async () => {
+        try {
+            const dateStr = date || new Date().toISOString().slice(0, 10);
+            const payload = {
+                energy_type: "Electricity",
+                unit: "kWh",
+                value: Number(reading) || 0,
+                date: new Date(dateStr).toISOString(),
+                notes: notes.trim()
+            };
+
+            if (editingId) {
+                await energyService.updateLog(editingId, payload);
+            } else {
+                await energyService.logEnergy(payload);
+            }
+
+            await fetchReadings();
+            setSavedToast(true);
+            setTimeout(() => setSavedToast(false), 1800);
+            setIsMeterOpen(false);
+            setReading('');
+            setDate('');
+            setNotes('');
+            setEditingId(null);
+        } catch (e) {
+            console.error("Save energy log failed", e);
         }
-        persist(next);
-        setSavedToast(true);
-        setTimeout(() => setSavedToast(false), 1800);
-        setIsMeterOpen(false);
-        setReading('');
-        setDate('');
-        setNotes('');
-        setEditingId(null);
     };
 
     const handleEdit = (id) => {
@@ -75,16 +91,20 @@ export default function EnergyPage() {
         setIsMeterOpen(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (!window.confirm('Delete this reading?')) return;
-        const next = readings.filter(r => r.id !== id);
-        persist(next);
-        if (editingId === id) {
-            setEditingId(null);
-            setIsMeterOpen(false);
-            setReading('');
-            setDate('');
-            setNotes('');
+        try {
+            await energyService.deleteLog(id);
+            setReadings(readings.filter(r => r.id !== id));
+            if (editingId === id) {
+                setEditingId(null);
+                setIsMeterOpen(false);
+                setReading('');
+                setDate('');
+                setNotes('');
+            }
+        } catch (e) {
+            console.error("Delete energy log failed", e);
         }
     };
 
