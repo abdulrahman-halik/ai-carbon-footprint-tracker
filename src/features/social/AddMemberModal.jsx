@@ -19,13 +19,9 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
         const file = e.target.files && e.target.files[0];
         if (!file) return;
         const reader = new FileReader();
-        reader.onload = () => {
-            setAvatar(reader.result);
-        };
+        reader.onload = () => { setAvatar(reader.result); };
         reader.readAsDataURL(file);
     };
-
-
 
     const errors = useMemo(() => {
         const e = {};
@@ -38,7 +34,7 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
     const valid = useMemo(() => Object.keys(errors).length === 0, [errors]);
 
     const reset = () => {
-        setName(''); setEmail(''); setRole('Member'); setAvatar('');
+        setName(''); setEmail(''); setRole('Member'); setStatus('Active'); setAvatar('');
     };
 
     React.useEffect(() => {
@@ -79,13 +75,8 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
 
         if (member && member.id && onSave) {
             onSave(newMember);
-            toast.success(`${newMember.name} updated`);
         } else if (onAdd) {
             onAdd(newMember);
-            toast.success(`${newMember.name} added to the team`);
-            if (!emailRegex.test(email.trim())) {
-                toast((t) => (<span>Note: email normalized to <strong>{newMember.email}</strong></span>));
-            }
         }
         reset();
         onClose();
@@ -93,24 +84,27 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
 
     return (
         <Modal isOpen={isOpen} onClose={onClose}>
-            <ModalContent className="max-w-3xl">
-                <div className="bg-linear-to-r from-emerald-600 to-emerald-400 rounded-t-2xl p-5 text-white shadow-md">
-                    <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                            <div className="bg-white/20 p-3 rounded-lg shadow-sm">
-                                <User className="text-white" />
-                            </div>
-                            <div>
-                                <h3 className="text-xl font-semibold">Add Team Member</h3>
-                                <p className="text-sm opacity-90">Invite a new teammate to collaborate on sustainability goals.</p>
-                            </div>
+            <ModalContent className="w-full max-w-3xl mx-4 sm:mx-auto">
+                {/* Header */}
+                <div className="bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-t-2xl p-4 sm:p-5 text-white shadow-md">
+                    <div className="flex items-center gap-4">
+                        <div className="bg-white/20 p-3 rounded-lg shadow-sm shrink-0">
+                            <User className="text-white" />
+                        </div>
+                        <div>
+                            <h3 className="text-lg sm:text-xl font-semibold">
+                                {member ? 'Edit Team Member' : 'Add Team Member'}
+                            </h3>
+                            <p className="text-sm opacity-90">Invite a new teammate to collaborate on sustainability goals.</p>
                         </div>
                     </div>
                 </div>
 
-                <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-8 md:gap-10 items-start">
-                    <div className="flex flex-col items-center md:items-start">
-                        <div className="w-32 h-32 rounded-full bg-white overflow-hidden flex items-center justify-center shadow-lg ring-4 ring-emerald-50">
+                {/* Body */}
+                <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-10 items-start">
+                    {/* Avatar upload */}
+                    <div className="flex flex-col items-center">
+                        <div className="w-28 h-28 sm:w-32 sm:h-32 rounded-full bg-white overflow-hidden flex items-center justify-center shadow-lg ring-4 ring-emerald-50">
                             {avatar ? (
                                 <div className="relative w-full h-full">
                                     <Image src={avatar} alt={name} fill className="object-cover" />
@@ -119,80 +113,104 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                                 <User className="text-emerald-300" size={48} />
                             )}
                         </div>
-                        <label className="mt-4 w-full md:w-64 flex items-center gap-3 text-sm cursor-pointer">
+                        <label className="mt-4 flex items-center gap-2 text-sm cursor-pointer text-center">
                             <input type="file" accept="image/*" onChange={handleFileChange} className="hidden" />
-                            <div className="font-semibold text-gray-700">Upload profile photo</div>
+                            <div className="font-semibold text-gray-700 hover:text-emerald-600 transition-colors">Upload profile photo</div>
                         </label>
-                        <div className="mt-3 text-xs text-gray-500">Tip: leave blank to auto-generate avatar</div>
+                        <div className="mt-2 text-xs text-gray-500 text-center">Tip: leave blank to auto-generate avatar</div>
                     </div>
 
-                    <div className="md:col-span-2 space-y-6">
+                    {/* Form fields */}
+                    <div className="md:col-span-2 space-y-5">
+                        {/* Name */}
                         <div>
                             <label className="text-sm font-medium text-gray-700">Full Name</label>
-                            <div className="mt-2 relative">
-                                <input value={name} onChange={(e) => setName(e.target.value)} className={`w-full px-4 py-3 mb-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 ${errors.name ? 'border-red-200 focus:ring-red-200' : ''}`} placeholder="e.g. Nithya Kevin" />
+                            <div className="mt-2">
+                                <input
+                                    value={name}
+                                    onChange={(e) => setName(e.target.value)}
+                                    className={`w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 focus:outline-none ${errors.name ? 'border-red-300 focus:ring-red-200' : 'border-gray-200'}`}
+                                    placeholder="e.g. Nithya Kevin"
+                                />
                                 {errors.name && <p className="text-xs text-red-600 mt-1">{errors.name}</p>}
                             </div>
                         </div>
 
+                        {/* Email */}
                         <div>
                             <label className="text-sm font-medium text-gray-700">Email</label>
                             <div className="mt-2 relative">
-                                <Mail className="absolute left-6 top-3 text-gray-300" />
-                                <input value={email} onChange={(e) => setEmail(e.target.value)} className={`pl-14 w-full px-4 py-3 mb-2 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 ${errors.email ? 'border-red-200 focus:ring-red-200' : ''}`} placeholder="name@company.com" />
+                                <Mail className="absolute left-3 top-3.5 text-gray-300 w-4 h-4" />
+                                <input
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    className={`pl-10 w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 focus:outline-none ${errors.email ? 'border-red-300 focus:ring-red-200' : 'border-gray-200'}`}
+                                    placeholder="name@company.com"
+                                />
                                 {errors.email && <p className="text-xs text-red-600 mt-1">{errors.email}</p>}
                             </div>
                         </div>
 
-                        <div className="grid grid-cols-2 gap-4 items-end">
+                        {/* Role + Status */}
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                             <div>
                                 <label className="text-sm font-medium text-gray-700">Role</label>
-                                <div className="mt-2 relative">
-                                    <select value={role} onChange={(e) => setRole(e.target.value)} className="w-full px-4 py-3 border rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200">
-                                        <option>Member</option>
-                                        <option>Manager</option>
-                                        <option>Admin</option>
-                                        <option>Owner</option>
-                                        <option>Contributor</option>
-                                        <option>Viewer</option>
-                                        <option>Analyst</option>
-                                    </select>
-                                </div>
+                                <select
+                                    value={role}
+                                    onChange={(e) => setRole(e.target.value)}
+                                    className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 focus:outline-none bg-white"
+                                >
+                                    <option>Member</option>
+                                    <option>Manager</option>
+                                    <option>Admin</option>
+                                    <option>Owner</option>
+                                    <option>Contributor</option>
+                                    <option>Viewer</option>
+                                    <option>Analyst</option>
+                                </select>
                             </div>
-
-                            <div className="text-right">
-                                <label className="text-sm text-gray-500">Status</label>
-                                <div className="mt-2">
-                                    <select value={status} onChange={(e) => setStatus(e.target.value)} className="px-4 py-2 border rounded-xl shadow-sm">
-                                        <option>Active</option>
-                                        <option>In Progress</option>
-                                        <option>Inactive</option>
-                                    </select>
-                                </div>
+                            <div>
+                                <label className="text-sm font-medium text-gray-700">Status</label>
+                                <select
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)}
+                                    className="mt-2 w-full px-4 py-3 border border-gray-200 rounded-xl shadow-sm focus:ring-2 focus:ring-emerald-200 focus:outline-none bg-white"
+                                >
+                                    <option>Active</option>
+                                    <option>In Progress</option>
+                                    <option>Inactive</option>
+                                </select>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-end gap-3 pt-3">
-                            <button onClick={() => { reset(); onClose(); }} className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700">Cancel</button>
+                        {/* Action buttons */}
+                        <div className="flex flex-col-reverse sm:flex-row sm:items-center sm:justify-end gap-3 pt-2">
+                            <button
+                                onClick={() => { reset(); onClose(); }}
+                                className="w-full sm:w-auto px-5 py-2.5 rounded-lg bg-gray-100 text-gray-700 font-medium hover:bg-gray-200 transition-colors"
+                            >
+                                Cancel
+                            </button>
                             <button
                                 aria-label={member ? 'Save member' : 'Add member'}
                                 disabled={!valid}
                                 onClick={handleAdd}
-                                className={`inline-flex items-center gap-2 px-5 py-2 rounded-full text-white font-semibold shadow-lg transform transition duration-150 ease-in-out hover:scale-105 ${!valid ? 'opacity-50 cursor-not-allowed' : ''} bg-linear-to-r from-emerald-500 to-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300`}
+                                className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-white font-semibold shadow-lg transform transition duration-150 ease-in-out hover:scale-105 ${!valid ? 'opacity-50 cursor-not-allowed' : ''} bg-gradient-to-r from-emerald-500 to-emerald-400 focus:outline-none focus:ring-2 focus:ring-emerald-300`}
                             >
                                 <UserPlus className="w-4 h-4" />
                                 <span>{member ? 'Save' : 'Add Member'}</span>
                             </button>
                         </div>
 
-                        <div className="mt-4 p-4 bg-gray-50 rounded-lg border border-dashed border-gray-100">
+                        {/* Preview */}
+                        <div className="mt-2 p-4 bg-gray-50 rounded-lg border border-dashed border-gray-200">
                             <h4 className="text-sm font-medium text-gray-700">Preview</h4>
                             <div className="mt-3 flex items-center gap-4">
-                                <div className="w-12 h-12 rounded-full overflow-hidden bg-white relative">
+                                <div className="w-12 h-12 rounded-full overflow-hidden bg-white relative border border-gray-100 flex items-center justify-center">
                                     {avatar ? (
                                         <Image src={avatar} alt={name} fill className="object-cover" />
                                     ) : (
-                                        <User className="text-gray-300" />
+                                        <User className="text-gray-300" size={24} />
                                     )}
                                 </div>
                                 <div>

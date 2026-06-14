@@ -5,6 +5,7 @@ import { WaterHeader, WaterStats, WaterTips } from '@/features/water/WaterDashbo
 import { WaterLogModal } from '@/features/water/WaterLogForm';
 import { WaterChart } from '@/features/water/WaterVisualization';
 import { SavedUsageCards } from '@/features/water/WaterLogHistory';
+import waterService from '@/services/waterService';
 
 export default function WaterPage() {
     // chart data/options moved to features/water/waterData.js
@@ -12,16 +13,26 @@ export default function WaterPage() {
     const [isLogOpen, setIsLogOpen] = useState(false);
     const [liters, setLiters] = useState('');
     const [logDate, setLogDate] = useState('');
-    const [logs, setLogs] = useState(() => {
-        if (typeof window === 'undefined') return [];
+    const [logs, setLogs] = useState([]);
+
+    useEffect(() => {
+        fetchLogs();
+    }, []);
+
+    const fetchLogs = async () => {
         try {
-            const raw = localStorage.getItem('water_logs');
-            return raw ? JSON.parse(raw) : [];
+            const rawData = await waterService.getLogs();
+            if (rawData && Array.isArray(rawData)) {
+                setLogs(rawData.map(r => ({
+                    id: r._id || r.id,
+                    liters: r.value,
+                    date: r.date
+                })));
+            }
         } catch (e) {
-            console.error('Failed to load water logs', e);
-            return [];
+            console.error(e);
         }
-    });
+    };
     const [editingId, setEditingId] = useState(null);
     const [savedToast, setSavedToast] = useState(false);
 
@@ -33,10 +44,6 @@ export default function WaterPage() {
         }
     };
 
-    const persist = (next) => {
-        setLogs(next);
-        try { localStorage.setItem('water_logs', JSON.stringify(next)); } catch (e) { console.error('persist failed', e); }
-    };
 
     const openLog = () => {
         setEditingId(null);
@@ -52,18 +59,24 @@ export default function WaterPage() {
         setLogDate('');
     };
 
-    const handleSaveLog = () => {
-        const entry = { id: editingId || Date.now(), liters: Number(liters) || 0, date: logDate || new Date().toISOString().slice(0, 10) };
-        if (editingId) {
-            const next = logs.map(l => l.id === editingId ? entry : l);
-            persist(next);
-        } else {
-            const next = [entry, ...logs].slice(0, 50);
-            persist(next);
+    const handleSaveLog = async () => {
+        try {
+            const dateStr = logDate || new Date().toISOString().slice(0, 10);
+            const payload = { value: Number(liters) || 0, date: new Date(dateStr).toISOString() };
+
+            if (editingId) {
+                await waterService.updateLog(editingId, payload);
+            } else {
+                await waterService.logWater(payload);
+            }
+
+            await fetchLogs();
+            setSavedToast(true);
+            setTimeout(() => setSavedToast(false), 1800);
+            closeLog();
+        } catch (e) {
+            console.error("Save failed", e);
         }
-        setSavedToast(true);
-        setTimeout(() => setSavedToast(false), 1800);
-        closeLog();
     };
 
     const handleEdit = (id) => {
@@ -75,10 +88,14 @@ export default function WaterPage() {
         setIsLogOpen(true);
     };
 
-    const handleDelete = (id) => {
+    const handleDelete = async (id) => {
         if (window.confirm('Delete this log entry?')) {
-            const next = logs.filter(l => l.id !== id);
-            persist(next);
+            try {
+                await waterService.deleteLog(id);
+                setLogs(logs.filter(l => l.id !== id));
+            } catch (e) {
+                console.error("Delete failed", e);
+            }
         }
     };
 

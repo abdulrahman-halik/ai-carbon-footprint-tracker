@@ -9,12 +9,12 @@ export default function DashboardShell({ children }) {
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     return (
-        <div className="flex h-screen w-full bg-gray-50 text-gray-900 font-sans">
+        <div className="flex h-screen w-full bg-gray-50 text-gray-900 font-sans overflow-hidden">
             {/* Sidebar (Desktop) */}
             <Sidebar />
 
             {/* Main Content Area */}
-            <div className="flex flex-1 flex-col h-full overflow-hidden relative">
+            <div className="flex flex-1 flex-col h-screen overflow-hidden relative">
                 <Header onMenuClick={() => setSidebarOpen(true)} />
 
                 {/* Mobile Sidebar System */}
@@ -26,8 +26,6 @@ export default function DashboardShell({ children }) {
                     </div>
                     <Footer />
                 </main>
-
-                {/* BottomNav removed as per user request */}
             </div>
         </div>
     );

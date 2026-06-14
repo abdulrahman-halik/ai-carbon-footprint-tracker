@@ -104,7 +104,9 @@ export default function MainDashboard() {
                     <DashboardComparisons stats={stats} />
                 </div>
 
-                <DashboardSidebar onNewEntry={() => setIsNewEntryOpen(true)} activities={trends.emissions_raw || []} />
+                <div className="lg:col-span-1 lg:sticky lg:top-0 h-fit self-start pt-1">
+                    <DashboardSidebar onNewEntry={() => setIsNewEntryOpen(true)} activities={trends.emissions_raw || []} />
+                </div>
             </div>
 
             <Modal isOpen={isNewEntryOpen} onClose={handleNewEntryClose}>

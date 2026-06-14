@@ -88,10 +88,16 @@ export default function ForgotPasswordForm() {
       if (step === 1) {
         const response = await forgotPassword(data.email);
 
+        const successMsg = response.message || "If the email exists, reset instructions have been sent.";
         setApiSuccess(
-          response.message ||
-            "If the email exists, reset instructions have been sent."
+          response.reset_token
+            ? `${successMsg} MOCK TOKEN: ${response.reset_token}`
+            : successMsg
         );
+
+        if (response.reset_token) {
+          toast.success(`Dev Mode Token: ${response.reset_token}`, { duration: 6000 });
+        }
 
         router.push(
           `/forgot-password?step=2&email=${encodeURIComponent(
@@ -157,9 +163,8 @@ export default function ForgotPasswordForm() {
                 type="email"
                 placeholder="name@example.com"
                 {...register("email")}
-                className={`pl-10 ${
-                  errors.email ? "border-red-500" : ""
-                }`}
+                className={`pl-10 ${errors.email ? "border-red-500" : ""
+                  }`}
                 readOnly={step === 2}
               />
             </div>
@@ -190,11 +195,10 @@ export default function ForgotPasswordForm() {
                     type="text"
                     placeholder="Enter verification code"
                     {...register("verificationCode")}
-                    className={`pl-10 ${
-                      errors.verificationCode
+                    className={`pl-10 ${errors.verificationCode
                         ? "border-red-500"
                         : ""
-                    }`}
+                      }`}
                   />
                 </div>
 
@@ -271,9 +275,9 @@ export default function ForgotPasswordForm() {
                 {step === 1 ? "Sending..." : "Resetting..."}
               </>
             ) : step === 1 ? (
-              "Verify"
+              "Send Code"
             ) : (
-              "Reset Password"
+              "Verify & Reset Password"
             )}
           </Button>
         </form>
