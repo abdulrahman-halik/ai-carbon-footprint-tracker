@@ -17,6 +17,7 @@ import WhatIfSimulator from "./WhatIfSimulator";
 import GamificationBadge from "./GamificationBadge";
 import { EmissionSparkline } from "./EmissionSparkline";
 import { ImpactVisualizer } from "./ImpactVisualizer";
+import emissionsService from "@/services/emissionsService";
 
 const DEFAULT_INPUTS = {
     // Energy
@@ -41,12 +42,45 @@ export default function EmissionsDashboard() {
         setInputs(prev => ({ ...prev, [id]: typeof value === 'string' ? (parseFloat(value) || value) : value }));
     }, []);
 
+    const persistAnalysis = useCallback(async (calculatedResults, currentInputs, feedback) => {
+        try {
+            const payload = {
+                category: "Lifestyle Analysis",
+                sub_category: "emissions_dashboard",
+                value: Number(calculatedResults.totalFootprint.toFixed(2)),
+                unit: "kg CO2e",
+                description: JSON.stringify({
+                    inputs: currentInputs,
+                    totalFootprint: Number(calculatedResults.totalFootprint.toFixed(2)),
+                    feedback: feedback?.text || null,
+                    breakdown: calculatedResults.breakdown
+                        .slice(0, 6)
+                        .map((entry) => ({
+                            category: entry.category,
+                            value: Number(entry.value.toFixed(2)),
+                        })),
+                }),
+            };
+
+            await emissionsService.logActivity(payload);
+        } catch (error) {
+            console.warn("Failed to persist emissions analysis:", error?.response?.data || error.message);
+        }
+    }, []);
+
     const handleCalculate = useCallback(async () => {
         setLoading(true);
-        await new Promise(r => setTimeout(r, 300));
-        setResults(calculateCarbonFootprint(inputs));
-        setLoading(false);
-    }, [inputs]);
+        try {
+            await new Promise(r => setTimeout(r, 300));
+            const calculatedResults = calculateCarbonFootprint(inputs);
+            setResults(calculatedResults);
+
+            const feedback = getFootprintFeedback(calculatedResults.totalFootprint);
+            await persistAnalysis(calculatedResults, inputs, feedback);
+        } finally {
+            setLoading(false);
+        }
+    }, [inputs, persistAnalysis]);
 
     if (!results) {
         return (

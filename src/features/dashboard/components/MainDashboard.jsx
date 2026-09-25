@@ -105,7 +105,7 @@ export default function MainDashboard() {
                 </div>
 
                 <div className="lg:col-span-1 lg:sticky lg:top-0 h-fit self-start pt-1">
-                    <DashboardSidebar onNewEntry={() => setIsNewEntryOpen(true)} activities={trends.emissions_raw || []} />
+                    <DashboardSidebar onNewEntry={() => setIsNewEntryOpen(true)} activities={trends.emissions_raw || []} stats={stats} />
                 </div>
             </div>
 

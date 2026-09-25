@@ -14,9 +14,32 @@ export default function DashboardTrends({ emissions = [], water = [], energy = [
         return result.slice(-length);
     };
 
+    /** Compute week-over-week trend as a percentage string.
+     *  Compares the most recent day vs the average of the previous days.
+     *  Returns null if there is insufficient data to compute a real trend. */
+    const computeTrend = (data) => {
+        const filled = fillData(data);
+        const latest = filled[filled.length - 1];
+        const prevDays = filled.slice(0, filled.length - 1);
+        const prevPositive = prevDays.filter(v => v > 0);
+        if (prevPositive.length === 0 || latest === 0) return null;
+        const prevAvg = prevPositive.reduce((a, b) => a + b, 0) / prevPositive.length;
+        const changePercent = ((latest - prevAvg) / prevAvg) * 100;
+        return changePercent;
+    };
+
     const emissionsData = fillData(emissions);
     const waterData = fillData(water);
     const energyData = fillData(energy);
+
+    const emissionsTrend = computeTrend(emissions);
+    const trendLabel = emissionsTrend !== null
+        ? `${emissionsTrend <= 0 ? "↓" : "↑"} ${Math.abs(emissionsTrend).toFixed(0)}% vs avg`
+        : null;
+    const trendClass = emissionsTrend !== null && emissionsTrend > 0
+        ? "bg-red-50 text-red-600"
+        : "bg-emerald-50 text-emerald-700";
+
     return (
         <div className="lg:col-span-2 space-y-6">
             {/* Weekly Emissions Trend */}
@@ -32,9 +55,11 @@ export default function DashboardTrends({ emissions = [], water = [], energy = [
                         </div>
                     </div>
                     <div className="flex items-center gap-2">
-                        <span className="flex items-center gap-1 bg-emerald-50 text-emerald-700 text-xs font-bold px-2.5 py-1 rounded-full">
-                            <TrendingDown className="w-3.5 h-3.5" /> ↓ 8% avg
-                        </span>
+                        {trendLabel && (
+                            <span className={`flex items-center gap-1 text-xs font-bold px-2.5 py-1 rounded-full ${trendClass}`}>
+                                <TrendingDown className="w-3.5 h-3.5" /> {trendLabel}
+                            </span>
+                        )}
                         <Link href="/emissions" className="text-xs font-medium text-gray-400 hover:text-emerald-600 flex items-center gap-1 transition-colors">
                             Full view <ArrowRight className="w-3 h-3" />
                         </Link>
