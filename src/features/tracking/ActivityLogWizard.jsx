@@ -3,6 +3,7 @@ import { Card } from '@/components/ui/Card';
 import TransportInput from './TransportInput';
 import DietInput from './DietInput';
 import emissionsService from '@/services/emissionsService';
+import mlService from '@/services/mlService';
 import { CheckCircle2 } from "lucide-react";
 
 export const ActivityLogWizard = ({ onComplete }) => {
@@ -24,31 +25,55 @@ export const ActivityLogWizard = ({ onComplete }) => {
     const handleSubmit = async () => {
         setIsSubmitting(true);
         try {
-            // Prepare payload according to backend EmissionCreate schema
-            let category = "Transport";
-            let subCategory = logData.mode;
-            let value = parseFloat(getTransportCO2(logData.mode, logData.distance));
+            // Map form inputs to ML feature names (missing features default to 0.0 in preprocess.py)
+            const transportModeMap = { car: 1, bus: 2, train: 3, walk: 4 };
+            const dietMeatMap = { 'meat-heavy': 14, omnivore: 7, vegetarian: 2, vegan: 0 };
 
-            if (logData.diet) {
-                category = "Food";
-                subCategory = logData.diet;
-                value = parseFloat(getDietCO2(logData.diet));
+            const mlFeatures = {
+                Daily_Travel_km: parseFloat(logData.distance || 0),
+                Transport_Mode: transportModeMap[logData.mode] || 0,
+                Meat_Consumption_per_week: dietMeatMap[logData.diet] ?? 7,
+                Electricity_Usage_kWh_per_month: 300, // sensible default
+            };
+
+            // Call the real ML model for the CO₂ prediction
+            let mlValue = null;
+            try {
+                const mlResult = await mlService.predict(mlFeatures);
+                mlValue = mlResult?.prediction ?? null;
+            } catch (mlErr) {
+                console.warn("ML prediction failed, falling back to emission factors:", mlErr);
+            }
+
+            // Determine primary category and sub-category
+            let category = logData.diet ? "Food" : "Transport";
+            let subCategory = logData.diet || logData.mode || "general";
+
+            // Fall back to local factors only if the ML API is unavailable
+            let value;
+            if (mlValue !== null) {
+                value = parseFloat(mlValue.toFixed(2));
+            } else {
+                value = logData.diet
+                    ? parseFloat(getDietCO2(logData.diet))
+                    : parseFloat(getTransportCO2(logData.mode, logData.distance));
             }
 
             const payload = {
-                category: category,
+                category,
                 sub_category: subCategory,
-                value: value,
+                value,
                 unit: "kg CO2e",
-                description: `Logged via ActivityLogWizard: ${subCategory}`
+                description: `Logged via ActivityLogWizard: ${subCategory}${mlValue !== null ? ' (ML predicted)' : ' (estimated)'
+                    }`,
             };
 
             const result = await emissionsService.logActivity(payload);
 
-            // Adapt real backend response to component needs
             setImpactData({
                 impact: result.value,
-                totalUsed: 0 // Backend might not return the new total budget directly in this endpoint
+                mlPredicted: mlValue !== null,
+                totalUsed: 0, // backend does not return new total in this endpoint
             });
             setSubmitted(true);
         } catch (error) {

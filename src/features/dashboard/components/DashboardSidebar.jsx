@@ -28,13 +28,43 @@ const COLOR_MAP = {
     teal: { bg: "hover:bg-teal-50", border: "hover:border-teal-100", icon: "text-gray-400 group-hover:text-teal-500", text: "group-hover:text-teal-700" },
 };
 
-const AI_TIPS = [
-    { text: "Switch to LED bulbs to cut home energy use by up to 25%.", href: "/emissions" },
-    { text: "Your water usage is 12% below average — great job! 💧", href: "/water" },
-    { text: "You're 15% closer to your monthly carbon goal.", href: "/goals" },
-];
+/** Derive AI-style tips dynamically from real backend stats */
+const deriveAITips = (stats) => {
+    if (!stats) return [
+        { text: "Log your first activity to unlock personalised insights.", href: "/emissions" },
+    ];
+    const tips = [];
+    const co2 = stats.total_emissions || 0;
+    const water = stats.total_water_usage || 0;
+    const energy = stats.total_energy_usage || 0;
 
-export default function DashboardSidebar({ onNewEntry, activities = [] }) {
+    if (co2 === 0) {
+        tips.push({ text: "Start logging activities to see your carbon footprint.", href: "/emissions" });
+    } else if (co2 > 500) {
+        tips.push({ text: `High CO₂ this period (${co2.toFixed(0)} kg). Try reducing car trips! 🚗`, href: "/emissions" });
+    } else {
+        tips.push({ text: `Great job! Your carbon footprint is ${co2.toFixed(0)} kg — keep it up! 🌱`, href: "/emissions" });
+    }
+
+    if (water > 300) {
+        tips.push({ text: `Water usage is ${water.toFixed(0)} L. Try shorter showers to conserve water 💧`, href: "/water" });
+    } else if (water > 0) {
+        tips.push({ text: `Excellent water habits! You've used only ${water.toFixed(0)} L total. 💧`, href: "/water" });
+    } else {
+        tips.push({ text: "Log your water usage to track your conservation progress.", href: "/water" });
+    }
+
+    if (energy > 0) {
+        tips.push({ text: `Energy tracked: ${energy.toFixed(1)} kWh. Switch to LED bulbs to save up to 25%. ⚡`, href: "/energy" });
+    } else {
+        tips.push({ text: "Track your energy usage to identify savings opportunities. ⚡", href: "/energy" });
+    }
+
+    return tips;
+};
+
+export default function DashboardSidebar({ onNewEntry, activities = [], stats = null }) {
+    const AI_TIPS = deriveAITips(stats);
     const displayActivities = activities.length > 0
         ? activities.slice(0, 5).map(a => ({
             icon: a.category === "Water" ? Droplets : a.category === "Energy" ? Zap : Leaf,

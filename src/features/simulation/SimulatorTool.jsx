@@ -1,40 +1,74 @@
 import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/Card';
 import ScenarioSlider from './ScenarioSlider';
+import mlService from '@/services/mlService';
 import dashboardService from '@/services/dashboardService';
 
-export const SimulatorTool = () => {
-    // Base footprint in kg CO2e pulled from live stats
-    const [baseFootprint, setBaseFootprint] = useState(12000); // 12000 as fallback
-    const [isLoading, setIsLoading] = useState(true);
+// Default features expected by the ML model
+const BASE_FEATURES = {
+    Daily_Travel_km: 20,
+    Electricity_Usage_kWh_per_month: 300,
+    Meat_Consumption_per_week: 5,
+};
 
-    useEffect(() => {
-        const fetchStats = async () => {
-            const stats = await dashboardService.getStats();
-            if (stats && stats.total_emissions) {
-                // we assume stats.total_emissions is monthly, scale to annual
-                setBaseFootprint(stats.total_emissions * 12);
-            }
-            setIsLoading(false);
-        };
-        fetchStats();
-    }, []);
+export const SimulatorTool = () => {
+    const [baseFootprint, setBaseFootprint] = useState(12000);
+    const [projectedFootprint, setProjectedFootprint] = useState(12000);
+    const [isLoading, setIsLoading] = useState(true);
+    const [isSimulating, setIsSimulating] = useState(false);
 
     // Simulation parameters (percentage reduction)
     const [transportReduction, setTransportReduction] = useState(0);
     const [dietPlantBased, setDietPlantBased] = useState(0);
     const [energyEfficiency, setEnergyEfficiency] = useState(0);
 
-    // Dynamic calculation logic (Derived State)
-    // Estimated savings are based on common impact proportions from the latest stats
-    // Transport accounts for ~30%, Diet ~25%, Energy ~25% of total
-    const transportSavings = (baseFootprint * 0.30) * (transportReduction / 100);
-    const dietSavings = (baseFootprint * 0.25) * (dietPlantBased / 100);
-    const energySavings = (baseFootprint * 0.25) * (energyEfficiency / 100);
+    // Initial load: get real stats or base ML prediction
+    useEffect(() => {
+        const fetchBase = async () => {
+            try {
+                const response = await mlService.predict(BASE_FEATURES);
+                const annualPredicted = (response.prediction || 1000) * 12;
+                setBaseFootprint(annualPredicted);
+                setProjectedFootprint(annualPredicted);
+            } catch (error) {
+                console.error("Failed to load base prediction:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        fetchBase();
+    }, []);
 
-    const totalSavings = transportSavings + dietSavings + energySavings;
-    const savings = Math.round(totalSavings);
-    const projectedFootprint = Math.round(baseFootprint - totalSavings);
+    // ML calculation effect with debounce
+    useEffect(() => {
+        if (isLoading) return;
+
+        const timeoutId = setTimeout(async () => {
+            setIsSimulating(true);
+            try {
+                // Map slider reductions to real ML features
+                const adjustedFeatures = {
+                    ...BASE_FEATURES,
+                    Daily_Travel_km: BASE_FEATURES.Daily_Travel_km * (1 - transportReduction / 100),
+                    Meat_Consumption_per_week: BASE_FEATURES.Meat_Consumption_per_week * (1 - dietPlantBased / 100),
+                    Electricity_Usage_kWh_per_month: BASE_FEATURES.Electricity_Usage_kWh_per_month * (1 - energyEfficiency / 100),
+                };
+                const result = await mlService.predict(adjustedFeatures);
+                const annualSimulated = (result.prediction || 1000) * 12;
+                setProjectedFootprint(annualSimulated);
+            } catch (error) {
+                console.error("Simulation failed:", error);
+            } finally {
+                setIsSimulating(false);
+            }
+        }, 500); // 500ms debounce
+
+        return () => clearTimeout(timeoutId);
+    }, [transportReduction, dietPlantBased, energyEfficiency, isLoading]);
+
+    const baseSavings = Math.round(baseFootprint - projectedFootprint);
+    const savings = Math.max(0, baseSavings);
+    const displayProjected = Math.round(projectedFootprint);
 
     if (isLoading) {
         return (
@@ -50,7 +84,7 @@ export const SimulatorTool = () => {
                 <div className="text-center sm:text-left">
                     <h3 className="text-2xl font-extrabold text-gray-900 tracking-tight">Future Impact Simulator</h3>
                     <p className="text-gray-500 mt-2 max-w-2xl">
-                        Adjust your lifestyle choices below to see their potential impact on your annual carbon emissions.
+                        Adjust your lifestyle choices below to see their potential impact on your annual carbon emissions, powered by our AI predictive model.
                     </p>
                 </div>
 
@@ -95,15 +129,21 @@ export const SimulatorTool = () => {
 
                     {/* Results Column */}
                     <div className="lg:col-span-5">
-                        <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden text-center">
+                        <div className="bg-linear-to-br from-blue-600 to-indigo-700 rounded-3xl p-8 text-white shadow-lg relative overflow-hidden text-center transition-all">
+                            {isSimulating && (
+                                <div className="absolute inset-0 bg-blue-900/40 backdrop-blur-[2px] flex items-center justify-center z-10 rounded-3xl">
+                                    <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-white" />
+                                </div>
+                            )}
+
                             {/* Decorative background circles */}
                             <div className="absolute top-0 right-0 -mr-8 -mt-8 w-32 h-32 rounded-full bg-white/10 blur-2xl"></div>
                             <div className="absolute bottom-0 left-0 -ml-8 -mb-8 w-24 h-24 rounded-full bg-white/10 blur-xl"></div>
 
-                            <h4 className="text-blue-100 font-medium text-sm uppercase tracking-wider mb-6">Projected Annual Footprint</h4>
+                            <h4 className="text-blue-100 font-medium text-sm uppercase tracking-wider mb-6">AI Projected Annual Footprint</h4>
 
                             <div className="relative inline-flex items-center justify-center">
-                                <span className="text-5xl font-black tracking-tight">{projectedFootprint.toLocaleString()}</span>
+                                <span className="text-5xl font-black tracking-tight">{displayProjected.toLocaleString()}</span>
                             </div>
                             <span className="block text-blue-200 mt-1 mb-8 text-sm">kg CO2e / year</span>
 
@@ -117,7 +157,7 @@ export const SimulatorTool = () => {
                                 </div>
                             ) : (
                                 <div className="p-4 rounded-xl border border-white/10 text-blue-200 text-sm">
-                                    Adjust the sliders to see your savings.
+                                    Adjust the sliders to see your AI-predicted savings.
                                 </div>
                             )}
                         </div>
