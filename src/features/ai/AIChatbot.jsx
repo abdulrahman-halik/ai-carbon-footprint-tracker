@@ -72,8 +72,16 @@ export default function AIChatbot() {
                     }
                 }
             } else {
-                const response = await insightsService.search(userText, 3);
-                aiResponseText = response?.insight || response?.results?.[0]?.text || "I couldn't find a specific answer for that. Try a different sustainability question.";
+                // Build context history (exclude initial prompt and errors)
+                const chatHistory = [...messages, userMsg]
+                    .filter(msg => msg.id !== 1 && !msg.text.includes("Sorry, I am having trouble"))
+                    .map(msg => ({
+                        role: msg.sender === 'user' ? 'user' : 'model',
+                        parts: msg.text
+                    }));
+
+                const response = await insightsService.chat(chatHistory);
+                aiResponseText = response?.insight || "I couldn't process that request at the moment. Try a different sustainability question.";
             }
 
             const aiMsg = { id: Date.now() + 1, text: aiResponseText, sender: 'ai' };

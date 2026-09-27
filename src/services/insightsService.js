@@ -1,6 +1,11 @@
 import apiClient from "@/lib/apiClient";
 
 const insightsService = {
+    chat: async (messages) => {
+        const response = await apiClient.post("/api/insights/chat", { messages });
+        return response.data;
+    },
+
     search: async (query, topK = 3) => {
         const response = await apiClient.get("/api/insights/search", {
             params: { q: query, top_k: topK }
