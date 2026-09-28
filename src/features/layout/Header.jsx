@@ -90,8 +90,8 @@ export default function Header({ onMenuClick }) {
                             {user?.full_name || user?.name || "Guest"}
                         </span>
                         <div className="flex h-10 w-10 items-center justify-center rounded-full bg-emerald-100 text-emerald-700 ring-2 ring-white shadow-sm group-hover:ring-emerald-100 transition-all">
-                            {user?.avatar ? (
-                                <Image src={user.avatar} alt="User Avatar" width={40} height={40} className="rounded-full object-cover" />
+                            {(user?.profile?.profilePicture || user?.profilePicture || user?.avatar) ? (
+                                <Image src={user?.profile?.profilePicture || user?.profilePicture || user?.avatar} alt="User Avatar" width={40} height={40} className="rounded-full object-cover" />
                             ) : (
                                 <UserIcon size={18} strokeWidth={2.5} />
                             )}

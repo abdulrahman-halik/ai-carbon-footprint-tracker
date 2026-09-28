@@ -76,6 +76,7 @@ export default function UserInfo() {
     const handleChangePassword = async () => {
         try {
             setApiError('');
+            if (passwordForm.current === passwordForm.new) throw new Error('New password must be different from your current password.');
             if (passwordForm.new !== passwordForm.confirm) throw new Error('Passwords do not match');
             await userService.changePassword(
                 passwordForm.current,
@@ -84,7 +85,10 @@ export default function UserInfo() {
             setIsPasswordModalOpen(false);
             setPasswordForm({ current: '', new: '', confirm: '' });
             toast.success('Password updated successfully');
-        } catch (e) { setApiError(e.message || 'Failed to change password'); }
+        } catch (e) {
+            const errorMsg = e.response?.data?.detail || e.message || 'Failed to change password';
+            toast.error(errorMsg);
+        }
     };
 
     const handleToggle2FA = async () => {
