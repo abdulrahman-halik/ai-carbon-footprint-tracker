@@ -41,6 +41,7 @@ export const AuthProvider = ({ children }) => {
             setUser(data);
             return data;
         } catch (error) {
+            toast.error("Invalid credentials. Please check your credentials");
             throw error;
         } finally {
             setIsLoading(false);
