@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from "chart.js";
 import { EnergyHeader, EnergyTips } from "@/features/energy/EnergyInfo";
 import { StatsGrid, UsageChart } from "@/features/energy/EnergyAnalytics";
@@ -39,13 +39,82 @@ export default function EnergyPage() {
                 setReadings(rawData.map(r => ({
                     id: r._id || r.id,
                     reading: r.value,
-                    date: r.date,
+                    date: r.date ? new Date(r.date).toISOString().slice(0, 10) : '',
                     notes: r.notes || ''
                 })));
             }
         } catch (e) {
             console.error("Failed to fetch energy readings", e);
         }
+    };
+
+    // Compute real stats from fetched readings
+    const energyStats = useMemo(() => {
+        if (!readings || readings.length === 0) return { dailyAvg: null, monthlyTotal: null, logCount: 0 };
+        const values = readings.map(r => Number(r.reading) || 0);
+        const total = values.reduce((a, b) => a + b, 0);
+        const now = new Date();
+        const thisMonthValues = readings
+            .filter(r => {
+                if (!r.date) return false;
+                const d = new Date(r.date);
+                return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+            })
+            .map(r => Number(r.reading) || 0);
+        const monthlyTotal = thisMonthValues.reduce((a, b) => a + b, 0);
+        return {
+            dailyAvg: values.length > 0 ? total / values.length : 0,
+            monthlyTotal,
+            logCount: readings.length,
+        };
+    }, [readings]);
+
+    // Build real chart data from readings (sorted by date, last 10)
+    const chartData = useMemo(() => {
+        const sorted = [...readings]
+            .filter(r => r.date)
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .slice(-10);
+
+        if (sorted.length === 0) {
+            return {
+                labels: [],
+                datasets: [{
+                    label: "Energy Usage (kWh)",
+                    data: [],
+                    borderColor: "rgb(245, 158, 11)",
+                    backgroundColor: "rgba(245, 158, 11, 0.2)",
+                    tension: 0.4,
+                    fill: true,
+                    pointBackgroundColor: "rgb(245, 158, 11)",
+                }],
+            };
+        }
+
+        return {
+            labels: sorted.map(r => r.date),
+            datasets: [{
+                label: "Energy Usage (kWh)",
+                data: sorted.map(r => Number(r.reading) || 0),
+                borderColor: "rgb(245, 158, 11)",
+                backgroundColor: "rgba(245, 158, 11, 0.2)",
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: "rgb(245, 158, 11)",
+            }],
+        };
+    }, [readings]);
+
+    const chartOptions = {
+        responsive: true,
+        plugins: {
+            legend: { display: false },
+            title: { display: false },
+        },
+        scales: {
+            y: { beginAtZero: true, grid: { color: "rgba(0, 0, 0, 0.05)" } },
+            x: { grid: { display: false } },
+        },
     };
 
     const openMeter = () => setIsMeterOpen(true);
@@ -116,52 +185,12 @@ export default function EnergyPage() {
         setNotes('');
     };
 
-    const data = {
-        labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "23:59"],
-        datasets: [
-            {
-                label: "Energy Usage (kWh)",
-                data: [0.5, 0.4, 1.2, 1.8, 1.5, 2.4, 1.1],
-                borderColor: "rgb(245, 158, 11)", // Amber-500
-                backgroundColor: "rgba(245, 158, 11, 0.2)",
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: "rgb(245, 158, 11)",
-            },
-        ],
-    };
-
-    const options = {
-        responsive: true,
-        plugins: {
-            legend: {
-                display: false,
-            },
-            title: {
-                display: false,
-            },
-        },
-        scales: {
-            y: {
-                beginAtZero: true,
-                grid: {
-                    color: "rgba(0, 0, 0, 0.05)",
-                },
-            },
-            x: {
-                grid: {
-                    display: false,
-                },
-            },
-        },
-    };
-
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-10">
             <EnergyHeader onAdd={openMeter} />
             <MeterModal isOpen={isMeterOpen} onClose={handleCancelEdit} reading={reading} setReading={setReading} date={date} setDate={setDate} notes={notes} setNotes={setNotes} readings={readings} onSave={handleSave} savedToast={savedToast} />
-            <StatsGrid />
-            <UsageChart data={data} options={options} />
+            <StatsGrid stats={energyStats} />
+            <UsageChart data={chartData} options={chartOptions} />
 
             <div className="mt-6">
                 <MeterList readings={readings} onEdit={handleEdit} onDelete={handleDelete} editingId={editingId} onCancel={handleCancelEdit} />

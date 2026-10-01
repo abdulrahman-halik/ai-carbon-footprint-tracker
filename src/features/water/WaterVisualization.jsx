@@ -64,7 +64,46 @@ export const waterChartOptions = {
     },
 };
 
-export function WaterChart() {
+export function WaterChart({ logs = [] }) {
+    const chartData = React.useMemo(() => {
+        const sorted = [...logs]
+            .filter(l => l.date)
+            .sort((a, b) => new Date(a.date) - new Date(b.date))
+            .slice(-7);
+
+        if (sorted.length === 0) return waterChartData;
+
+        return {
+            labels: sorted.map(l => new Date(l.date).toLocaleDateString('en-US', { weekday: 'short', month: 'numeric', day: 'numeric' })),
+            datasets: [
+                {
+                    label: "Water Usage (Liters)",
+                    data: sorted.map(l => Number(l.liters || l.value || 0)),
+                    backgroundColor: (ctx) => {
+                        const chart = ctx.chart;
+                        const { ctx: c, chartArea } = chart;
+                        if (!chartArea) return "rgba(56, 189, 248, 0.6)";
+                        const gradient = c.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
+                        gradient.addColorStop(0, "rgba(56, 189, 248, 0.2)");
+                        gradient.addColorStop(1, "rgba(14, 165, 233, 0.7)");
+                        return gradient;
+                    },
+                    borderColor: "rgb(14, 165, 233)",
+                    borderWidth: 2,
+                    borderRadius: 10,
+                    borderSkipped: false,
+                    hoverBackgroundColor: "rgba(14, 165, 233, 0.85)",
+                },
+            ],
+        };
+    }, [logs]);
+
+    const average = React.useMemo(() => {
+        if (logs.length === 0) return 0;
+        const total = logs.reduce((a, b) => a + (Number(b.liters || b.value || 0)), 0);
+        return Math.round(total / logs.length);
+    }, [logs]);
+
     return (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 ring-1 ring-gray-100 overflow-hidden">
             <div className="p-6 sm:p-8 border-b border-gray-50">
@@ -74,25 +113,25 @@ export function WaterChart() {
                             <BarChart3 className="w-5 h-5" />
                         </div>
                         <div>
-                            <h3 className="text-lg font-bold text-gray-900">Weekly Consumption</h3>
+                            <h3 className="text-lg font-bold text-gray-900">Recent Consumption</h3>
                             <p className="text-xs text-gray-400">Daily water usage breakdown</p>
                         </div>
                     </div>
                     <div className="flex items-center gap-4">
                         <div className="flex items-center gap-2 bg-sky-50 px-3 py-1.5 rounded-full">
                             <span className="w-2.5 h-2.5 rounded-full bg-sky-500 animate-pulse" />
-                            <span className="text-xs font-medium text-sky-700">Avg: 148L / day</span>
+                            <span className="text-xs font-medium text-sky-700">Avg: {average}L / day</span>
                         </div>
                         <div className="flex items-center gap-1.5 text-xs text-gray-400">
                             <Clock className="w-3.5 h-3.5" />
-                            This week
+                            Latest logs
                         </div>
                     </div>
                 </div>
             </div>
             <div className="p-6 sm:p-8">
                 <div className="h-75 w-full">
-                    <Bar data={waterChartData} options={waterChartOptions} />
+                    <Bar data={chartData} options={waterChartOptions} />
                 </div>
             </div>
         </div>

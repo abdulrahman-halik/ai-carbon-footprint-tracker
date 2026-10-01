@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui/Card";
  * @param {{ level: string, icon: string, xp: number, color: string }} levelData
  * @param {number} streakDays - Mock streak (5 by default)
  */
-export default function GamificationBadge({ levelData, streakDays = 5 }) {
+export default function GamificationBadge({ levelData, streakDays = 0 }) {
     if (!levelData) return null;
 
     const { level, icon, xp, color } = levelData;

@@ -111,7 +111,7 @@ export default function EmissionsDashboard() {
             <div className="flex justify-between items-center flex-wrap gap-3">
                 <div>
                     <h2 className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-                     Emissions Dashboard
+                        Emissions Dashboard
                     </h2>
                     <p className="text-gray-500 text-sm">AI-powered carbon footprint advisor</p>
                 </div>
@@ -135,7 +135,7 @@ export default function EmissionsDashboard() {
                     <EmissionsSummaryCards results={results} feedback={feedback} />
                 </div>
                 <div>
-                    <GamificationBadge levelData={levelData} streakDays={5} />
+                    <GamificationBadge levelData={levelData} />
                 </div>
             </div>
 

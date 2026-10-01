@@ -89,15 +89,7 @@ export default function ForgotPasswordForm() {
         const response = await forgotPassword(data.email);
 
         const successMsg = response.message || "If the email exists, reset instructions have been sent.";
-        setApiSuccess(
-          response.reset_token
-            ? `${successMsg} MOCK TOKEN: ${response.reset_token}`
-            : successMsg
-        );
-
-        if (response.reset_token) {
-          toast.success(`Dev Mode Token: ${response.reset_token}`, { duration: 6000 });
-        }
+        setApiSuccess(successMsg);
 
         router.push(
           `/forgot-password?step=2&email=${encodeURIComponent(
@@ -196,8 +188,8 @@ export default function ForgotPasswordForm() {
                     placeholder="Enter verification code"
                     {...register("verificationCode")}
                     className={`pl-10 ${errors.verificationCode
-                        ? "border-red-500"
-                        : ""
+                      ? "border-red-500"
+                      : ""
                       }`}
                   />
                 </div>
