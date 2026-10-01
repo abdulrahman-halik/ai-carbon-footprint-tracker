@@ -43,7 +43,7 @@ export const TransportInput = ({ onUpdate }) => {
                         type="number"
                         min="0"
                         value={distance}
-                        onChange={(e) => handleUpdate(mode, parseFloat(e.target.value) || 0)}
+                        onChange={(e) => handleUpdate(mode, e.target.value === '' ? '' : Number(e.target.value))}
                         className="w-full pl-4 pr-12 py-3 rounded-xl border-gray-200 bg-gray-50/50 focus:bg-white focus:border-emerald-500 focus:ring-emerald-500 transition-all text-lg font-medium"
                         placeholder="0"
                     />

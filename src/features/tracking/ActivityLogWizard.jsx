@@ -5,6 +5,7 @@ import DietInput from './DietInput';
 import emissionsService from '@/services/emissionsService';
 import mlService from '@/services/mlService';
 import { CheckCircle2 } from "lucide-react";
+import { toast } from "react-hot-toast";
 
 export const ActivityLogWizard = ({ onComplete }) => {
     const [step, setStep] = useState(1);
@@ -18,6 +19,13 @@ export const ActivityLogWizard = ({ onComplete }) => {
     };
 
     const handleNext = () => {
+        if (step === 1) {
+            const dist = logData.distance !== undefined ? logData.distance : 0;
+            if (dist === '' || Number(dist) < 0) {
+                toast.error("Please enter a valid distance (must be 0 or greater).");
+                return;
+            }
+        }
         if (step < 2) setStep(step + 1);
         else handleSubmit();
     };
@@ -68,6 +76,10 @@ export const ActivityLogWizard = ({ onComplete }) => {
                     }`,
             };
 
+            if (logData.distance !== undefined && logData.distance !== '') {
+                payload.distance = parseFloat(logData.distance);
+            }
+
             const result = await emissionsService.logActivity(payload);
 
             setImpactData({
@@ -78,6 +90,8 @@ export const ActivityLogWizard = ({ onComplete }) => {
             setSubmitted(true);
         } catch (error) {
             console.error("Failed to log activity:", error);
+            const errorMessage = error.response?.data?.detail || "Failed to log activity. Please try again.";
+            toast.error(errorMessage);
         } finally {
             setIsSubmitting(false);
         }

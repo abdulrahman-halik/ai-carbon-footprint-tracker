@@ -17,39 +17,34 @@ ChartJS.register(
     Filler
 );
 
-export function StatsGrid() {
-    const stats = [
+export function StatsGrid({ stats = {} }) {
+    const { dailyAvg = null, monthlyTotal = null, logCount = null } = stats;
+
+    const statCards = [
         {
-            label: "Daily Usage",
-            value: "12.4",
-            unit: "kWh",
+            label: "Daily Average",
+            value: dailyAvg !== null ? dailyAvg.toFixed(1) : "–",
+            unit: dailyAvg !== null ? "kWh" : "",
             icon: Zap,
-            trend: { direction: "up", value: "5%", text: "vs last week" },
             gradient: "from-amber-500 to-orange-500",
-            bg: "bg-amber-50",
             ring: "ring-amber-100",
             iconBg: "bg-linear-to-br from-amber-400 to-orange-500",
         },
         {
-            label: "Renewable Mix",
-            value: "42",
-            unit: "%",
+            label: "Monthly Total",
+            value: monthlyTotal !== null ? monthlyTotal.toFixed(1) : "–",
+            unit: monthlyTotal !== null ? "kWh" : "",
             icon: Sun,
-            trend: { direction: "down", value: "8%", text: "more green" },
             gradient: "from-emerald-500 to-teal-500",
-            bg: "bg-emerald-50",
             ring: "ring-emerald-100",
             iconBg: "bg-linear-to-br from-emerald-400 to-teal-500",
-            progress: 42,
         },
         {
-            label: "Monthly Cost",
-            value: "$48.20",
-            unit: "",
+            label: "Total Readings",
+            value: logCount !== null ? String(logCount) : "–",
+            unit: logCount !== null ? "entries" : "",
             icon: DollarSign,
-            trend: { direction: "down", value: "12%", text: "savings" },
             gradient: "from-violet-500 to-purple-500",
-            bg: "bg-violet-50",
             ring: "ring-violet-100",
             iconBg: "bg-linear-to-br from-violet-400 to-purple-500",
         },
@@ -57,9 +52,8 @@ export function StatsGrid() {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {stats.map((stat) => {
+            {statCards.map((stat) => {
                 const Icon = stat.icon;
-                const isUp = stat.trend.direction === "up";
                 return (
                     <div
                         key={stat.label}
@@ -80,23 +74,6 @@ export function StatsGrid() {
                                 <Icon className="w-5 h-5" />
                             </div>
                         </div>
-
-                        {stat.progress !== undefined && (
-                            <div className="mt-4 w-full bg-gray-100 rounded-full h-2.5 overflow-hidden">
-                                <div
-                                    className={`h-2.5 rounded-full bg-linear-to-r ${stat.gradient} transition-all duration-1000`}
-                                    style={{ width: `${stat.progress}%` }}
-                                />
-                            </div>
-                        )}
-
-                        <div className="mt-4 flex items-center gap-2">
-                            <div className={`flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-semibold ${isUp ? 'bg-rose-50 text-rose-600' : 'bg-emerald-50 text-emerald-600'}`}>
-                                {isUp ? <TrendingUp className="w-3.5 h-3.5" /> : <TrendingDown className="w-3.5 h-3.5" />}
-                                {stat.trend.value}
-                            </div>
-                            <span className="text-xs text-gray-400">{stat.trend.text}</span>
-                        </div>
                     </div>
                 );
             })}
@@ -105,31 +82,19 @@ export function StatsGrid() {
 }
 
 export function UsageChart({ data, options }) {
-    const defaultData = {
-        labels: ["00:00", "04:00", "08:00", "12:00", "16:00", "20:00", "23:59"],
+    const useData = data || {
+        labels: [],
         datasets: [
             {
                 label: "Energy Usage (kWh)",
-                data: [0.5, 0.4, 1.2, 1.8, 1.5, 2.4, 1.1],
+                data: [],
                 borderColor: "rgb(245, 158, 11)",
-                backgroundColor: (ctx) => {
-                    const gradient = ctx.chart.ctx.createLinearGradient(0, 0, 0, 300);
-                    gradient.addColorStop(0, "rgba(245, 158, 11, 0.3)");
-                    gradient.addColorStop(1, "rgba(245, 158, 11, 0.02)");
-                    return gradient;
-                },
+                backgroundColor: "rgba(245, 158, 11, 0.2)",
                 tension: 0.4,
                 fill: true,
-                pointBackgroundColor: "#fff",
-                pointBorderColor: "rgb(245, 158, 11)",
-                pointBorderWidth: 3,
-                pointRadius: 5,
-                pointHoverRadius: 8,
-                borderWidth: 3,
             },
         ],
     };
-
     const defaultOptions = {
         responsive: true,
         maintainAspectRatio: false,
@@ -164,7 +129,6 @@ export function UsageChart({ data, options }) {
         },
     };
 
-    const useData = data || defaultData;
     const useOptions = options || defaultOptions;
 
     return (

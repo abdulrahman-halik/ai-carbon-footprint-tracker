@@ -44,38 +44,53 @@ export function WaterHeader({ onOpen }) {
     );
 }
 
-export function WaterStats() {
+export function WaterStats({ logs = [] }) {
+    // Compute real stats from logs
+    const values = logs.map(l => Number(l.liters || l.value) || 0);
+    const total = values.reduce((a, b) => a + b, 0);
+    const dailyAvg = values.length > 0 ? Math.round(total / values.length) : 0;
+
+    const now = new Date();
+    const monthlyLogs = logs.filter(l => {
+        const d = new Date(l.date);
+        return d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
+    });
+    const monthlyTotal = monthlyLogs.reduce((a, l) => a + (Number(l.liters || l.value) || 0), 0);
+
+    // Alert: any day with more than 200L
+    const highDay = logs.find(l => (Number(l.liters || l.value) || 0) > 200);
+
     const stats = [
         {
             label: "Daily Average",
-            value: "148",
-            unit: "Liters",
+            value: logs.length > 0 ? String(dailyAvg) : "–",
+            unit: logs.length > 0 ? "Liters" : "",
             icon: Droplets,
-            trend: { direction: "down", value: "12%", text: "vs last week" },
             gradient: "from-sky-500 to-cyan-500",
             ring: "ring-sky-100",
             iconBg: "bg-linear-to-br from-sky-400 to-cyan-500",
         },
         {
             label: "Monthly Total",
-            value: "4,200",
-            unit: "Liters",
+            value: logs.length > 0 ? monthlyTotal.toLocaleString() : "–",
+            unit: logs.length > 0 ? "Liters" : "",
             icon: BarChart3,
-            trend: { direction: "down", value: "8%", text: "under target" },
             gradient: "from-blue-500 to-indigo-500",
             ring: "ring-blue-100",
             iconBg: "bg-linear-to-br from-blue-400 to-indigo-500",
-            extra: { label: "Projected", value: "4,500L" },
         },
         {
             label: "Alerts",
-            value: "1",
-            unit: "Active",
+            value: highDay ? "1" : "0",
+            unit: highDay ? "Active" : "Active",
             icon: AlertTriangle,
-            gradient: "from-amber-500 to-orange-500",
-            ring: "ring-amber-100",
-            iconBg: "bg-linear-to-br from-amber-400 to-orange-500",
-            alert: { title: "High Usage Detected", description: "Sunday — check your irrigation system." },
+            gradient: highDay ? "from-amber-500 to-orange-500" : "from-emerald-500 to-teal-500",
+            ring: highDay ? "ring-amber-100" : "ring-emerald-100",
+            iconBg: highDay ? "bg-linear-to-br from-amber-400 to-orange-500" : "bg-linear-to-br from-emerald-400 to-teal-500",
+            alert: highDay ? {
+                title: "High Usage Detected",
+                description: `${new Date(highDay.date).toLocaleDateString()} — ${Number(highDay.liters || highDay.value)} L logged.`
+            } : null,
         },
     ];
 

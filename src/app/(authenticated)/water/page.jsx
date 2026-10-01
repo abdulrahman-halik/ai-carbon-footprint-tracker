@@ -119,9 +119,9 @@ export default function WaterPage() {
                 editingId={editingId}
             />
 
-            <WaterStats />
+            <WaterStats logs={logs} />
 
-            <WaterChart />
+            <WaterChart logs={logs} />
 
             {/* Saved usage cards */}
             <SavedUsageCards logs={logs.slice(0, 12)} onEdit={handleEdit} onDelete={handleDelete} editingId={editingId} onCancel={closeLog} />
