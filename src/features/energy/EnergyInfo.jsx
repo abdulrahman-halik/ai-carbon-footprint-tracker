@@ -1,7 +1,8 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import { Zap, Plus, Activity, Lightbulb, Plug, Leaf, ArrowRight } from "lucide-react";
+import { Modal, ModalContent, ModalHeader, ModalTitle } from '@/components/ui/Modal';
 
 export function EnergyHeader({ onAdd }) {
     return (
@@ -50,6 +51,7 @@ const tips = [
         icon: Lightbulb,
         title: "Switch to LED",
         description: "LED bulbs use up to 90% less energy than incandescent bulbs and last 25x longer. The easiest switch with the biggest impact!",
+        details: "Switching to LED lighting is one of the quickest and easiest ways to reduce your energy bill.\n\nKey benefits:\n- Energy Efficiency: LEDs use up to 90% less energy than traditional incandescent bulbs, drastically cutting down on electricity usage.\n- Longevity: A single LED bulb can last up to 25 times longer than an incandescent one, meaning you'll buy fewer bulbs over time.\n- Environmental Impact: Less energy consumption directly translates to a lower carbon footprint, and because they last longer, LEDs reduce waste in landfills.",
         gradient: "from-amber-400 to-yellow-400",
         bg: "bg-amber-50",
         border: "border-amber-100",
@@ -60,6 +62,7 @@ const tips = [
         icon: Plug,
         title: "Kill Phantom Power",
         description: "Standby electronics can account for up to 10% of your electricity bill. Use smart power strips to turn them all off at once.",
+        details: "Phantom power, also known as vampire power, refers to the energy drawn by electronic devices even when they are turned off but still plugged in.\n\nHow to stop it:\n- Identify Culprits: TVs, computers, gaming consoles, and kitchen appliances are major contributors to phantom power.\n- Smart Power Strips: Invest in smart power strips that automatically cut power to devices when they are not in use.\n- Unplug: Simply unplugging chargers and devices when they are fully charged or not in use can save up to 10% on your monthly electricity bill.",
         gradient: "from-violet-400 to-purple-500",
         bg: "bg-violet-50",
         border: "border-violet-100",
@@ -70,6 +73,7 @@ const tips = [
         icon: Leaf,
         title: "Go Renewable",
         description: "Consider switching to a green energy provider or installing solar panels. Many utility companies now offer 100% renewable options.",
+        details: "Transitioning to renewable energy sources is one of the most impactful steps you can take toward a sustainable lifestyle.\n\nSteps to take:\n- Green Providers: Contact your local utility company to see if they offer an opt-in program for 100% wind or solar energy. It's often a simple switch.\n- Solar Panels: If you own your home, consider installing solar panels. While the initial investment is significant, federal and state tax credits, along with long-term energy savings, make it highly cost-effective over time.\n- Community Solar: If you can't install panels, look into community solar programs where you can subscribe to a shared local solar farm.",
         gradient: "from-emerald-400 to-teal-500",
         bg: "bg-emerald-50",
         border: "border-emerald-100",
@@ -79,6 +83,8 @@ const tips = [
 ];
 
 export function EnergyTips() {
+    const [activeTip, setActiveTip] = useState(null);
+
     return (
         <div className="space-y-5">
             <div className="flex items-center gap-3">
@@ -115,14 +121,44 @@ export function EnergyTips() {
                                 <h4 className="text-base font-bold text-gray-900 mb-2">{tip.title}</h4>
                                 <p className="text-sm text-gray-500 leading-relaxed">{tip.description}</p>
 
-                                <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-amber-600 group-hover:gap-2.5 transition-all duration-300">
+                                <button
+                                    onClick={() => setActiveTip(tip)}
+                                    className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-amber-600 group-hover:gap-2.5 transition-all duration-300 focus:outline-none cursor-pointer"
+                                >
                                     Learn more <ArrowRight className="w-3.5 h-3.5" />
-                                </div>
+                                </button>
                             </div>
                         </div>
                     );
                 })}
             </div>
+
+            <Modal isOpen={!!activeTip} onClose={() => setActiveTip(null)}>
+                <ModalContent className="max-w-xl">
+                    {activeTip && (
+                        <>
+                            <ModalHeader>
+                                <div className="flex items-center gap-4">
+                                    <div className={`p-3 rounded-2xl bg-linear-to-br ${activeTip.gradient} text-white shadow-lg`}>
+                                        <activeTip.icon className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <div className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-1 ${activeTip.tagColor}`}>
+                                            {activeTip.tag}
+                                        </div>
+                                        <ModalTitle className="text-xl sm:text-2xl">{activeTip.title}</ModalTitle>
+                                    </div>
+                                </div>
+                            </ModalHeader>
+                            <div className="p-6 pt-2 overflow-y-auto max-h-[60vh]">
+                                <div className="text-gray-600 text-sm sm:text-base leading-relaxed space-y-4 whitespace-pre-wrap">
+                                    {activeTip.details}
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 }
