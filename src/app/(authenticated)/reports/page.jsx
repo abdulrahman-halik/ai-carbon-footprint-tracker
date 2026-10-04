@@ -1,6 +1,7 @@
 "use client";
 
 import { FileText, Download, Share2, Award, Calendar } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 /* ── Canvas utility ── */
 function roundRect(ctx, x, y, w, h, r) {
@@ -18,7 +19,7 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 /* ── Certificate download (Canvas → PNG) ── */
-function downloadCertificate() {
+function downloadCertificate(userName) {
     const W = 900, H = 620;
     const canvas = document.createElement("canvas");
     canvas.width = W;
@@ -64,7 +65,7 @@ function downloadCertificate() {
 
     ctx.fillStyle = "#065f46";
     ctx.font = "bold 32px Georgia, serif";
-    ctx.fillText("Eco Warrior", W / 2, 260);
+    ctx.fillText(userName || "Certified User", W / 2, 260);
 
     ctx.fillStyle = "#374151";
     ctx.font = "20px Georgia, serif";
@@ -192,6 +193,9 @@ function downloadReportPDF(report) {
 }
 
 export default function ReportsPage() {
+    const { user } = useAuth();
+    const userName = user?.full_name || "";
+
     const reports = [
         {
             id: 1,
@@ -200,7 +204,7 @@ export default function ReportsPage() {
             emissions: "850 kg",
             saved: "120 kg",
             status: "Available",
-            badge: "Eco Warrior",
+            badge: userName,
             color: "emerald",
         },
         {
@@ -241,7 +245,7 @@ export default function ReportsPage() {
                         </p>
                     </div>
                     <button
-                        onClick={downloadCertificate}
+                        onClick={() => downloadCertificate(userName)}
                         className="bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
                     >
                         <Download size={18} />
