@@ -1,6 +1,11 @@
 import apiClient from "@/lib/apiClient";
 
 const mlService = {
+    getBaseFeatures: async () => {
+        const response = await apiClient.get("/api/ml/base-features");
+        return response.data;
+    },
+
     predict: async (features) => {
         const response = await apiClient.post("/api/ml/predict", { features });
         return response.data;

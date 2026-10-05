@@ -4,14 +4,15 @@ import ScenarioSlider from './ScenarioSlider';
 import mlService from '@/services/mlService';
 import dashboardService from '@/services/dashboardService';
 
-// Default features expected by the ML model
-const BASE_FEATURES = {
+// Default features fallback expected by the ML model
+const FALLBACK_FEATURES = {
     Daily_Travel_km: 20,
     Electricity_Usage_kWh_per_month: 300,
     Meat_Consumption_per_week: 5,
 };
 
 export const SimulatorTool = () => {
+    const [baseFeatures, setBaseFeatures] = useState(FALLBACK_FEATURES);
     const [baseFootprint, setBaseFootprint] = useState(12000);
     const [projectedFootprint, setProjectedFootprint] = useState(12000);
     const [isLoading, setIsLoading] = useState(true);
@@ -26,7 +27,16 @@ export const SimulatorTool = () => {
     useEffect(() => {
         const fetchBase = async () => {
             try {
-                const response = await mlService.predict(BASE_FEATURES);
+                let currentFeatures = FALLBACK_FEATURES;
+                try {
+                    const dynamicFeatures = await mlService.getBaseFeatures();
+                    currentFeatures = { ...FALLBACK_FEATURES, ...dynamicFeatures };
+                } catch (featErr) {
+                    console.warn("Could not load dynamic base features, using fallback", featErr);
+                }
+                setBaseFeatures(currentFeatures);
+
+                const response = await mlService.predict(currentFeatures);
                 const annualPredicted = (response.prediction || 1000) * 12;
                 setBaseFootprint(annualPredicted);
                 setProjectedFootprint(annualPredicted);
@@ -48,10 +58,10 @@ export const SimulatorTool = () => {
             try {
                 // Map slider reductions to real ML features
                 const adjustedFeatures = {
-                    ...BASE_FEATURES,
-                    Daily_Travel_km: BASE_FEATURES.Daily_Travel_km * (1 - transportReduction / 100),
-                    Meat_Consumption_per_week: BASE_FEATURES.Meat_Consumption_per_week * (1 - dietPlantBased / 100),
-                    Electricity_Usage_kWh_per_month: BASE_FEATURES.Electricity_Usage_kWh_per_month * (1 - energyEfficiency / 100),
+                    ...baseFeatures,
+                    Daily_Travel_km: baseFeatures.Daily_Travel_km * (1 - transportReduction / 100),
+                    Meat_Consumption_per_week: baseFeatures.Meat_Consumption_per_week * (1 - dietPlantBased / 100),
+                    Electricity_Usage_kWh_per_month: baseFeatures.Electricity_Usage_kWh_per_month * (1 - energyEfficiency / 100),
                 };
                 const result = await mlService.predict(adjustedFeatures);
                 const annualSimulated = (result.prediction || 1000) * 12;
@@ -64,7 +74,7 @@ export const SimulatorTool = () => {
         }, 500); // 500ms debounce
 
         return () => clearTimeout(timeoutId);
-    }, [transportReduction, dietPlantBased, energyEfficiency, isLoading]);
+    }, [transportReduction, dietPlantBased, energyEfficiency, isLoading, baseFeatures]);
 
     const baseSavings = Math.round(baseFootprint - projectedFootprint);
     const savings = Math.max(0, baseSavings);

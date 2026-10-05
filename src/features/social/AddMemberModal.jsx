@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { Modal, ModalContent } from '@/components/ui/Modal';
 import { X, User, Mail, Briefcase, UserPlus } from 'lucide-react';
 import { toast } from 'react-hot-toast';
+import { getInitials } from '@/lib/utils';
 
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -69,7 +70,7 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
             task: (member && member.task) ? member.task : 'No task yet',
             status: status || ((member && member.status) ? member.status : 'Active'),
             statusColor: statusColorMap[status || (member && member.status) || 'Active'],
-            avatar: avatar || `https://i.pravatar.cc/150?u=${encodeURIComponent(normalizedEmail)}`,
+            avatar: avatar || null,
             email: normalizedEmail,
         };
 
@@ -110,7 +111,7 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                                     <Image src={avatar} alt={name} fill className="object-cover" />
                                 </div>
                             ) : (
-                                <User className="text-emerald-300" size={48} />
+                                <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-700 font-bold text-4xl">{getInitials(name || 'New Member')}</div>
                             )}
                         </div>
                         <label className="mt-4 flex items-center gap-2 text-sm cursor-pointer text-center">
@@ -210,7 +211,7 @@ export default function AddMemberModal({ isOpen, onClose, onAdd, member, onSave 
                                     {avatar ? (
                                         <Image src={avatar} alt={name} fill className="object-cover" />
                                     ) : (
-                                        <User className="text-gray-300" size={24} />
+                                        <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-700 font-bold text-lg">{getInitials(name || 'New Member')}</div>
                                     )}
                                 </div>
                                 <div>

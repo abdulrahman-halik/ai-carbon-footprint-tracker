@@ -4,19 +4,9 @@ import React, { useState } from 'react';
 import Image from 'next/image';
 import { Edit2, Trash2, Mail, Briefcase, CheckCircle, Clock, X, User } from 'lucide-react';
 import { Modal, ModalContent } from '@/components/ui/Modal';
+import { getInitials } from '@/lib/utils';
 
 export function MemberCard({ member, onClick }) {
-    const getInitials = (name) => {
-        if (!name) return "?";
-        return name
-            .split(' ')
-            .filter(Boolean)
-            .slice(0, 2)
-            .map(n => n.charAt(0))
-            .join('')
-            .toUpperCase();
-    };
-
     return (
         <div
             onClick={() => onClick(member)}
@@ -58,7 +48,7 @@ export function MemberDetailsModal({ member, isOpen, onClose, onEdit, onDelete, 
                                 {member.avatar ? (
                                     <Image src={member.avatar} alt={member.name} fill className="object-cover" />
                                 ) : (
-                                    <div className="w-full h-full flex items-center justify-center"><User size={32} className="text-gray-400" /></div>
+                                    <div className="w-full h-full flex items-center justify-center bg-emerald-50 text-emerald-700 font-bold text-3xl">{getInitials(member.name)}</div>
                                 )}
                             </div>
                         </div>
