@@ -102,8 +102,12 @@ const TrendIcon = ({ trend }) => {
 export default function DashboardStatsGrid({ stats }) {
     // Override cards with live stats if available
     const cards = STAT_CARDS.map((c) => {
-        if (c.id === "footprint" && stats?.total_emissions !== undefined) {
-            return { ...c, value: `${stats.total_emissions.toFixed(1)} kg`, subLabel: "total emissions" };
+        if (c.id === "footprint") {
+            if (stats?.calculated_total_footprint !== undefined) {
+                return { ...c, value: `${stats.calculated_total_footprint.toFixed(1)} kg CO₂e`, subLabel: "total emissions" };
+            } else if (stats) {
+                return { ...c, value: "No emission data available", valueClass: "text-xs", subLabel: "visit Emissions Dashboard" };
+            }
         }
         if (c.id === "water" && stats?.total_water_usage !== undefined) {
             return { ...c, value: `${stats.total_water_usage.toFixed(0)} L`, subLabel: "total usage" };
@@ -144,7 +148,7 @@ export default function DashboardStatsGrid({ stats }) {
 
                         <div className="relative">
                             <p className="text-[11px] text-gray-500 font-medium mb-0.5">{card.label}</p>
-                            <p className="text-xl font-extrabold text-gray-900 tracking-tight">{card.value}</p>
+                            <p className={`${card.valueClass || 'text-xl'} font-extrabold text-gray-900 tracking-tight`}>{card.value}</p>
                             <p className="text-[10px] text-gray-400 mt-0.5">{card.subLabel}</p>
                         </div>
                     </Link>

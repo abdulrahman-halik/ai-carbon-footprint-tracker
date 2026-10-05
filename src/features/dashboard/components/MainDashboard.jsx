@@ -38,7 +38,20 @@ export default function MainDashboard() {
                 energyService.getLogs()
             ]);
 
-            setStats(statsRes);
+            let calculatedTotalFootprint = undefined;
+            const lastDashboard = (emissionsRes || []).find(d => d.sub_category === 'emissions_dashboard');
+            if (lastDashboard && lastDashboard.description) {
+                try {
+                    const desc = JSON.parse(lastDashboard.description);
+                    if (desc.totalFootprint !== undefined) {
+                        calculatedTotalFootprint = desc.totalFootprint;
+                    }
+                } catch (e) {
+                    console.warn("Failed to parse previous inputs", e);
+                }
+            }
+
+            setStats(statsRes ? { ...statsRes, calculated_total_footprint: calculatedTotalFootprint } : { calculated_total_footprint: calculatedTotalFootprint });
 
             // Extract daily trends for the last 7 days
             setTrends({
