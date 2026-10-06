@@ -41,7 +41,20 @@ export const AuthProvider = ({ children }) => {
             setUser(data);
             return data;
         } catch (error) {
-            toast.error("Invalid credentials. Please check your credentials");
+            toast.error("Invalid credentials");
+            throw error;
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    const verifyOtp = async (credentials) => {
+        setIsLoading(true);
+        try {
+            const data = await authService.verifyOtp(credentials);
+            return data;
+        } catch (error) {
+            toast.error("Invalid credentials");
             throw error;
         } finally {
             setIsLoading(false);
@@ -53,6 +66,7 @@ export const AuthProvider = ({ children }) => {
         setIsLoading(true);
         try {
             const data = await authService.register(userData);
+
             setUser(data);
             return data;
         } catch (error) {
@@ -80,7 +94,6 @@ export const AuthProvider = ({ children }) => {
         try {
             await authService.logout();
             setUser(null);
-            // Toast is now handled by the refresh-safe useEffect above or by individual components
         } finally {
             setIsLoading(false);
         }
@@ -111,7 +124,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, register, logout, forgotPassword, resetPassword, updateUser }}>
+        <AuthContext.Provider value={{ user, isLoading, login, register, logout, forgotPassword, resetPassword, updateUser, verifyOtp }}>
             {children}
         </AuthContext.Provider>
     );
