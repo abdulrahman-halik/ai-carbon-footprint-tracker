@@ -48,7 +48,9 @@ export default function LoginForm() {
         try {
             const user = await login(data);
             toast.success(`Welcome back, ${user?.full_name || user?.name || "User"} 👋`);
-            if (!user?.onboarding_completed) {
+            if (user?.role === "admin") {
+                router.push("/admin/users");
+            } else if (!user?.onboarding_completed) {
                 router.push("/onboarding");
             } else {
                 router.push("/dashboard");

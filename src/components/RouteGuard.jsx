@@ -11,6 +11,7 @@ export default function RouteGuard({ children }) {
 
     const isAuthPath = pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/forgot-password") || pathname.startsWith("/activate-account");
     const isPublicPath = pathname === "/" || pathname.startsWith("/about") || pathname.startsWith("/estimator") || pathname.startsWith("/learn") || pathname.startsWith("/projects");
+    const isAdminPath = pathname.startsWith("/admin");
 
     useEffect(() => {
         if (isLoading) return;
@@ -21,12 +22,25 @@ export default function RouteGuard({ children }) {
             }
             return;
         }
-    }, [user, isLoading, pathname, router, isAuthPath, isPublicPath]);
+
+        // Restrict /admin to admin role only
+        if (isAdminPath && user.role !== "admin") {
+            router.push("/dashboard");
+            return;
+        }
+
+        // If admin navigates to onboarding
+        if (user.role === "admin" && pathname === "/onboarding") {
+            router.push("/admin/users");
+            return;
+        }
+    }, [user, isLoading, pathname, router, isAuthPath, isPublicPath, isAdminPath]);
 
     const isAuthorized = !isLoading && (
         (!user && (isAuthPath || isPublicPath)) ||
-        (user && !user.onboarding_completed && (isPublicPath || pathname === "/onboarding")) ||
-        (user && user.onboarding_completed && pathname !== "/onboarding" && !isAuthPath)
+        (user && user.role === "admin" && !isAuthPath) ||
+        (user && user.role !== "admin" && !user.onboarding_completed && (isPublicPath || pathname === "/onboarding")) ||
+        (user && user.role !== "admin" && user.onboarding_completed && pathname !== "/onboarding" && !isAuthPath && !isAdminPath)
     );
 
     // Show loading spinner while loading user or determining auth path

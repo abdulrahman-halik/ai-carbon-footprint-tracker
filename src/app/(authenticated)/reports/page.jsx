@@ -1,9 +1,8 @@
 "use client";
 
-import { FileText, Download, Share2, Award, Calendar } from "lucide-react";
-import { useAuth } from "@/hooks/useAuth";
-
-/* ── Canvas utility ── */
+import { useState, useEffect } from "react";
+import { FileText, Download, Share2, Award, Calendar, Loader2, Inbox } from "lucide-react";
+import emissionsService from "@/services/emissionsService";/* ── Canvas utility ── */
 function roundRect(ctx, x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -19,7 +18,10 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 /* ── Certificate download (Canvas → PNG) ── */
-function downloadCertificate(userName) {
+function downloadCertificate(latestReport) {
+    if (!latestReport) return;
+    const { badge, month, reductionPercentage, score } = latestReport;
+
     const W = 900, H = 620;
     const canvas = document.createElement("canvas");
     canvas.width = W;
@@ -65,7 +67,7 @@ function downloadCertificate(userName) {
 
     ctx.fillStyle = "#065f46";
     ctx.font = "bold 32px Georgia, serif";
-    ctx.fillText(userName || "Certified User", W / 2, 260);
+    ctx.fillText("EcoTracker Member", W / 2, 260);
 
     ctx.fillStyle = "#374151";
     ctx.font = "20px Georgia, serif";
@@ -73,12 +75,16 @@ function downloadCertificate(userName) {
 
     ctx.fillStyle = "#4f46e5";
     ctx.font = "bold 28px Georgia, serif";
-    ctx.fillText("Net Zero Hero", W / 2, 350);
+    ctx.fillText(badge, W / 2, 350);
 
     ctx.fillStyle = "#6b7280";
     ctx.font = "16px Georgia, serif";
-    ctx.fillText("by reducing carbon footprint by 15% in January 2026", W / 2, 390);
-    ctx.fillText("compared to the previous month.", W / 2, 414);
+    if (reductionPercentage > 0) {
+        ctx.fillText(`by reducing carbon footprint by ${reductionPercentage.toFixed(1)}% in ${month}`, W / 2, 390);
+        ctx.fillText("compared to the previous month.", W / 2, 414);
+    } else {
+        ctx.fillText(`for active sustainability tracking in ${month}.`, W / 2, 390);
+    }
 
     // Issue date
     ctx.fillStyle = "#9ca3af";
@@ -100,11 +106,11 @@ function downloadCertificate(userName) {
     ctx.fillStyle = "#92400e";
     ctx.font = "bold 22px Arial";
     ctx.textAlign = "center";
-    ctx.fillText("A", W / 2, 538);
+    ctx.fillText(score, W / 2, 538);
 
     // Trigger download
     const link = document.createElement("a");
-    link.download = "eco_certificate_jan_2026.png";
+    link.download = `eco_certificate_${month.replace(/\s+/g, "_").toLowerCase()}.png`;
     link.href = canvas.toDataURL("image/png");
     link.click();
 }
@@ -193,31 +199,93 @@ function downloadReportPDF(report) {
 }
 
 export default function ReportsPage() {
-    const { user } = useAuth();
-    const userName = user?.full_name || "";
+    const [reports, setReports] = useState([]);
+    const [loading, setLoading] = useState(true);
 
-    const reports = [
-        {
-            id: 1,
-            month: "January 2026",
-            score: "A",
-            emissions: "850 kg",
-            saved: "120 kg",
-            status: "Available",
-            badge: userName,
-            color: "emerald",
-        },
-        {
-            id: 2,
-            month: "December 2025",
-            score: "B+",
-            emissions: "1,100 kg",
-            saved: "45 kg",
-            status: "Available",
-            badge: "Improver",
-            color: "blue",
-        },
-    ];
+    useEffect(() => {
+        const fetchAndProcessData = async () => {
+            try {
+                const emissionsData = await emissionsService.getEmissions();
+
+                // Process the raw emissions data into monthly reports
+                const monthlyData = {};
+
+                emissionsData.forEach(emission => {
+                    const date = new Date(emission.date);
+                    const sortKey = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+                    const monthKey = date.toLocaleDateString("en-US", { month: "long", year: "numeric" });
+
+                    if (!monthlyData[sortKey]) {
+                        monthlyData[sortKey] = {
+                            id: sortKey,
+                            sortKey,
+                            month: monthKey,
+                            totalEmissions: 0,
+                        };
+                    }
+                    monthlyData[sortKey].totalEmissions += (emission.value || 0);
+                });
+
+                // Sort by descending sortKey
+                const sortedKeys = Object.keys(monthlyData).sort((a, b) => b.localeCompare(a));
+                const finalReports = [];
+
+                for (let i = 0; i < sortedKeys.length; i++) {
+                    const current = monthlyData[sortedKeys[i]];
+                    const previous = monthlyData[sortedKeys[i + 1]]; // Previous chronological month (appears later in array)
+
+                    let saved = 0;
+                    if (previous && previous.totalEmissions > current.totalEmissions) {
+                        saved = previous.totalEmissions - current.totalEmissions;
+                    }
+
+                    let score = "C";
+                    let badge = "Starter";
+                    let color = "gray";
+
+                    if (current.totalEmissions < 500) {
+                        score = "A";
+                        badge = "Net Zero Hero";
+                        color = "emerald";
+                    } else if (current.totalEmissions < 1000) {
+                        score = "B+";
+                        badge = "Improver";
+                        color = "blue";
+                    }
+
+                    finalReports.push({
+                        id: current.id,
+                        month: current.month,
+                        score: score,
+                        emissions: `${current.totalEmissions.toFixed(1)} kg`,
+                        saved: `${saved.toFixed(1)} kg`,
+                        status: "Available",
+                        badge: badge,
+                        color: color,
+                        reductionPercentage: previous && previous.totalEmissions > 0
+                            ? (saved / previous.totalEmissions) * 100
+                            : 0
+                    });
+                }
+                setReports(finalReports);
+            } catch (error) {
+                console.error("Failed to load reports:", error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchAndProcessData();
+    }, []);
+
+    const latestReport = reports.length > 0 ? reports[0] : null;
+
+    if (loading) {
+        return (
+            <div className="flex items-center justify-center min-h-[400px]">
+                <Loader2 className="w-8 h-8 animate-spin text-indigo-500" />
+            </div>
+        );
+    }
 
     return (
         <div className="space-y-8 max-w-7xl mx-auto pb-10">
@@ -231,80 +299,101 @@ export default function ReportsPage() {
             </div>
 
             {/* Featured Certificate Card */}
-            <div className="bg-linear-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white relative overflow-hidden shadow-lg">
-                <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
-                <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
-                    <div>
-                        <div className="flex items-center gap-2 text-indigo-100 mb-2 font-medium">
-                            <Award size={20} />
-                            <span>Latest Achievement</span>
+            {latestReport && (
+                <div className="bg-gradient-to-r from-indigo-500 to-purple-600 rounded-2xl p-8 text-white relative overflow-hidden shadow-lg">
+                    <div className="absolute top-0 right-0 -mr-16 -mt-16 w-64 h-64 rounded-full bg-white/10 blur-3xl" />
+                    <div className="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+                        <div>
+                            <div className="flex items-center gap-2 text-indigo-100 mb-2 font-medium">
+                                <Award size={20} />
+                                <span>Latest Achievement</span>
+                            </div>
+                            <h2 className="text-3xl font-bold mb-2">{latestReport.badge}</h2>
+                            <p className="text-indigo-100 max-w-lg">
+                                {latestReport.reductionPercentage > 0
+                                    ? `Congratulations! You reduced your carbon footprint by ${latestReport.reductionPercentage.toFixed(1)}% in ${latestReport.month.split(" ")[0]} compared to last month.`
+                                    : "Keep tracking your emissions to earn new badges and achievements!"}
+                            </p>
                         </div>
-                        <h2 className="text-3xl font-bold mb-2">Net Zero Hero</h2>
-                        <p className="text-indigo-100 max-w-lg">
-                            Congratulations! You reduced your carbon footprint by 15% in January compared to last month.
-                        </p>
+                        <button
+                            onClick={() => downloadCertificate(latestReport)}
+                            className="bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
+                        >
+                            <Download size={18} />
+                            Download Certificate
+                        </button>
                     </div>
-                    <button
-                        onClick={() => downloadCertificate(userName)}
-                        className="bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
-                    >
-                        <Download size={18} />
-                        Download Certificate
-                    </button>
                 </div>
-            </div>
+            )}
 
             {/* Reports Grid */}
             <h3 className="text-xl font-bold text-gray-900 mt-8">Monthly Summaries</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {reports.map((report) => (
-                    <div key={report.id} className="glass-card flex flex-col group hover:border-indigo-200 transition-colors">
-                        <div className="flex items-start justify-between mb-4">
-                            <div className="flex items-center gap-3">
-                                <div
-                                    className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold ${report.color === "emerald"
+
+            {reports.length === 0 ? (
+                <div className="flex flex-col items-center justify-center p-12 bg-white/50 border border-gray-200 border-dashed rounded-2xl text-gray-500">
+                    <Inbox className="w-12 h-12 text-gray-400 mb-4" />
+                    <h3 className="text-lg font-medium text-gray-900 mb-1">No reports yet</h3>
+                    <p className="text-sm text-center max-w-md">
+                        Start tracking your daily emissions to generate monthly impact reports.
+                    </p>
+                </div>
+            ) : (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    {reports.map((report) => (
+                        <div key={report.id} className="glass-card flex flex-col group hover:border-indigo-200 transition-colors">
+                            <div className="flex items-start justify-between mb-4">
+                                <div className="flex items-center gap-3">
+                                    <div
+                                        className={`w-12 h-12 rounded-xl flex items-center justify-center text-xl font-bold ${report.color === "emerald"
                                             ? "bg-emerald-100 text-emerald-700"
-                                            : "bg-blue-100 text-blue-700"
-                                        }`}
-                                >
-                                    {report.score}
-                                </div>
-                                <div>
-                                    <h4 className="font-bold text-gray-900">{report.month}</h4>
-                                    <div className="flex items-center gap-1 text-xs text-gray-500">
-                                        <Calendar size={12} />
-                                        <span>Monthly Report</span>
+                                            : report.color === "blue"
+                                                ? "bg-blue-100 text-blue-700"
+                                                : "bg-gray-100 text-gray-700"
+                                            }`}
+                                    >
+                                        {report.score}
+                                    </div>
+                                    <div>
+                                        <h4 className="font-bold text-gray-900">{report.month}</h4>
+                                        <div className="flex items-center gap-1 text-xs text-gray-500">
+                                            <Calendar size={12} />
+                                            <span>Monthly Report</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
 
-                        <div className="space-y-3 mb-6">
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">Total Emissions</span>
-                                <span className="font-medium text-gray-900">{report.emissions} CO2e</span>
+                            <div className="space-y-3 mb-6">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">Total Emissions</span>
+                                    <span className="font-medium text-gray-900">{report.emissions} CO2e</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">Carbon Saved</span>
+                                    {parseFloat(report.saved) > 0 ? (
+                                        <span className="font-medium text-emerald-600">-{report.saved}</span>
+                                    ) : (
+                                        <span className="font-medium text-gray-500">0 kg</span>
+                                    )}
+                                </div>
                             </div>
-                            <div className="flex justify-between text-sm">
-                                <span className="text-gray-500">Carbon Saved</span>
-                                <span className="font-medium text-emerald-600">-{report.saved}</span>
-                            </div>
-                        </div>
 
-                        <div className="mt-auto pt-4 border-t border-gray-100 flex gap-3">
-                            <button
-                                onClick={() => downloadReportPDF(report)}
-                                className="flex-1 flex items-center justify-center gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 py-2 rounded-lg transition-colors border border-gray-200"
-                            >
-                                <Download size={16} />
-                                PDF
-                            </button>
-                            <button className="flex items-center justify-center p-2 text-gray-400 hover:text-indigo-600 transition-colors rounded-lg hover:bg-indigo-50">
-                                <Share2 size={18} />
-                            </button>
+                            <div className="mt-auto pt-4 border-t border-gray-100 flex gap-3">
+                                <button
+                                    onClick={() => downloadReportPDF(report)}
+                                    className="flex-1 flex items-center justify-center gap-2 text-sm font-medium text-gray-700 hover:bg-gray-50 py-2 rounded-lg transition-colors border border-gray-200 shadow-[0_1px_2px_rgba(0,0,0,0.05)] cursor-pointer"
+                                >
+                                    <Download size={16} />
+                                    PDF
+                                </button>
+                                <button className="flex items-center justify-center p-2 text-gray-400 hover:text-indigo-600 transition-colors rounded-lg hover:bg-indigo-50 border border-transparent shadow-[0_1px_2px_rgba(0,0,0,0.05)] cursor-pointer">
+                                    <Share2 size={18} />
+                                </button>
+                            </div>
                         </div>
-                    </div>
-                ))}
-            </div>
+                    ))}
+                </div>
+            )}
         </div>
     );
 }
