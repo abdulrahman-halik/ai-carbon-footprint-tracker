@@ -2,6 +2,7 @@
 import React from 'react';
 import { Shield, Key, Trash2 } from 'lucide-react';
 import { Modal, ModalContent, ModalHeader, ModalTitle, ModalDescription, ModalFooter } from '@/components/ui/Modal';
+import PasswordInput from "@/components/ui/PasswordInput";
 
 /**
  * InputField helper — scoped to SecuritySettings modals
@@ -96,9 +97,9 @@ export default function SecuritySettings({
                         <ModalDescription>Update your existing password to maintain account security.</ModalDescription>
                     </ModalHeader>
                     <div className="p-6 space-y-4">
-                        <InputField type="password" label="Current Password" value={passwordForm.current} onChange={(e) => onPasswordFormChange('current', e.target.value)} />
-                        <InputField type="password" label="New Password" value={passwordForm.new} onChange={(e) => onPasswordFormChange('new', e.target.value)} />
-                        <InputField type="password" label="Confirm New Password" value={passwordForm.confirm} onChange={(e) => onPasswordFormChange('confirm', e.target.value)} />
+                        <PasswordInput type="password" label="Current Password" value={passwordForm.current} onChange={(e) => onPasswordFormChange('current', e.target.value)} />
+                        <PasswordInput type="password" label="New Password" value={passwordForm.new} onChange={(e) => onPasswordFormChange('new', e.target.value)} />
+                        <PasswordInput type="password" label="Confirm New Password" value={passwordForm.confirm} onChange={(e) => onPasswordFormChange('confirm', e.target.value)} />
                     </div>
                     <ModalFooter>
                         <button onClick={onClosePasswordModal} className="px-4 py-2 rounded-xl text-gray-600 hover:bg-gray-100 transition-colors font-medium">Cancel</button>

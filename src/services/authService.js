@@ -23,12 +23,16 @@ const authService = {
     },
 
     register: async (userData) => {
-        await apiClient.post("/api/auth/register", userData);
+        return apiClient.post("/api/auth/register", userData);
         // Automatically login after successful registration
-        return await authService.login({
-            email: userData.email,
-            password: userData.password
-        });
+        //  await authService.login({
+        //     email: userData.email,
+        //     password: userData.password
+        // });
+    },
+
+    verifyOtp: async (data) => {
+        return apiClient.post("/api/auth/verify-otp", data);
     },
 
     logout: async () => {

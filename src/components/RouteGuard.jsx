@@ -9,7 +9,7 @@ export default function RouteGuard({ children }) {
     const router = useRouter();
     const pathname = usePathname();
 
-    const isAuthPath = pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/forgot-password");
+    const isAuthPath = pathname.startsWith("/login") || pathname.startsWith("/register") || pathname.startsWith("/forgot-password") || pathname.startsWith("/activate-account");
     const isPublicPath = pathname === "/" || pathname.startsWith("/about") || pathname.startsWith("/estimator") || pathname.startsWith("/learn") || pathname.startsWith("/projects");
 
     useEffect(() => {
@@ -20,17 +20,6 @@ export default function RouteGuard({ children }) {
                 router.push("/login");
             }
             return;
-        }
-
-        if (!user.onboarding_completed) {
-            if (!isPublicPath && pathname !== "/onboarding") {
-                router.push("/onboarding");
-            }
-            return;
-        }
-
-        if (pathname === "/onboarding" || isAuthPath) {
-            router.push("/dashboard");
         }
     }, [user, isLoading, pathname, router, isAuthPath, isPublicPath]);
 

@@ -1,11 +1,15 @@
 import DashboardShell from "@/features/layout/DashboardShell";
 import AIChatbot from "@/features/ai/AIChatbot";
+import RouteGuard from "@/components/RouteGuard";
 
 export default function AuthenticatedLayout({ children }) {
     return (
-        <DashboardShell>
-            {children}
-            <AIChatbot />
-        </DashboardShell>
+        <RouteGuard>
+            <DashboardShell>
+                {children}
+                <AIChatbot />
+            </DashboardShell>
+        </RouteGuard>
+
     );
 }
