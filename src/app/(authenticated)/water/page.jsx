@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { WaterHeader, WaterStats, WaterTips } from '@/features/water/WaterDashboardUI';
 import { WaterLogModal } from '@/features/water/WaterLogForm';
 import { WaterChart } from '@/features/water/WaterVisualization';
@@ -15,11 +15,10 @@ export default function WaterPage() {
     const [logDate, setLogDate] = useState('');
     const [logs, setLogs] = useState([]);
 
-    useEffect(() => {
-        fetchLogs();
-    }, []);
+    const [editingId, setEditingId] = useState(null);
+    const [savedToast, setSavedToast] = useState(false);
 
-    const fetchLogs = async () => {
+    const fetchLogs = useCallback(async () => {
         try {
             const rawData = await waterService.getLogs();
             if (rawData && Array.isArray(rawData)) {
@@ -32,9 +31,21 @@ export default function WaterPage() {
         } catch (e) {
             console.error(e);
         }
-    };
-    const [editingId, setEditingId] = useState(null);
-    const [savedToast, setSavedToast] = useState(false);
+    }, []);
+
+    useEffect(() => {
+        let isMounted = true;
+        waterService.getLogs().then(rawData => {
+            if (isMounted && rawData && Array.isArray(rawData)) {
+                setLogs(rawData.map(r => ({
+                    id: r._id || r.id,
+                    liters: r.value,
+                    date: r.date
+                })));
+            }
+        }).catch(e => console.error(e));
+        return () => { isMounted = false; };
+    }, []);
 
     const formatDate = (d) => {
         try {

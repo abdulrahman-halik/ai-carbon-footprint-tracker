@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useMemo } from "react";
+import React, { useState, useEffect, useMemo, useCallback } from "react";
 import { Chart as ChartJS, CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend, Filler } from "chart.js";
 import { EnergyHeader, EnergyTips } from "@/features/energy/EnergyInfo";
 import { StatsGrid, UsageChart } from "@/features/energy/EnergyAnalytics";
@@ -28,11 +28,7 @@ export default function EnergyPage() {
     const [editingId, setEditingId] = useState(null);
     const [savedToast, setSavedToast] = useState(false);
 
-    useEffect(() => {
-        fetchReadings();
-    }, []);
-
-    const fetchReadings = async () => {
+    const fetchReadings = useCallback(async () => {
         try {
             const rawData = await energyService.getLogs();
             if (rawData && Array.isArray(rawData)) {
@@ -46,7 +42,22 @@ export default function EnergyPage() {
         } catch (e) {
             console.error("Failed to fetch energy readings", e);
         }
-    };
+    }, []);
+
+    useEffect(() => {
+        let isMounted = true;
+        energyService.getLogs().then(rawData => {
+            if (isMounted && rawData && Array.isArray(rawData)) {
+                setReadings(rawData.map(r => ({
+                    id: r._id || r.id,
+                    reading: r.value,
+                    date: r.date ? new Date(r.date).toISOString().slice(0, 10) : '',
+                    notes: r.notes || ''
+                })));
+            }
+        }).catch(e => console.error("Failed to fetch energy readings", e));
+        return () => { isMounted = false; };
+    }, []);
 
     // Compute real stats from fetched readings
     const energyStats = useMemo(() => {

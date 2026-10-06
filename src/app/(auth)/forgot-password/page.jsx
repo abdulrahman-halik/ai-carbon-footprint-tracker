@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import ForgotPasswordForm from "@/features/auth/ForgotPasswordForm";
 
 export const metadata = {
@@ -6,5 +7,9 @@ export const metadata = {
 };
 
 export default function ForgotPasswordPage() {
-    return <ForgotPasswordForm />;
+    return (
+        <Suspense fallback={<div className="flex justify-center p-8">Loading...</div>}>
+            <ForgotPasswordForm />
+        </Suspense>
+    );
 }

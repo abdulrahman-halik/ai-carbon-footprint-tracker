@@ -1,6 +1,6 @@
 "use client";
 
-import { Menu, Sun, User as UserIcon, Leaf, LogOut } from "lucide-react";
+import { Menu, Sun, User as UserIcon, Leaf, LogOut, Shield } from "lucide-react";
 import NotificationBell from "@/features/notifications/NotificationBell";
 import Link from "next/link";
 import Image from "next/image";
@@ -69,6 +69,15 @@ export default function Header({ onMenuClick }) {
                     >
                         Insights
                     </Link>
+                    {user?.role === "admin" && (
+                        <Link
+                            href="/admin/users"
+                            className="relative py-7 text-xs font-bold tracking-widest uppercase text-emerald-600 hover:text-emerald-700 flex items-center gap-1.5"
+                        >
+                            <Shield size={14} />
+                            Admin
+                        </Link>
+                    )}
                 </nav>
             </div>
 
@@ -109,6 +118,16 @@ export default function Header({ onMenuClick }) {
                                 <p className="text-sm font-medium text-gray-900">{user?.full_name || user?.name || "Guest"}</p>
                                 {user?.email && <p className="text-xs text-gray-500 truncate">{user.email}</p>}
                             </Link>
+                            {user?.role === "admin" && (
+                                <Link
+                                    href="/admin/users"
+                                    onClick={() => setIsDropdownOpen(false)}
+                                    className="flex items-center gap-2 px-4 py-2 text-xs font-bold text-emerald-700 hover:bg-emerald-50 transition-colors"
+                                >
+                                    <Shield size={14} />
+                                    Admin Dashboard
+                                </Link>
+                            )}
                             <button
                                 onClick={handleLogout}
                                 className="w-full flex items-center gap-2 px-4 py-2 text-sm text-red-600 hover:bg-red-50 transition-colors text-left"
