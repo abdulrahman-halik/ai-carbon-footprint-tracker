@@ -20,6 +20,7 @@ import Icon from "@/components/ui/Icon";
 import { Mail, Lock, User, Loader2, CheckCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { toast } from "react-hot-toast";
 import { registerSchema } from "./authSchemas";
 
 export default function RegisterForm() {
@@ -63,7 +64,9 @@ export default function RegisterForm() {
             //     router.push("/dashboard");
             // }
         } catch (err) {
-            setApiError(err.message || "Failed to register");
+            const errorMessage = err.response?.data?.message || err.response?.data?.detail || err.message || "Failed to register";
+            // setApiError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setLoading(false);
         }
