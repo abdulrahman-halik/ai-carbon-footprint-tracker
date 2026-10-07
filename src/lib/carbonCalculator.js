@@ -45,6 +45,7 @@ const MONTH_FACTORS = {
 
 // Diet type base multiplier (in addition to meal inputs)
 export const DIET_BASE = {
+    '': 0,            // Empty/new user
     vegan: 30,        // kg CO2e/month
     vegetarian: 60,
     mixed: 100,
