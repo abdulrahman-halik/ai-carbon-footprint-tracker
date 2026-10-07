@@ -1,64 +1,14 @@
-"use client";
+﻿"use client";
 
 import React from 'react';
-import { ProjectGallery } from '@/features/projects/ProjectGallery';
 
-const projects = [
-    {
-        id: 1,
-        name: "Amazon Reforestation Initiative",
-        type: "Forestry",
-        location: "Brazil",
-        shortDescription: "Restoring degraded lands in the Amazon basin through native tree planting and community-led conservation efforts.",
-        description: "This project focuses on restoring 500 hectares of degraded land in the Amazon via native species reforestation. By working with local communities, we ensure sustainable land management practices that protect biodiversity and sequester carbon.",
-        impactGoal: "50,000",
-        status: "Gold Standard",
-        certifications: ["VCS", "CCB Gold"],
-    },
-    {
-        id: 2,
-        name: "Sahara Wind Farm",
-        type: "Renewable Energy",
-        location: "Morocco",
-        shortDescription: "Generating clean electricity for 200,000 homes and displacing fossil fuel usage in the national grid.",
-        description: "A large-scale wind energy project located in the windy regions of Morocco. It generates clean electricity that feeds into the national grid, reducing reliance on fossil fuels and avoiding significant CO2 emissions annually.",
-        impactGoal: "120,000",
-        status: "Verified",
-        certifications: ["VCS"],
-    },
-    {
-        id: 3,
-        name: "Clean Water for Kenya",
-        type: "Community",
-        location: "Kenya",
-        shortDescription: "Providing water filters to rural families, reducing the need to boil water using wood fuel.",
-        description: "This project distributes ceramic water filters to rural households in Kenya. By eliminating the need to boil water for purification, families reduce their wood fuel consumption, saving forests and reducing indoor air pollution.",
-        impactGoal: "15,000",
-        status: "verified",
-        certifications: ["Gold Standard"],
-    },
-    {
-        id: 4,
-        name: "Mangrove Restoration",
-        type: "Blue Carbon",
-        location: "Indonesia",
-        shortDescription: "Rehabilitating coastal mangrove ecosystems to protect shorelines and store vast amounts of carbon.",
-        description: "Mangroves are incredible carbon sinks. This project restores damaged coastal ecosystems in Indonesia, protecting local communities from storm surges while sequestering blue carbon at rates higher than terrestrial forests.",
-        impactGoal: "30,000",
-        status: "In Progress",
-        certifications: ["Plan Vivo"],
-    },
-    {
-        id: 5,
-        name: "Biogas Digesters",
-        type: "Energy Efficiency",
-        location: "Vietnam",
-        shortDescription: "converting farm waste into clean cooking gas for rural households.",
-        description: "Small-scale biogas digesters are installed for farmers in Vietnam. These systems convert livestock waste into clean cooking gas, reducing methane emissions and stopping the burning of wood for cooking.",
-        impactGoal: "8,000",
-        status: "Verified",
-        certifications: ["Gold Standard"],
-    },
+const VIDEO_IDS = [
+    'KxkTphDQDRM',
+    '8CfK1PLObRU',
+    'JoXnmEjy8DY',
+    '6_4s6MM_Ip4',
+    'Xy5XL30CvIg',
+    'mdmU7-vbHpI',
 ];
 
 export default function ProjectsPage() {
@@ -71,7 +21,21 @@ export default function ProjectsPage() {
                 </p>
             </div>
 
-            <ProjectGallery projects={projects} />
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                {VIDEO_IDS.map((id) => (
+                    <div key={id} className="aspect-video overflow-hidden rounded-3xl bg-slate-100 shadow-md">
+                        <iframe
+                            className="h-full w-full"
+                            src={`https://www.youtube.com/embed/${id}`}
+                            title={`Carbon offset project video ${id}`}
+                            loading="lazy"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            referrerPolicy="strict-origin-when-cross-origin"
+                            allowFullScreen
+                        />
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
