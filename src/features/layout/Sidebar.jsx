@@ -28,7 +28,6 @@ const NAV_ITEMS = [
     { label: "Energy", href: "/energy", icon: Zap },
     { label: "Reports", href: "/reports", icon: FileText },
     { label: "Community", href: "/community", icon: Globe },
-    { label: "Team", href: "/social", icon: Users },
     { label: "Simulate", href: "/simulate", icon: FlaskConical },
 ];
 

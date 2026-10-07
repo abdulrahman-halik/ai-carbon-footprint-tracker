@@ -97,7 +97,7 @@ export default function AdminEnergyPage() {
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div>
                     <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight">
-                        Electricity & Energy Usage
+                        Energy Usage
                     </h1>
                     <p className="text-sm text-gray-500 mt-1">
                         Monitor power consumption (kWh) per user and energy type distribution.
@@ -123,7 +123,7 @@ export default function AdminEnergyPage() {
                         {data?.platform_total_energy?.toLocaleString() || 0}{" "}
                         <span className="text-xs font-bold text-gray-400">kWh</span>
                     </p>
-                    <p className="text-xs text-amber-600 mt-1 font-medium">Recorded electricity consumption</p>
+                    <p className="text-xs text-amber-600 mt-1 font-medium">Recorded energy consumption</p>
                 </div>
 
                 <div className="p-5 rounded-2xl bg-white border border-gray-100 shadow-xs">
@@ -156,7 +156,7 @@ export default function AdminEnergyPage() {
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 <div className="lg:col-span-2 p-6 rounded-2xl bg-white border border-gray-100 shadow-xs">
                     <h2 className="text-base font-bold text-gray-900 mb-1">
-                        Electricity Consumption by User
+                        Energy Consumption by User
                     </h2>
                     <p className="text-xs text-gray-500 mb-6">Total kilowatt-hours (kWh) consumed per account</p>
                     <div className="h-72">
@@ -175,7 +175,7 @@ export default function AdminEnergyPage() {
                             />
                         ) : (
                             <div className="h-full flex items-center justify-center text-xs text-gray-400 italic">
-                                No electricity consumption data logged.
+                                No energy consumption data logged.
                             </div>
                         )}
                     </div>
@@ -203,11 +203,11 @@ export default function AdminEnergyPage() {
                 </div>
             </div>
 
-            {/* User Electricity Table */}
+            {/* User Energy Table */}
             <div className="rounded-2xl bg-white border border-gray-100 shadow-xs overflow-hidden">
                 <div className="p-5 border-b border-gray-100">
                     <h2 className="text-base font-bold text-gray-900">
-                        Electricity Usage Table
+                        Energy Usage Table
                     </h2>
                     <p className="text-xs text-gray-500">Detailed list of user electrical consumption totals</p>
                 </div>

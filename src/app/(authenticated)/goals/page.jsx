@@ -72,11 +72,12 @@ export default function GoalsPage() {
         const parsedTarget = parseFloat(newGoal.target) || 0;
 
         try {
+            const currentVal = parseFloat(newGoal.current) || 0;
             if (editingId) {
                 // If editing, since we don't have update API bound directly in UI, we can just replace the goal 
-                await goalService.setGoal({ category: newGoal.title || "General", target_value: parsedTarget });
+                await goalService.setGoal({ category: newGoal.title || "General", target_value: parsedTarget, current_value: currentVal });
             } else {
-                await goalService.setGoal({ category: newGoal.title || "General", target_value: parsedTarget });
+                await goalService.setGoal({ category: newGoal.title || "General", target_value: parsedTarget, current_value: currentVal });
             }
             await loadGoals();
         } catch (err) {

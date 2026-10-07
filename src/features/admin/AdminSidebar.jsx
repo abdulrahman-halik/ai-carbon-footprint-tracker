@@ -20,7 +20,7 @@ export const ADMIN_NAV_ITEMS = [
     { label: "Users", href: "/admin/users", icon: Users, description: "User accounts & access status" },
     { label: "Carbon Footprint", href: "/admin/emissions", icon: BarChart3, description: "CO2e emissions by user" },
     { label: "Water Usage", href: "/admin/water", icon: Droplets, description: "Consumption liters comparison" },
-    { label: "Electricity Usage", href: "/admin/energy", icon: Zap, description: "Power & kWh usage metrics" },
+    { label: "Energy Usage", href: "/admin/energy", icon: Zap, description: "Power & kWh usage metrics" },
     { label: "Active Goals", href: "/admin/goals", icon: Target, description: "Current sustainability goals" },
     { label: "Reducing Goals", href: "/admin/reducing-goals", icon: TrendingDown, description: "Emission reduction achievements" },
 ];
