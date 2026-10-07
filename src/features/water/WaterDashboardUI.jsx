@@ -1,6 +1,7 @@
 "use client";
-import React from 'react';
+import React, { useState } from 'react';
 import { Droplets, Plus, Waves, Activity, TrendingDown, TrendingUp, BarChart3, AlertTriangle, Target, ShowerHead, Leaf, ArrowRight } from 'lucide-react';
+import { Modal, ModalContent, ModalHeader, ModalTitle } from '@/components/ui/Modal';
 
 export function WaterHeader({ onOpen }) {
     return (
@@ -158,6 +159,7 @@ const tips = [
         icon: Droplets,
         title: "Fix Leaky Faucets",
         description: "A leaky faucet can waste up to 3,000 gallons per year. Check your bathroom and kitchen sinks for any drips!",
+        details: "Detecting and fixing leaks is one of the easiest ways to save water. A leaky faucet dripping at the rate of one drip per second can waste more than 3,000 gallons per year. \n\nPractical steps:\n- Check faucets, showerheads, and pipes for visible leaks.\n- Check your water meter before and after a two-hour period when no water is being used. If the meter changes, you probably have a leak.\n- Fix dripping faucets by replacing washers. If your faucet is dripping, the repair can usually be done quickly and inexpensively.",
         gradient: "from-sky-400 to-cyan-500",
         border: "border-sky-100",
         tag: "Quick Win",
@@ -167,6 +169,7 @@ const tips = [
         icon: ShowerHead,
         title: "Shorter Showers",
         description: "A 5-minute shower uses 10-25 gallons. A full bath can use up to 70 gallons. Cutting 2 minutes saves big!",
+        details: "Reducing your shower time is a highly effective way to conserve water and lower your energy bill.\n\nWater savings:\n- Older showerheads use up to 5 gallons of water per minute. A 10-minute shower can use 50 gallons of water.\n- By cutting your shower time down by just 2 minutes, you can save up to 10 gallons of water per shower.\n- Consider installing a WaterSense labeled showerhead, which uses no more than 2.0 gallons per minute, providing substantial savings without sacrificing performance.",
         gradient: "from-blue-400 to-indigo-500",
         border: "border-blue-100",
         tag: "Daily Habit",
@@ -176,6 +179,7 @@ const tips = [
         icon: Leaf,
         title: "Smart Irrigation",
         description: "Water your garden early morning or late evening to reduce evaporation by up to 30%. Use drip irrigation when possible.",
+        details: "Outdoor water use accounts for a significant portion of household water consumption. Efficient irrigation practices can drastically reduce waste.\n\nEfficient watering:\n- Water your lawn and garden in the early morning or late evening when temperatures are cooler. This reduces water loss due to evaporation by up to 30%.\n- Use drip irrigation systems for trees, shrubs, and gardens. Drip irrigation applies water directly to the roots, minimizing evaporation and runoff.\n- Adjust your watering schedule based on the season and weather. Don't water the lawn on rainy or windy days.",
         gradient: "from-emerald-400 to-teal-500",
         border: "border-emerald-100",
         tag: "Eco Impact",
@@ -184,6 +188,8 @@ const tips = [
 ];
 
 export function WaterTips() {
+    const [activeTip, setActiveTip] = useState(null);
+
     return (
         <div className="space-y-5">
             <div className="flex items-center gap-3">
@@ -220,14 +226,44 @@ export function WaterTips() {
                                 <h4 className="text-base font-bold text-gray-900 mb-2">{tip.title}</h4>
                                 <p className="text-sm text-gray-500 leading-relaxed">{tip.description}</p>
 
-                                <div className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-sky-600 group-hover:gap-2.5 transition-all duration-300">
+                                <button 
+                                    onClick={() => setActiveTip(tip)}
+                                    className="mt-4 flex items-center gap-1.5 text-xs font-semibold text-sky-600 group-hover:gap-2.5 transition-all duration-300 focus:outline-none cursor-pointer"
+                                >
                                     Learn more <ArrowRight className="w-3.5 h-3.5" />
-                                </div>
+                                </button>
                             </div>
                         </div>
                     );
                 })}
             </div>
+
+            <Modal isOpen={!!activeTip} onClose={() => setActiveTip(null)}>
+                <ModalContent className="max-w-xl">
+                    {activeTip && (
+                        <>
+                            <ModalHeader>
+                                <div className="flex items-center gap-4">
+                                    <div className={`p-3 rounded-2xl bg-linear-to-br ${activeTip.gradient} text-white shadow-lg`}>
+                                        <activeTip.icon className="w-6 h-6" />
+                                    </div>
+                                    <div>
+                                        <div className={`inline-block text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full mb-1 ${activeTip.tagColor}`}>
+                                            {activeTip.tag}
+                                        </div>
+                                        <ModalTitle className="text-xl sm:text-2xl">{activeTip.title}</ModalTitle>
+                                    </div>
+                                </div>
+                            </ModalHeader>
+                            <div className="p-6 pt-2 overflow-y-auto max-h-[60vh]">
+                                <div className="text-gray-600 text-sm sm:text-base leading-relaxed space-y-4 whitespace-pre-wrap">
+                                    {activeTip.details}
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </ModalContent>
+            </Modal>
         </div>
     );
 }

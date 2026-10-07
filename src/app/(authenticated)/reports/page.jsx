@@ -2,7 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { FileText, Download, Share2, Award, Calendar, Loader2, Inbox } from "lucide-react";
-import emissionsService from "@/services/emissionsService";/* ── Canvas utility ── */
+import { useAuth } from "@/hooks/useAuth";
+import emissionsService from "@/services/emissionsService";
+
+/* ── Canvas utility ── */
 function roundRect(ctx, x, y, w, h, r) {
     ctx.beginPath();
     ctx.moveTo(x + r, y);
@@ -18,10 +21,9 @@ function roundRect(ctx, x, y, w, h, r) {
 }
 
 /* ── Certificate download (Canvas → PNG) ── */
-function downloadCertificate(latestReport) {
+function downloadCertificate(latestReport, userName) {
     if (!latestReport) return;
     const { badge, month, reductionPercentage, score } = latestReport;
-
     const W = 900, H = 620;
     const canvas = document.createElement("canvas");
     canvas.width = W;
@@ -67,7 +69,7 @@ function downloadCertificate(latestReport) {
 
     ctx.fillStyle = "#065f46";
     ctx.font = "bold 32px Georgia, serif";
-    ctx.fillText("EcoTracker Member", W / 2, 260);
+    ctx.fillText(userName || "Certified User", W / 2, 260);
 
     ctx.fillStyle = "#374151";
     ctx.font = "20px Georgia, serif";
@@ -199,6 +201,9 @@ function downloadReportPDF(report) {
 }
 
 export default function ReportsPage() {
+    const { user } = useAuth();
+    const userName = user?.full_name || "";
+
     const [reports, setReports] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -316,7 +321,7 @@ export default function ReportsPage() {
                             </p>
                         </div>
                         <button
-                            onClick={() => downloadCertificate(latestReport)}
+                            onClick={() => downloadCertificate(latestReport, userName)}
                             className="bg-white text-indigo-600 px-6 py-3 rounded-xl font-bold shadow-lg hover:bg-gray-50 transition-colors flex items-center gap-2"
                         >
                             <Download size={18} />

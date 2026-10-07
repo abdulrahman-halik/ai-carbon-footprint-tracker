@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useCallback } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { Calculator, Leaf } from 'lucide-react';
 import { Button } from "@/components/ui/Button";
 import {
@@ -32,11 +32,51 @@ const DEFAULT_INPUTS = {
     clothing: 2, electronics: 0, online_orders: 4,
 };
 
+const NEW_USER_INPUTS = {
+    // Energy
+    electricity: 0, lpg: 0, water: 0, energy_source: '',
+    // Transport
+    car: 0, bike: 0, public_transport: 0, air_travel: 0, waste: 0,
+    // Food
+    diet_type: '', meat_meals: 0, dairy_portions: 0, food_waste: 0,
+    // Home
+    house_type: '', household_size: 1, ac_usage: 0, has_solar: 0,
+    // Shopping
+    clothing: 0, electronics: 0, online_orders: 0,
+};
+
 export default function EmissionsDashboard() {
     const [inputs, setInputs] = useState(DEFAULT_INPUTS);
-    const [results, setResults] = useState(calculateCarbonFootprint(DEFAULT_INPUTS));
+    const [results, setResults] = useState(null);
     const [loading, setLoading] = useState(false);
     const [showInputs, setShowInputs] = useState(false);
+
+    useEffect(() => {
+        const loadUserData = async () => {
+            const data = await emissionsService.getEmissions();
+            const lastDashboard = data.find(d => d.sub_category === 'emissions_dashboard');
+            
+            if (lastDashboard && lastDashboard.description) {
+                try {
+                    const desc = JSON.parse(lastDashboard.description);
+                    if (desc.inputs) {
+                        setInputs(desc.inputs);
+                        setResults(calculateCarbonFootprint(desc.inputs));
+                        return; // Found existing user data
+                    }
+                } catch (e) {
+                    console.warn("Failed to parse previous inputs", e);
+                }
+            }
+            
+            // New user scenario
+            setInputs(NEW_USER_INPUTS);
+            setResults(calculateCarbonFootprint(NEW_USER_INPUTS));
+            setShowInputs(true);
+        };
+        
+        loadUserData();
+    }, []);
 
     const handleInputChange = useCallback((id, value) => {
         setInputs(prev => ({ ...prev, [id]: typeof value === 'string' ? (parseFloat(value) || value) : value }));
