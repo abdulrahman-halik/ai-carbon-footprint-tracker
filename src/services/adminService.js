@@ -33,7 +33,7 @@ const adminService = {
         return response.data;
     },
 
-    // 6. Electricity / Energy Usage Analytics across users
+    // 6. Energy Usage Analytics across users
     getEnergyAnalytics: async () => {
         const response = await apiClient.get("/api/admin/analytics/energy");
         return response.data;

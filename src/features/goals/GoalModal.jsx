@@ -36,7 +36,7 @@ export function GoalForm({ newGoal, setNewGoal, onSave, onClose, editingId }) {
                 <input
                     value={newGoal.title}
                     onChange={(e) => setNewGoal({ ...newGoal, title: e.target.value })}
-                    placeholder="e.g. Reduce Electricity Usage"
+                    placeholder="e.g. Reduce Energy Usage"
                     className="w-full px-4 py-3 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-400/50 focus:border-emerald-400 transition-all text-gray-900 placeholder-gray-300 shadow-sm"
                 />
             </div>
