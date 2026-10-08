@@ -4,7 +4,6 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/Button';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/Card';
-import { Label } from '@/components/ui/Label';
 import { ArrowRight, Check, Car, Utensils, Plane, Zap, ShoppingBag } from 'lucide-react';
 
 const questions = [
@@ -140,7 +139,7 @@ export default function EstimatorPage() {
                         </CardContent>
                         <CardFooter className="flex flex-col gap-3">
                             <Link href="/register" className="w-full">
-                                <Button className="w-full h-12 text-lg">Unlock Full Report</Button>
+                                <Button className="w-full h-12 text-lg">Unlock Your Profile</Button>
                             </Link>
                             <Button variant="ghost" onClick={() => { setStep(0); setScore(0); setShowResult(false); }}>
                                 Start Over
